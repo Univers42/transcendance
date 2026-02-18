@@ -1,335 +1,279 @@
-# 🔧 Contributing to ft_transcendence
+# Contributing to ft_transcendence
 
-Welcome to the team! This document explains how we work together — project architecture, branching strategy, commit conventions, PR process, and code standards.
-
-**Read this before writing any code.**
+Everything you need to know before writing code on this project. Architecture, conventions, how to test, how to style, how to commit. If something isn't covered here, ask on Discord.
 
 ---
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Getting Started](#getting-started)
 - [Project Architecture](#project-architecture)
 - [Directory Structure](#directory-structure)
-- [Frontend (React + Vite)](#frontend-react--vite)
-- [Backend (NestJS)](#backend-nestjs)
-- [SCSS Architecture & Graphical Chart](#scss-architecture--graphical-chart)
+- [Frontend — React + Vite](#frontend--react--vite)
+- [Backend — NestJS](#backend--nestjs)
+- [SCSS & the Graphical Chart](#scss--the-graphical-chart)
 - [Testing](#testing)
 - [Git Flow](#git-flow)
 - [Branch Naming](#branch-naming)
-- [Commit Convention](#commit-convention)
-- [Pull Request Process](#pull-request-process)
+- [Commits](#commits)
+- [Pull Requests](#pull-requests)
 - [Code Standards](#code-standards)
-- [Code Review Guidelines](#code-review-guidelines)
-- [Issue Workflow](#issue-workflow)
+- [Code Review](#code-review)
+- [Issues](#issues)
 - [Vendor Directory](#vendor-directory)
 - [AI Transparency](#ai-transparency)
-- [Quick Reference](#quick-reference)
-- [📚 Bibliographic References & Resources](#-bibliographic-references--resources)
+- [Cheat Sheet](#cheat-sheet)
+- [References](#references)
 
 ---
 
 ## Getting Started
 
 ```bash
-# 1. Clone the repo
 git clone git@github.com:Univers42/ft_transcendence.git
 cd ft_transcendence
-
-# 2. Set up your environment
 cp .env.example .env
-make
-
-# 3. Start development servers
-make dev
-
-# 4. Create your feature branch FROM develop
-git checkout develop
-git pull origin develop
-git checkout -b feature/your-feature-name
+make          # first-time setup
+make dev      # start everything
 ```
 
-### Essential Commands
+Then create your branch from `develop`:
 
-| Command | Description |
+```bash
+git checkout develop && git pull
+git checkout -b feature/my-thing
+```
+
+### Commands you'll use daily
+
+| Command | What it does |
 |---------|-------------|
-| `make` | First-time setup (containers + deps + migrations) |
-| `make dev` | Start dev servers (frontend + backend) |
+| `make dev` | Start frontend + backend |
 | `make test` | Run all tests |
-| `make lint` | Run ESLint on all code |
-| `make typecheck` | TypeScript type checking |
-| `make gen-css` | Compile SASS → CSS |
-| `make gen-css WATCH=1` | SASS watch mode |
-| `make shell` | Open shell in dev container |
-| `make help` | Show all available commands |
+| `make lint` | ESLint |
+| `make typecheck` | TypeScript checks |
+| `make gen-css` | Compile SASS once |
+| `make gen-css WATCH=1` | SASS in watch mode |
+| `make shell` | Shell into the container |
+| `make help` | List everything |
 
 ---
 
 ## Project Architecture
 
-```
-ft_transcendence/
-├── apps/                    # Application code
-│   ├── backend/             # NestJS API server
-│   └── frontend/            # React + Vite SPA
-├── packages/                # Shared code
-│   └── shared/              # Types, utils shared between apps
-├── docker/                  # Docker configuration
-├── docs/                    # Documentation
-├── scripts/                 # Utility scripts
-└── vendor/                  # Third-party tools & 42-specific utilities
-```
-
-### System Architecture Overview
+Here's the big picture — how the pieces connect:
 
 ```mermaid
-flowchart TB
-    subgraph Client["🌐 Client Layer"]
-        Browser["Browser\n(React SPA)"]
-    end
-    
-    subgraph Frontend["⚛️ Frontend - Vite + React"]
-        direction TB
-        Components["Components"]
-        Stores["Zustand Stores"]
-        Services["API Services"]
-        Styles["SCSS Styles"]
-    end
-    
-    subgraph Backend["🔧 Backend - NestJS"]
-        direction TB
-        Controllers["Controllers"]
-        ServicesB["Services"]
-        Guards["Guards & Pipes"]
-        Gateways["WebSocket\nGateways"]
-    end
-    
-    subgraph Data["💾 Data Layer"]
-        Prisma["Prisma ORM"]
-        PostgreSQL[("PostgreSQL")]
-        Redis[("Redis Cache")]
-    end
-    
-    subgraph External["🌍 External Services"]
-        OAuth["42 OAuth"]
+graph TB
+    Browser["Browser"]
+
+    subgraph FE["Frontend · React + Vite"]
+        Pages["Pages"]
+        Comps["Components"]
+        Hooks["Hooks"]
+        Stores["Stores"]
+        SCSS["SCSS"]
     end
 
-    Browser <-->|"HTTP/WS"| Frontend
-    Frontend <-->|"REST API"| Controllers
-    Frontend <-->|"WebSocket"| Gateways
-    Controllers --> ServicesB
-    ServicesB --> Guards
-    ServicesB --> Prisma
-    Gateways --> ServicesB
-    Prisma --> PostgreSQL
-    ServicesB --> Redis
-    Controllers <-->|"OAuth 2.0"| OAuth
+    subgraph BE["Backend · NestJS"]
+        Ctrl["Controllers"]
+        Svc["Services"]
+        Guard["Guards"]
+        GW["WS Gateways"]
+    end
 
-    style Client fill:#1a1a2e,stroke:#7c3aed,color:#fff
-    style Frontend fill:#0f172a,stroke:#22d3ee,color:#fff
-    style Backend fill:#0f172a,stroke:#a855f7,color:#fff
-    style Data fill:#0f172a,stroke:#22c55e,color:#fff
-    style External fill:#1e293b,stroke:#f59e0b,color:#fff
-    style Browser fill:#7c3aed,stroke:#fff,color:#fff
-    style Components fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Stores fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Services fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Styles fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Controllers fill:#a855f7,stroke:#fff,color:#fff
-    style ServicesB fill:#a855f7,stroke:#fff,color:#fff
-    style Guards fill:#a855f7,stroke:#fff,color:#fff
-    style Gateways fill:#a855f7,stroke:#fff,color:#fff
-    style Prisma fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style PostgreSQL fill:#336791,stroke:#fff,color:#fff
-    style Redis fill:#dc382d,stroke:#fff,color:#fff
-    style OAuth fill:#f59e0b,stroke:#fff,color:#1a1a2e
+    subgraph DB["Data"]
+        Prisma["Prisma"]
+        PG[("PostgreSQL")]
+        RD[("Redis")]
+    end
+
+    OAuth42["42 OAuth"]
+
+    Browser -- "HTTP" --> Ctrl
+    Browser -- "WebSocket" --> GW
+    Browser -- "renders" --> Pages
+    Pages --> Comps
+    Pages --> Hooks
+    Hooks --> Stores
+    Ctrl --> Svc
+    GW --> Svc
+    Svc --> Guard
+    Svc --> Prisma
+    Prisma --> PG
+    Svc --> RD
+    Ctrl -- "OAuth 2.0" --> OAuth42
+
+    style FE fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style BE fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style DB fill:#dcfce7,stroke:#22c55e,color:#14532d
+    style Browser fill:#bfdbfe,stroke:#2563eb,color:#1e3a5f
+    style OAuth42 fill:#fef3c7,stroke:#d97706,color:#78350f
+    style PG fill:#bbf7d0,stroke:#16a34a,color:#14532d
+    style RD fill:#fecaca,stroke:#dc2626,color:#7f1d1d
 ```
 
-### What Goes Where?
+### File tree
 
-| I want to... | Location |
-|--------------|----------|
-| Add a new API endpoint | `apps/backend/src/` |
-| Create a React component | `apps/frontend/src/components/` |
-| Add shared TypeScript types | `packages/shared/src/types/` |
-| Write CSS/SCSS styles | `apps/frontend/src/styles/` |
-| Add database models | `apps/backend/prisma/schema.prisma` |
-| Add a utility script | `scripts/` |
-| Configure Docker | `docker/` |
+```
+ft_transcendence/
+├── apps/
+│   ├── backend/             # NestJS API
+│   └── frontend/            # React SPA
+├── packages/
+│   └── shared/              # Shared types & utils
+├── docker/                  # Dockerfiles, nginx
+├── docs/                    # Extra docs
+├── scripts/                 # Helper scripts
+└── vendor/                  # Third-party & 42 tools
+```
+
+### Where does my code go?
+
+| I need to… | Put it in |
+|------------|-----------|
+| New API route | `apps/backend/src/<module>/` |
+| React component | `apps/frontend/src/components/` |
+| Shared types | `packages/shared/src/types/` |
+| Styles | `apps/frontend/src/styles/` |
+| DB model | `apps/backend/prisma/schema.prisma` |
+| Docker config | `docker/` |
 
 ---
 
 ## Directory Structure
 
-### `apps/backend/` — NestJS Backend
+### Backend
 
 ```
 apps/backend/
 ├── prisma/
-│   ├── schema.prisma        # Database schema (models)
-│   └── migrations/          # Database migrations
+│   ├── schema.prisma        # DB models
+│   └── migrations/
 ├── src/
-│   ├── main.ts              # Application entry point
+│   ├── main.ts              # Entry point
 │   ├── app.module.ts        # Root module
-│   ├── auth/                # Auth module (JWT, OAuth, 2FA)
-│   ├── users/               # Users module
-│   ├── chat/                # Chat module (WebSockets)
-│   ├── game/                # Game module (Pong)
-│   └── common/              # Shared (guards, pipes, decorators)
+│   ├── auth/                # Auth (JWT, OAuth, 2FA)
+│   ├── users/               # Users
+│   ├── chat/                # Chat (WebSockets)
+│   ├── game/                # Pong game
+│   └── common/              # Guards, pipes, decorators
 ├── test/
-│   ├── jest-e2e.json        # E2E test config
 │   └── *.e2e-spec.ts        # E2E tests
-├── prisma.config.ts         # Prisma configuration
-├── nest-cli.json            # NestJS CLI config
+├── prisma.config.ts
 └── package.json
 ```
 
-### `apps/frontend/` — React Frontend
+### Frontend
 
 ```
 apps/frontend/
-├── public/                  # Static assets
 ├── src/
 │   ├── main.tsx             # Entry point
 │   ├── App.tsx              # Root component
-│   ├── components/          # Reusable UI components
-│   ├── pages/               # Page-level components
-│   ├── hooks/               # Custom React hooks
-│   ├── stores/              # Zustand state stores
-│   ├── services/            # API client services
-│   ├── styles/              # SCSS architecture (see below)
-│   └── utils/               # Utility functions
-├── index.html               # HTML template
-├── vite.config.ts           # Vite configuration
+│   ├── components/          # UI components
+│   ├── pages/               # Route-level pages
+│   ├── hooks/               # Custom hooks
+│   ├── stores/              # Zustand stores
+│   ├── services/            # API calls
+│   ├── styles/              # SCSS (see below)
+│   └── utils/
+├── index.html
+├── vite.config.ts
 └── package.json
 ```
 
 ---
 
-## Frontend (React + Vite)
+## Frontend — React + Vite
 
-### React Component Architecture
+How the React app is organized:
 
 ```mermaid
-flowchart TD
-    subgraph App["🏠 App.tsx"]
-        Router["React Router"]
+graph TD
+    App["App.tsx + Router"]
+
+    subgraph PG["Pages"]
+        Home["Home"]
+        Game["Game"]
+        Profile["Profile"]
+        Chat["Chat"]
     end
-    
-    subgraph Pages["📄 Pages"]
-        Home["HomePage"]
-        Game["GamePage"]
-        Profile["ProfilePage"]
-        Chat["ChatPage"]
-    end
-    
-    subgraph Components["🧩 Reusable Components"]
+
+    subgraph CP["Components"]
         Header["Header"]
-        Footer["Footer"]
         Card["Card"]
         Button["Button"]
         Modal["Modal"]
     end
-    
-    subgraph Hooks["🪝 Custom Hooks"]
-        useAuth["useAuth"]
-        useGame["useGame"]
-        useChat["useChat"]
-        useApi["useApi"]
-    end
-    
-    subgraph State["📦 Zustand Stores"]
-        AuthStore["authStore"]
-        GameStore["gameStore"]
-        UIStore["uiStore"]
+
+    subgraph HK["Hooks"]
+        uA["useAuth"]
+        uG["useGame"]
+        uC["useChat"]
     end
 
-    Router --> Pages
-    Pages --> Components
-    Pages --> Hooks
-    Hooks --> State
-    Components --> Hooks
+    subgraph ST["Stores · Zustand"]
+        authS["authStore"]
+        gameS["gameStore"]
+        uiS["uiStore"]
+    end
 
-    style App fill:#1a1a2e,stroke:#61dafb,color:#fff
-    style Pages fill:#0f172a,stroke:#22d3ee,color:#fff
-    style Components fill:#0f172a,stroke:#a855f7,color:#fff
-    style Hooks fill:#0f172a,stroke:#f59e0b,color:#fff
-    style State fill:#0f172a,stroke:#22c55e,color:#fff
-    style Router fill:#61dafb,stroke:#fff,color:#1a1a2e
-    style Home fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Game fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Profile fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Chat fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Header fill:#a855f7,stroke:#fff,color:#fff
-    style Footer fill:#a855f7,stroke:#fff,color:#fff
-    style Card fill:#a855f7,stroke:#fff,color:#fff
-    style Button fill:#a855f7,stroke:#fff,color:#fff
-    style Modal fill:#a855f7,stroke:#fff,color:#fff
-    style useAuth fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style useGame fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style useChat fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style useApi fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style AuthStore fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style GameStore fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style UIStore fill:#22c55e,stroke:#fff,color:#1a1a2e
+    App --> PG
+    PG --> CP
+    PG --> HK
+    CP --> HK
+    HK --> ST
+
+    style PG fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style CP fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style HK fill:#fef3c7,stroke:#d97706,color:#78350f
+    style ST fill:#dcfce7,stroke:#22c55e,color:#14532d
+    style App fill:#bfdbfe,stroke:#2563eb,color:#1e3a5f
 ```
 
-### Vite Build Pipeline
+### How Vite builds things
 
 ```mermaid
-flowchart LR
-    subgraph Source["📝 Source Files"]
-        TSX["*.tsx"]
-        SCSS["*.scss"]
-        Assets["assets/"]
-    end
-    
-    subgraph Vite["⚡ Vite"]
-        ESBuild["ESBuild\n(Dev Transform)"]
-        Rollup["Rollup\n(Prod Bundle)"]
-        SASS["SASS\nCompiler"]
-    end
-    
-    subgraph Output["📦 Output"]
-        JS["bundle.js"]
-        CSS["styles.css"]
-        HTML["index.html"]
+graph LR
+    subgraph SRC["Source"]
+        tsx[".tsx files"]
+        scss[".scss files"]
+        assets["Static assets"]
     end
 
-    TSX --> ESBuild
-    TSX --> Rollup
-    SCSS --> SASS
-    SASS --> CSS
-    ESBuild --> JS
-    Rollup --> JS
-    Assets --> HTML
+    subgraph VITE["Vite"]
+        esbuild["esbuild · dev"]
+        rollup["rollup · prod"]
+        sass["SASS compiler"]
+    end
 
-    style Source fill:#1e293b,stroke:#f59e0b,color:#fff
-    style Vite fill:#1e293b,stroke:#a855f7,color:#fff
-    style Output fill:#1e293b,stroke:#22c55e,color:#fff
-    style TSX fill:#3178c6,stroke:#fff,color:#fff
-    style SCSS fill:#cf649a,stroke:#fff,color:#fff
-    style Assets fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style ESBuild fill:#ffcf00,stroke:#000,color:#000
-    style Rollup fill:#ff3333,stroke:#fff,color:#fff
-    style SASS fill:#cf649a,stroke:#fff,color:#fff
-    style JS fill:#f7df1e,stroke:#000,color:#000
-    style CSS fill:#264de4,stroke:#fff,color:#fff
-    style HTML fill:#e34f26,stroke:#fff,color:#fff
+    subgraph OUT["Output"]
+        js["bundle.js"]
+        css["styles.css"]
+        html["index.html"]
+    end
+
+    tsx --> esbuild --> js
+    tsx --> rollup --> js
+    scss --> sass --> css
+    assets --> html
+
+    style SRC fill:#fef3c7,stroke:#d97706,color:#78350f
+    style VITE fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style OUT fill:#dcfce7,stroke:#22c55e,color:#14532d
 ```
 
-### Vite Configuration
-
-Vite is our build tool. Key configuration in `vite.config.ts`:
+### Vite config highlights
 
 ```typescript
-// Path aliases — use @/ instead of relative paths
+// Path aliases — use @/ instead of ../../
 alias: {
   '@': path.resolve(__dirname, 'src'),
   '@shared': path.resolve(__dirname, '../../packages/shared/src'),
 }
 
-// SCSS preprocessing — graphical chart auto-imported
+// SCSS — graphical chart is auto-imported everywhere
 css: {
   preprocessorOptions: {
     scss: {
@@ -339,20 +283,18 @@ css: {
 }
 ```
 
-### File Conventions
+### Naming
 
-| Type | Convention | Example |
+| What | Convention | Example |
 |------|-----------|---------|
 | Components | PascalCase | `UserProfile.tsx` |
 | Hooks | `use` prefix | `useAuth.ts` |
-| Stores | camelCase + `Store` | `authStore.ts` |
-| Services | camelCase + `Service` | `apiService.ts` |
+| Stores | camelCase + Store | `authStore.ts` |
 | Types | PascalCase | `User.ts` |
 
-### Adding a New Component
+### New component template
 
 ```tsx
-// src/components/MyComponent.tsx
 import styles from './MyComponent.module.scss';
 
 interface MyComponentProps {
@@ -366,106 +308,52 @@ export function MyComponent({ title }: MyComponentProps) {
 
 ---
 
-## Backend (NestJS)
+## Backend — NestJS
 
-### NestJS Request Lifecycle
+Every request goes through this pipeline. If something blocks, check where it fails in this chain:
 
 ```mermaid
-flowchart LR
-    subgraph Request["📨 Incoming Request"]
-        HTTP["HTTP Request"]
-        WS["WebSocket"]
-    end
-    
-    subgraph Middleware["🔗 Middleware Layer"]
-        Logger["Logger"]
-        CORS["CORS"]
-        Helmet["Helmet"]
-    end
-    
-    subgraph Guards["🛡️ Guards"]
-        JWT["JWT Guard"]
-        Roles["Roles Guard"]
-    end
-    
-    subgraph Pipes["🔧 Pipes"]
-        Validation["Validation Pipe"]
-        Transform["Transform Pipe"]
-    end
-    
-    subgraph Controller["🎮 Controller"]
-        Endpoint["@Get, @Post..."]
-    end
-    
-    subgraph Service["⚙️ Service"]
-        Logic["Business Logic"]
-    end
-    
-    subgraph Interceptors["🔄 Interceptors"]
-        Serialize["Serialize"]
-        Timeout["Timeout"]
-    end
-    
-    subgraph Response["📤 Response"]
-        JSON["JSON Response"]
-    end
+graph LR
+    Req["Request"] --> MW["Middleware"]
+    MW --> GD["Guards"]
+    GD --> PP["Pipes"]
+    PP --> CT["Controller"]
+    CT --> SV["Service"]
+    SV --> CT
+    CT --> IC["Interceptors"]
+    IC --> Res["Response"]
 
-    HTTP --> Middleware
-    WS --> Middleware
-    Middleware --> Guards
-    Guards --> Pipes
-    Pipes --> Controller
-    Controller --> Service
-    Service --> Controller
-    Controller --> Interceptors
-    Interceptors --> Response
-
-    style Request fill:#1a1a2e,stroke:#22d3ee,color:#fff
-    style Middleware fill:#1e293b,stroke:#f59e0b,color:#fff
-    style Guards fill:#1e293b,stroke:#ef4444,color:#fff
-    style Pipes fill:#1e293b,stroke:#8b5cf6,color:#fff
-    style Controller fill:#1e293b,stroke:#22c55e,color:#fff
-    style Service fill:#1e293b,stroke:#3b82f6,color:#fff
-    style Interceptors fill:#1e293b,stroke:#ec4899,color:#fff
-    style Response fill:#1a1a2e,stroke:#22c55e,color:#fff
-    style HTTP fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style WS fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Logger fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style CORS fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Helmet fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style JWT fill:#ef4444,stroke:#fff,color:#fff
-    style Roles fill:#ef4444,stroke:#fff,color:#fff
-    style Validation fill:#8b5cf6,stroke:#fff,color:#fff
-    style Transform fill:#8b5cf6,stroke:#fff,color:#fff
-    style Endpoint fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style Logic fill:#3b82f6,stroke:#fff,color:#fff
-    style Serialize fill:#ec4899,stroke:#fff,color:#fff
-    style Timeout fill:#ec4899,stroke:#fff,color:#fff
-    style JSON fill:#22c55e,stroke:#fff,color:#1a1a2e
+    style Req fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style MW fill:#fef3c7,stroke:#d97706,color:#78350f
+    style GD fill:#fecaca,stroke:#dc2626,color:#7f1d1d
+    style PP fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style CT fill:#dcfce7,stroke:#22c55e,color:#14532d
+    style SV fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style IC fill:#fce7f3,stroke:#db2777,color:#831843
+    style Res fill:#dcfce7,stroke:#22c55e,color:#14532d
 ```
 
-### Module Structure
+**Middleware** = logging, CORS, Helmet · **Guards** = auth checks · **Pipes** = validation · **Interceptors** = response shaping
 
-Each feature is a **module** with its own folder:
+### One module = one feature
 
 ```
 src/users/
-├── users.module.ts          # Module definition
-├── users.controller.ts      # HTTP endpoints
-├── users.service.ts         # Business logic
-├── users.gateway.ts         # WebSocket gateway (if needed)
-├── dto/                     # Data Transfer Objects
+├── users.module.ts          # wires it all
+├── users.controller.ts      # HTTP routes
+├── users.service.ts         # logic
+├── users.gateway.ts         # WS (if needed)
+├── dto/
 │   ├── create-user.dto.ts
 │   └── update-user.dto.ts
-├── entities/                # TypeScript interfaces
+├── entities/
 │   └── user.entity.ts
-└── users.spec.ts            # Unit tests
+└── users.spec.ts            # tests
 ```
 
-### Creating a New Module
+### Scaffold a new module
 
 ```bash
-# Inside the container
 docker exec -it transcendence-dev bash
 cd apps/backend
 nest g module myfeature
@@ -473,148 +361,120 @@ nest g controller myfeature
 nest g service myfeature
 ```
 
-### Key NestJS Concepts
+### Quick reference
 
-| Concept | Purpose | Location |
-|---------|---------|----------|
-| **Controllers** | Handle HTTP requests | `*.controller.ts` |
-| **Services** | Business logic | `*.service.ts` |
-| **Guards** | Authorization | `common/guards/` |
-| **Pipes** | Validation/Transform | `common/pipes/` |
-| **DTOs** | Request validation | `*/dto/` |
-| **Gateways** | WebSocket handlers | `*.gateway.ts` |
+| Concept | Role | Files |
+|---------|------|-------|
+| Controllers | HTTP handlers | `*.controller.ts` |
+| Services | Business logic | `*.service.ts` |
+| Guards | Auth/authorization | `common/guards/` |
+| Pipes | Validation | `common/pipes/` |
+| DTOs | Request schemas | `*/dto/` |
+| Gateways | WebSocket | `*.gateway.ts` |
 
 ---
 
-## SCSS Architecture & Graphical Chart
+## SCSS & the Graphical Chart
 
-We use **SASS/SCSS** for styling with a strict architecture. The **Graphical Chart** (`_graphical-chart.scss`) is the **single source of truth** for all design tokens.
+All styling goes through SASS. The **graphical chart** (`_graphical-chart.scss`) is the single source of truth for every color, size, font, and breakpoint. Nothing gets hardcoded.
 
-### Design System Flow
-
-```mermaid
-flowchart TB
-    subgraph Chart["🎨 Graphical Chart (Single Source of Truth)"]
-        Colors["🌈 Colors\n$accent, $bg-*, $text-*"]
-        Typography["✏️ Typography\n$font-size-*, $font-weight-*"]
-        Spacing["📏 Spacing\n$spacing-1 → $spacing-32"]
-        Breakpoints["📱 Breakpoints\n$breakpoint-xs → $breakpoint-xl"]
-    end
-    
-    subgraph Abstracts["🔧 Abstracts Layer"]
-        Mixins["Mixins\n@include card, @include sm"]
-        Functions["Functions\nrem(), spacing()"]
-    end
-    
-    subgraph Layers["📚 Style Layers"]
-        Base["Base\n_reset.scss"]
-        Layout["Layout\n_app.scss, _footer.scss"]
-        Components["Components\n_hero.scss, _cards.scss"]
-        Utilities["Utilities\n_animations.scss"]
-    end
-    
-    subgraph Output["🎯 Compiled CSS"]
-        Final["main.css\n(Production Bundle)"]
-    end
-
-    Colors --> Mixins
-    Typography --> Mixins
-    Spacing --> Mixins
-    Breakpoints --> Mixins
-    Mixins --> Base
-    Mixins --> Layout
-    Mixins --> Components
-    Functions --> Components
-    Base --> Final
-    Layout --> Final
-    Components --> Final
-    Utilities --> Final
-
-    style Chart fill:#0f172a,stroke:#a855f7,color:#fff,stroke-width:3px
-    style Abstracts fill:#1e293b,stroke:#f59e0b,color:#fff
-    style Layers fill:#1e293b,stroke:#22d3ee,color:#fff
-    style Output fill:#1e293b,stroke:#22c55e,color:#fff
-    style Colors fill:#a855f7,stroke:#fff,color:#fff
-    style Typography fill:#a855f7,stroke:#fff,color:#fff
-    style Spacing fill:#a855f7,stroke:#fff,color:#fff
-    style Breakpoints fill:#a855f7,stroke:#fff,color:#fff
-    style Mixins fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Functions fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Base fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Layout fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Components fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Utilities fill:#22d3ee,stroke:#fff,color:#1a1a2e
-    style Final fill:#22c55e,stroke:#fff,color:#1a1a2e
-```
-
-### Responsive Design System
+### How it flows
 
 ```mermaid
-flowchart LR
-    subgraph Mobile["📱 Mobile First"]
-        XS["xs\n< 480px"]
-        SM["sm\n480-640px"]
-    end
-    
-    subgraph Tablet["📱 Tablet"]
-        MD["md\n768px"]
-    end
-    
-    subgraph Desktop["🖥️ Desktop"]
-        LG["lg\n1024px"]
-        XL["xl\n1280px"]
+graph TB
+    subgraph GC["Graphical Chart · source of truth"]
+        colors["Colors"]
+        typo["Typography"]
+        space["Spacing"]
+        bp["Breakpoints"]
     end
 
-    XS -->|"@include sm-up"| SM
-    SM -->|"@include md-up"| MD
-    MD -->|"@include lg-up"| LG
-    LG -->|"@include xl-up"| XL
+    subgraph AB["Abstracts"]
+        mixins["Mixins"]
+        funcs["Functions"]
+    end
 
-    style Mobile fill:#ef4444,stroke:#fff,color:#fff
-    style Tablet fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Desktop fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style XS fill:#ef4444,stroke:#fff,color:#fff
-    style SM fill:#f97316,stroke:#fff,color:#fff
-    style MD fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style LG fill:#84cc16,stroke:#fff,color:#1a1a2e
-    style XL fill:#22c55e,stroke:#fff,color:#1a1a2e
+    subgraph LAYERS["Style Layers"]
+        base["Base · reset"]
+        layout["Layout · app, footer"]
+        comps["Components · hero, cards"]
+        utils["Utilities · animations"]
+    end
+
+    output["main.css"]
+
+    colors --> mixins
+    typo --> mixins
+    space --> mixins
+    bp --> mixins
+    mixins --> base
+    mixins --> layout
+    mixins --> comps
+    funcs --> comps
+    base --> output
+    layout --> output
+    comps --> output
+    utils --> output
+
+    style GC fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style AB fill:#fef3c7,stroke:#d97706,color:#78350f
+    style LAYERS fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style output fill:#dcfce7,stroke:#22c55e,color:#14532d
 ```
 
-### SCSS Directory Structure
+### Breakpoints — mobile first
+
+```mermaid
+graph LR
+    xs["xs · under 480px"] --> sm["sm · 640px"]
+    sm --> md["md · 768px"]
+    md --> lg["lg · 1024px"]
+    lg --> xl["xl · 1280px"]
+
+    style xs fill:#fecaca,stroke:#dc2626,color:#7f1d1d
+    style sm fill:#fed7aa,stroke:#ea580c,color:#7c2d12
+    style md fill:#fef3c7,stroke:#d97706,color:#78350f
+    style lg fill:#d9f99d,stroke:#65a30d,color:#365314
+    style xl fill:#bbf7d0,stroke:#16a34a,color:#14532d
+```
+
+Use `@include sm-up`, `@include md-up`, etc. to go upward. Use `@include sm`, `@include md` to go downward.
+
+### File structure
 
 ```
 src/styles/
 ├── base/
-│   ├── _graphical-chart.scss   # 🎨 DESIGN SYSTEM — ALL TOKENS HERE
-│   └── _reset.scss             # CSS reset + base styles
+│   ├── _graphical-chart.scss   # ALL tokens live here
+│   └── _reset.scss
 ├── abstracts/
-│   ├── _index.scss             # Re-exports graphical-chart + mixins
-│   └── _mixins.scss            # Reusable SCSS mixins
+│   ├── _index.scss             # Re-exports chart + mixins
+│   └── _mixins.scss
 ├── layout/
-│   ├── _app.scss               # App container layout
-│   └── _footer.scss            # Footer styles
+│   ├── _app.scss
+│   └── _footer.scss
 ├── components/
-│   ├── _hero.scss              # Hero section
-│   ├── _cards.scss             # Card components
-│   └── _quickstart.scss        # Quickstart section
+│   ├── _hero.scss
+│   ├── _cards.scss
+│   └── _quickstart.scss
 ├── utilities/
-│   └── _animations.scss        # Keyframe animations
-└── main.scss                   # Entry point (imports all)
+│   └── _animations.scss
+└── main.scss                   # Imports everything
 ```
 
-### The Graphical Chart
+### The golden rule
 
-**ALL design values MUST come from `_graphical-chart.scss`**. Never hardcode colors, sizes, or breakpoints.
+Never hardcode values. Always use variables from the graphical chart.
 
 ```scss
-// ❌ WRONG — Hardcoded values
+// Don't
 .button {
   background: #7c3aed;
   padding: 12px 24px;
   border-radius: 8px;
 }
 
-// ✅ CORRECT — Using graphical chart variables
+// Do
 .button {
   background: $accent;
   padding: $spacing-3 $spacing-6;
@@ -622,237 +482,101 @@ src/styles/
 }
 ```
 
-### Available Design Tokens
+### Available tokens
 
-#### Colors
-```scss
-// Backgrounds
-$bg-primary, $bg-secondary, $bg-card, $bg-card-hover
+**Colors** — `$bg-primary`, `$bg-card`, `$text-primary`, `$text-muted`, `$accent`, `$accent-hover`, `$color-success`, `$color-error`, `$border-color`
 
-// Text
-$text-primary, $text-secondary, $text-muted
+**Typography** — `$font-family-sans`, `$font-family-mono`, `$font-size-xs` through `$font-size-5xl`, `$font-weight-normal` through `$font-weight-bold`
 
-// Accent (brand)
-$accent, $accent-hover, $accent-light, $accent-glow
+**Spacing** (8px grid) — `$spacing-1` (4px) through `$spacing-32` (256px)
 
-// Semantic
-$color-success, $color-warning, $color-error, $color-info
+**Breakpoints** — `$breakpoint-xs` (480px), `$breakpoint-sm` (640px), `$breakpoint-md` (768px), `$breakpoint-lg` (1024px), `$breakpoint-xl` (1280px)
 
-// Borders
-$border-color, $border-accent
-```
-
-#### Typography
-```scss
-// Font families
-$font-family-sans, $font-family-mono
-
-// Sizes (modular scale)
-$font-size-xs, $font-size-sm, $font-size-base, $font-size-md,
-$font-size-lg, $font-size-xl, $font-size-2xl, $font-size-3xl...
-
-// Weights
-$font-weight-normal, $font-weight-medium, $font-weight-semibold, $font-weight-bold
-```
-
-#### Spacing (8px grid)
-```scss
-$spacing-1 (4px), $spacing-2 (8px), $spacing-3 (12px), $spacing-4 (16px),
-$spacing-6 (24px), $spacing-8 (32px), $spacing-12 (48px), $spacing-16 (64px)...
-```
-
-#### Breakpoints
-```scss
-$breakpoint-xs: 480px;   // Small phones
-$breakpoint-sm: 640px;   // Large phones
-$breakpoint-md: 768px;   // Tablets
-$breakpoint-lg: 1024px;  // Laptops
-$breakpoint-xl: 1280px;  // Desktops
-```
-
-### Using Mixins
+### Mixins
 
 ```scss
 @use '../abstracts' as *;
 
-.my-component {
-  // Responsive breakpoints
-  @include sm {
-    // Styles for screens < 640px
-  }
-  
-  // Card pattern
-  @include card;
-  
-  // Flex helpers
-  @include flex-center;
-  @include flex-between;
-  
-  // Focus accessibility
-  &:focus {
-    @include focus-ring;
-  }
+.thing {
+  @include card;           // card pattern
+  @include flex-center;    // center children
+  @include focus-ring;     // a11y focus
+
+  @include sm { /* < 640px */ }
+  @include md-up { /* >= 768px */ }
 }
 ```
 
-### Adding New Styles
+### Adding styles
 
-1. **Create a new SCSS partial** in the appropriate folder:
-   ```bash
-   touch apps/frontend/src/styles/components/_my-component.scss
-   ```
-
-2. **Import the abstracts** and use graphical chart variables:
-   ```scss
-   // _my-component.scss
-   @use '../abstracts' as *;
-   
-   .my-component {
-     background: $bg-card;
-     padding: $spacing-4;
-     border-radius: $radius-lg;
-   }
-   ```
-
-3. **Import in main.scss**:
-   ```scss
-   @use 'components/my-component';
-   ```
-
-4. **Compile** (if not in dev mode):
-   ```bash
-   make gen-css
-   ```
-
-### Extending the Graphical Chart
-
-When adding new design tokens:
-
-1. Add to `_graphical-chart.scss` in the appropriate section
-2. Export as CSS variable if needed for JS theming (in the `@mixin export-css-variables`)
-3. Document the new token in this guide
+1. Create `apps/frontend/src/styles/components/_my-thing.scss`
+2. Import abstracts and use chart variables
+3. Add `@use 'components/my-thing';` in `main.scss`
+4. Run `make gen-css` (or it auto-compiles in dev mode)
 
 ---
 
 ## Testing
 
-### Testing Pyramid
+We want most of our tests at the unit level, fewer at integration, fewest at E2E.
 
 ```mermaid
-flowchart TB
-    subgraph E2E["🔝 E2E Tests"]
-        E2ETests["test/*.e2e-spec.ts\nFull application flows"]
-    end
-    
-    subgraph Integration["🔗 Integration Tests"]
-        IntTests["Module + Database\nAPI endpoint testing"]
-    end
-    
-    subgraph Unit["🧱 Unit Tests"]
-        UnitTests["*.spec.ts\nServices, Utils, Components"]
-    end
+graph TB
+    e2e["E2E · full flows"]
+    int["Integration · modules + DB"]
+    unit["Unit · services, utils"]
 
-    E2E --> Integration
-    Integration --> Unit
+    e2e --> int --> unit
 
-    style E2E fill:#ef4444,stroke:#fff,color:#fff
-    style Integration fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Unit fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style E2ETests fill:#ef4444,stroke:#fff,color:#fff
-    style IntTests fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style UnitTests fill:#22c55e,stroke:#fff,color:#1a1a2e
+    style e2e fill:#fecaca,stroke:#dc2626,color:#7f1d1d
+    style int fill:#fef3c7,stroke:#d97706,color:#78350f
+    style unit fill:#dcfce7,stroke:#22c55e,color:#14532d
 ```
 
-> **Rule of thumb**: 70% unit tests, 20% integration, 10% E2E
+Aim for roughly: **70% unit · 20% integration · 10% E2E**.
 
-### Test Workflow
+### How to run
+
+```bash
+make test                     # everything
+
+# Or inside the container:
+pnpm test                     # unit
+pnpm run test:e2e             # e2e
+pnpm run test:watch           # TDD mode
+pnpm run test:cov             # coverage report
+```
+
+### The dev loop
 
 ```mermaid
-flowchart LR
-    subgraph Write["✍️ Write"]
-        Code["Write Code"]
-        Test["Write Test"]
-    end
-    
-    subgraph Run["▶️ Run"]
-        Local["make test"]
-        Watch["test:watch"]
-    end
-    
-    subgraph CI["🤖 CI Pipeline"]
-        Lint["Lint"]
-        TypeCheck["TypeCheck"]
-        Tests["Tests"]
-        Coverage["Coverage"]
-    end
-    
-    subgraph Feedback["📊 Feedback"]
-        Pass["✅ Pass"]
-        Fail["❌ Fail"]
-    end
+graph LR
+    write["Write code"] --> test["Write test"]
+    test --> run["make test"]
+    run --> pass{Pass?}
+    pass -- "yes" --> push["Push + PR"]
+    pass -- "no" --> write
 
-    Code --> Test
-    Test --> Local
-    Local --> Watch
-    Watch --> Code
-    Local --> CI
-    CI --> Lint --> TypeCheck --> Tests --> Coverage
-    Coverage --> Pass
-    Coverage --> Fail
-    Fail --> Code
-
-    style Write fill:#1e293b,stroke:#3b82f6,color:#fff
-    style Run fill:#1e293b,stroke:#f59e0b,color:#fff
-    style CI fill:#1e293b,stroke:#a855f7,color:#fff
-    style Feedback fill:#1e293b,stroke:#22c55e,color:#fff
-    style Code fill:#3b82f6,stroke:#fff,color:#fff
-    style Test fill:#3b82f6,stroke:#fff,color:#fff
-    style Local fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Watch fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Lint fill:#a855f7,stroke:#fff,color:#fff
-    style TypeCheck fill:#a855f7,stroke:#fff,color:#fff
-    style Tests fill:#a855f7,stroke:#fff,color:#fff
-    style Coverage fill:#a855f7,stroke:#fff,color:#fff
-    style Pass fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style Fail fill:#ef4444,stroke:#fff,color:#fff
+    style write fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style test fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style run fill:#fef3c7,stroke:#d97706,color:#78350f
+    style pass fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style push fill:#dcfce7,stroke:#22c55e,color:#14532d
 ```
 
-### Test Architecture
+### Where tests live
 
 ```
 apps/backend/
 ├── src/
-│   └── *.spec.ts            # Unit tests (co-located)
+│   └── *.spec.ts            # Unit tests (next to the code)
 └── test/
-    ├── jest-e2e.json        # E2E config
     └── *.e2e-spec.ts        # E2E tests
 ```
 
-### Running Tests
-
-```bash
-# All tests
-make test
-
-# Unit tests only
-docker exec transcendence-dev sh -c "cd apps/backend && pnpm test"
-
-# E2E tests only
-docker exec transcendence-dev sh -c "cd apps/backend && pnpm run test:e2e"
-
-# Watch mode (TDD)
-docker exec -it transcendence-dev sh -c "cd apps/backend && pnpm run test:watch"
-
-# With coverage
-docker exec transcendence-dev sh -c "cd apps/backend && pnpm run test:cov"
-```
-
-### Writing Unit Tests
-
-Create `*.spec.ts` files next to the code they test:
+### Unit test example
 
 ```typescript
-// src/users/users.service.spec.ts
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
 
@@ -863,292 +587,200 @@ describe('UsersService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [UsersService],
     }).compile();
-
     service = module.get<UsersService>(UsersService);
   });
 
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
-
-  describe('findOne', () => {
-    it('should return a user by ID', async () => {
-      const result = await service.findOne('123');
-      expect(result).toHaveProperty('id', '123');
-    });
-  });
 });
 ```
 
-### Writing E2E Tests
-
-E2E tests go in `test/*.e2e-spec.ts`:
+### E2E test example
 
 ```typescript
-// test/users.e2e-spec.ts
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { Test } from '@nestjs/testing';
+import { INestApplication } from '@nestjs/common';
 
-describe('UsersController (e2e)', () => {
+describe('Users (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+    const module = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-
-    app = moduleFixture.createNestApplication();
+    app = module.createNestApplication();
     await app.init();
   });
 
-  afterEach(async () => {
-    await app.close();
-  });
+  afterEach(() => app.close());
 
-  it('/users (GET)', () => {
-    return request(app.getHttpServer())
+  it('GET /users', () =>
+    request(app.getHttpServer())
       .get('/users')
-      .expect(200)
-      .expect((res) => {
-        expect(Array.isArray(res.body)).toBe(true);
-      });
-  });
+      .expect(200));
 });
-```
-
-### Jest Configuration
-
-**Unit tests** (`package.json`):
-```json
-{
-  "jest": {
-    "rootDir": "src",
-    "testRegex": ".*\\.spec\\.ts$",
-    "transform": { "^.+\\.(t|j)s$": "ts-jest" },
-    "testEnvironment": "node"
-  }
-}
-```
-
-**E2E tests** (`test/jest-e2e.json`):
-```json
-{
-  "rootDir": ".",
-  "testRegex": ".e2e-spec.ts$",
-  "transform": { "^.+\\.(t|j)s$": "ts-jest" },
-  "testEnvironment": "node"
-}
 ```
 
 ---
 
 ## Git Flow
 
-We use **Git Flow** — a structured branching model that keeps `main` stable and `develop` as the integration branch.
+`main` is always production-ready. `develop` is where features land. Never push directly to either.
 
 ```mermaid
-graph LR
-    A[main] -->|"always stable"| B[develop]
-    B -->|"branch off"| C[feature/xxx]
-    C -->|"PR + review"| B
-    B -->|"release ready"| D[release/x.x.x]
-    D -->|"merge"| A
-    A -->|"hotfix"| E[hotfix/xxx]
-    E -->|"merge"| A
-    E -->|"merge"| B
-
-    style A fill:#2d6a4f,stroke:#fff,color:#fff
-    style B fill:#40916c,stroke:#fff,color:#fff
-    style C fill:#52b788,stroke:#fff,color:#fff
-    style D fill:#95d5b2,stroke:#333,color:#333
-    style E fill:#d62828,stroke:#fff,color:#fff
+gitGraph
+    commit id: "v1.0"
+    branch develop
+    commit id: "setup"
+    branch feature/auth
+    commit id: "oauth"
+    commit id: "jwt"
+    checkout develop
+    merge feature/auth id: "PR #1"
+    branch feature/game
+    commit id: "pong"
+    checkout develop
+    merge feature/game id: "PR #2"
+    checkout main
+    merge develop id: "v1.1" tag: "release"
 ```
 
-### Branch Rules
+### Branch rules
 
-| Branch | Purpose | Merge Target | Protected |
-|--------|---------|-------------|-----------|
-| `main` | Production-ready code | — | ✅ No direct push |
-| `develop` | Integration branch | `main` (via release) | ✅ No direct push |
-| `feature/*` | New features | `develop` (via PR) | ❌ |
-| `fix/*` | Bug fixes | `develop` (via PR) | ❌ |
-| `hotfix/*` | Critical production fixes | `main` + `develop` | ❌ |
-| `release/*` | Release preparation | `main` + `develop` | ❌ |
+| Branch | For | Merges into | Protected? |
+|--------|-----|------------|------------|
+| `main` | Production | — | Yes |
+| `develop` | Integration | `main` via release | Yes |
+| `feature/*` | New stuff | `develop` via PR | No |
+| `fix/*` | Bug fixes | `develop` via PR | No |
+| `hotfix/*` | Urgent prod fixes | `main` + `develop` | No |
+| `release/*` | Release prep | `main` + `develop` | No |
 
-### Golden Rules
+### Rules
 
-1. **Never push directly to `main` or `develop`** — always go through a PR
-2. **Always branch from `develop`** for features and fixes
-3. **Keep branches short-lived** — merge within 2-3 days max
-4. **Delete branches after merge** — keep the repo clean
+1. Never push to `main` or `develop` directly
+2. Always branch from `develop`
+3. Keep branches short — merge in 2–3 days
+4. Delete branches after merge
 
 ---
 
 ## Branch Naming
 
 ```
-<type>/<short-description>
+<type>/<description>
 ```
 
-| Type | When | Example |
-|------|------|---------|
-| `feature/` | New functionality | `feature/auth-oauth` |
-| `fix/` | Bug fix | `fix/42-login-redirect` |
-| `hotfix/` | Urgent production fix | `hotfix/cors-origin` |
-| `release/` | Release prep | `release/1.0.0` |
-| `docs/` | Documentation only | `docs/api-endpoints` |
-| `refactor/` | Code improvement | `refactor/extract-guards` |
-| `test/` | Adding tests | `test/auth-e2e` |
+| Type | Use for | Example |
+|------|---------|---------|
+| `feature/` | New feature | `feature/auth-oauth` |
+| `fix/` | Bug fix | `fix/login-redirect` |
+| `hotfix/` | Urgent prod fix | `hotfix/cors` |
+| `release/` | Release | `release/1.0.0` |
+| `docs/` | Docs only | `docs/api-endpoints` |
+| `refactor/` | Cleanup | `refactor/extract-guards` |
+| `test/` | Tests | `test/auth-e2e` |
 
 ---
 
-## Commit Convention
+## Commits
 
-We follow [Conventional Commits](https://www.conventionalcommits.org/):
+We use [Conventional Commits](https://www.conventionalcommits.org/):
 
 ```
-<type>(<scope>): <short description>
-
-[optional body]
-
-[optional footer]
+type(scope): short description
 ```
 
-### Types
-
-| Type | Description |
-|------|-------------|
+| Type | Meaning |
+|------|---------|
 | `feat` | New feature |
 | `fix` | Bug fix |
-| `docs` | Documentation only |
-| `style` | Formatting, no logic change |
-| `refactor` | Code change that neither fixes a bug nor adds a feature |
-| `test` | Adding or updating tests |
-| `chore` | Tooling, deps, CI, config |
-| `perf` | Performance improvement |
+| `docs` | Docs only |
+| `style` | Formatting, no logic |
+| `refactor` | Neither fix nor feature |
+| `test` | Tests |
+| `chore` | Tooling, CI, deps |
+| `perf` | Performance |
 
-### Examples
+**Scope** = module name: `auth`, `users`, `game`, `chat`, `docker`, `ci`, `prisma`…
 
 ```bash
-feat(auth): implement JWT refresh token rotation
-fix(game): correct ball physics at high velocities
-docs(readme): add environment variables section
-refactor(users): extract profile validation to shared pipe
-test(chat): add WebSocket connection E2E tests
-chore(docker): upgrade PostgreSQL to 16.2
+feat(auth): add JWT refresh rotation
+fix(game): ball physics at high speed
+docs(readme): add env variables section
+test(chat): websocket e2e tests
+chore(docker): upgrade postgres to 16.2
 ```
-
-### Scope
-
-Use the module name: `auth`, `users`, `game`, `chat`, `docker`, `ci`, `prisma`, etc.
 
 ---
 
-## Pull Request Process
+## Pull Requests
 
-### PR Lifecycle
+### The lifecycle
 
 ```mermaid
 stateDiagram-v2
-    [*] --> Draft: Create PR
-    Draft --> Open: Ready for Review
-    Open --> InReview: Reviewer Assigned
-    InReview --> ChangesRequested: Needs Work
-    ChangesRequested --> InReview: Push Fixes
-    InReview --> Approved: LGTM 👍
-    Approved --> Merged: Squash Merge
+    [*] --> Draft
+    Draft --> Open : Ready
+    Open --> Review : Assigned
+    Review --> Changes : Needs work
+    Changes --> Review : Fixed
+    Review --> Approved : LGTM
+    Approved --> Merged : Squash merge
     Merged --> [*]
-    
-    note right of Draft
-        WIP, not ready
-        for review yet
-    end note
-    
-    note right of InReview
-        CI must pass
-        before merge
-    end note
 ```
 
-### CI/CD Pipeline
+### What CI checks on every PR
 
 ```mermaid
-flowchart LR
-    subgraph Trigger["🚀 Trigger"]
-        Push["Push"]
-        PR["Pull Request"]
-    end
-    
-    subgraph Jobs["⚙️ CI Jobs (Parallel)"]
-        direction TB
-        Lint["🔍 Lint\nESLint"]
-        Type["📝 TypeCheck\ntsc --noEmit"]
-        Test["🧪 Test\nJest"]
-    end
-    
-    subgraph Checks["✅ Status Checks"]
-        All["All Passed?"]
-    end
-    
-    subgraph Actions["📦 Actions"]
-        Merge["Ready to Merge"]
-        Block["Blocked"]
-    end
+graph LR
+    trigger["Push / PR"] --> lint["Lint"]
+    trigger --> types["TypeCheck"]
+    trigger --> tests["Tests"]
+    lint --> gate{All green?}
+    types --> gate
+    tests --> gate
+    gate -- yes --> merge["Mergeable"]
+    gate -- no --> block["Blocked"]
 
-    Push --> Jobs
-    PR --> Jobs
-    Lint --> All
-    Type --> All
-    Test --> All
-    All -->|"Yes"| Merge
-    All -->|"No"| Block
-
-    style Trigger fill:#1e293b,stroke:#3b82f6,color:#fff
-    style Jobs fill:#1e293b,stroke:#a855f7,color:#fff
-    style Checks fill:#1e293b,stroke:#f59e0b,color:#fff
-    style Actions fill:#1e293b,stroke:#22c55e,color:#fff
-    style Push fill:#3b82f6,stroke:#fff,color:#fff
-    style PR fill:#3b82f6,stroke:#fff,color:#fff
-    style Lint fill:#a855f7,stroke:#fff,color:#fff
-    style Type fill:#a855f7,stroke:#fff,color:#fff
-    style Test fill:#a855f7,stroke:#fff,color:#fff
-    style All fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Merge fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style Block fill:#ef4444,stroke:#fff,color:#fff
+    style trigger fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style lint fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style types fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style tests fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style gate fill:#fef3c7,stroke:#d97706,color:#78350f
+    style merge fill:#dcfce7,stroke:#22c55e,color:#14532d
+    style block fill:#fecaca,stroke:#dc2626,color:#7f1d1d
 ```
 
-### Before Opening a PR
+### Before you open one
 
-- [ ] Your branch is up to date with `develop` (`git rebase develop`)
-- [ ] All tests pass locally (`make test`)
-- [ ] Linter passes (`make lint`)
-- [ ] TypeScript compiles with no errors (`make typecheck`)
-- [ ] You've tested your feature manually
+- [ ] Rebased on `develop`
+- [ ] `make test` passes
+- [ ] `make lint` passes
+- [ ] `make typecheck` passes
+- [ ] Tested manually
 
-### PR Requirements
+### What goes in the PR
 
-1. **Use the PR template** — it's auto-loaded when you open a PR
-2. **Title follows commit convention** — e.g., `feat(auth): add Google OAuth login`
-3. **Description explains what and why** — not just "fixed stuff"
-4. **Link related issues** — `Closes #12` or `Related to #15`
-5. **Screenshots/videos for UI changes** — before/after if applicable
-6. **AI disclosure** — note if AI was used and for what
+1. Title follows commit convention — `feat(auth): add google login`
+2. Description says **what** and **why**
+3. Link issues — `Closes #12`
+4. Screenshots for UI changes
+5. AI disclosure (see below)
 
-### Review Process
+### Review flow
 
-1. Open PR → Assign at least 1 reviewer (ideally 2)
-2. CI runs automatically (lint + test + typecheck)
+1. Open PR, assign 1–2 reviewers
+2. CI runs (lint + typecheck + tests)
 3. Reviewer approves or requests changes
-4. Address all feedback
-5. **Squash merge** into `develop`
-6. Delete the source branch
+4. Address feedback
+5. Squash merge into `develop`
+6. Delete the branch
 
-### Review SLA
-
-- Aim to review PRs within **24 hours**
-- If you're blocked on a review, ping in Discord
+Try to review within **24 hours**. Ping on Discord if blocked.
 
 ---
 
@@ -1156,411 +788,284 @@ flowchart LR
 
 ### TypeScript
 
-- **Strict mode** — `strict: true` in all `tsconfig.json` files
-- **No `any`** — use `unknown` and narrow with type guards
-- **Explicit return types** on all functions
-- **Interface over type** for object shapes (unless union/intersection needed)
-- **Readonly where possible** — immutability by default
+- `strict: true` everywhere
+- No `any` — use `unknown` and type guards
+- Explicit return types
+- `interface` over `type` for objects
+- `readonly` by default
 
-### Backend (NestJS)
+### Backend
 
-- One module per feature domain (e.g., `auth.module.ts`, `users.module.ts`)
-- DTOs for all request/response validation (with `class-validator`)
-- Guards for authorization, Pipes for validation, Interceptors for transformation
-- Services contain business logic, Controllers are thin
-- All endpoints documented with `@ApiTags`, `@ApiOperation`, `@ApiResponse`
+- One module per feature
+- DTOs for all validation (class-validator)
+- Services hold logic, controllers are thin
+- Document endpoints with Swagger decorators
 
-### Frontend (React)
+### Frontend
 
-- Functional components only (no class components)
-- Custom hooks for reusable logic (`use*.ts`)
-- Co-located tests (`Component.test.tsx` next to `Component.tsx`)
-- Props interfaces named `ComponentNameProps`
-- Lazy loading for route-level code splitting
+- Functional components only
+- Hooks for reusable logic
+- Tests next to the component
+- Lazy-load pages
 
-### File Naming
+### Naming
 
-| What | Convention | Example |
-|------|-----------|---------|
+| What | Style | Example |
+|------|-------|---------|
 | Components | PascalCase | `UserProfile.tsx` |
-| Hooks | camelCase with `use` prefix | `useAuth.ts` |
+| Hooks | usePrefix | `useAuth.ts` |
 | Services | camelCase | `auth.service.ts` |
-| Modules | camelCase | `auth.module.ts` |
-| Tests | Same name + `.spec.ts` / `.test.tsx` | `auth.service.spec.ts` |
-| Types/Interfaces | PascalCase | `User.ts`, `AuthPayload.ts` |
+| Tests | same + `.spec` | `auth.service.spec.ts` |
+| Types | PascalCase | `AuthPayload.ts` |
 
 ---
 
-## Code Review Guidelines
+## Code Review
 
-### For Reviewers
+**Reviewers** — be kind, be specific. Say "this might cause X because…" not "this is wrong". Approve when it's good enough; perfect ships never.
 
-- **Be kind, be specific** — "This could cause a race condition because…" not "This is wrong"
-- **Suggest, don't demand** — "Consider using X here because…"
-- **Approve if it's good enough** — perfect is the enemy of shipped
-- **Test the branch locally** if the change is significant
-- **Check for**: security issues, missing tests, broken types, naming, edge cases
-
-### For Authors
-
-- **Don't take it personally** — feedback is about the code, not you
-- **Respond to every comment** — even if just "Done ✅"
-- **Ask for clarification** if you don't understand the feedback
-- **Don't force-push after review** — push new commits so reviewers can see the diff
+**Authors** — don't take it personally. Respond to every comment. Don't force-push after review started — push new commits so the reviewer can track the diff.
 
 ---
 
-## Issue Workflow
+## Issues
 
-### Issue Lifecycle
+### How an issue moves
 
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> Open: Created
-    Open --> Triaged: Labels Added
-    Triaged --> InProgress: Assigned
-    InProgress --> InReview: PR Opened
-    InReview --> Done: PR Merged
+    [*] --> Open
+    Open --> Triaged : Labeled
+    Triaged --> InProgress : Assigned
+    InProgress --> InReview : PR opened
+    InReview --> Done : Merged
     Done --> [*]
-    
-    InProgress --> Blocked: Dependency
-    Blocked --> InProgress: Unblocked
-    
-    Open --> Closed: Won't Fix
-    Triaged --> Closed: Duplicate
+    InProgress --> Blocked
+    Blocked --> InProgress
+    Open --> Closed : Won't fix
 ```
 
-### Issue Board Flow
+### Board
 
 ```mermaid
-flowchart LR
-    subgraph Backlog["📋 Backlog"]
-        New["New Issues"]
-    end
-    
-    subgraph Todo["📝 To Do"]
-        Ready["Ready for Dev"]
-    end
-    
-    subgraph Progress["🔨 In Progress"]
-        Working["Being Worked On"]
-    end
-    
-    subgraph Review["👀 In Review"]
-        PR["PR Open"]
-    end
-    
-    subgraph Done["✅ Done"]
-        Merged["Merged"]
-    end
+graph LR
+    backlog["Backlog"] --> todo["To Do"]
+    todo --> wip["In Progress"]
+    wip --> review["In Review"]
+    review --> done["Done"]
 
-    New --> Ready
-    Ready --> Working
-    Working --> PR
-    PR --> Merged
-
-    style Backlog fill:#64748b,stroke:#fff,color:#fff
-    style Todo fill:#3b82f6,stroke:#fff,color:#fff
-    style Progress fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style Review fill:#a855f7,stroke:#fff,color:#fff
-    style Done fill:#22c55e,stroke:#fff,color:#1a1a2e
-    style New fill:#64748b,stroke:#fff,color:#fff
-    style Ready fill:#3b82f6,stroke:#fff,color:#fff
-    style Working fill:#f59e0b,stroke:#fff,color:#1a1a2e
-    style PR fill:#a855f7,stroke:#fff,color:#fff
-    style Merged fill:#22c55e,stroke:#fff,color:#1a1a2e
+    style backlog fill:#e2e8f0,stroke:#64748b,color:#334155
+    style todo fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style wip fill:#fef3c7,stroke:#d97706,color:#78350f
+    style review fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style done fill:#dcfce7,stroke:#22c55e,color:#14532d
 ```
 
-### Creating Issues
-
-Use the issue templates (Bug Report or Feature Request). Every issue should have:
-
-- **Clear title** — what's broken or what's needed
-- **Labels** — `bug`, `feature`, `docs`, `refactor`, etc.
-- **Assignee** — who's working on it
-- **Milestone** — which sprint/release it targets
-
-### Linking Issues to PRs
-
-Link issues to PRs: when a PR description says `Closes #42`, the issue auto-closes on merge.
+Every issue needs: clear title, labels, assignee, milestone. Use `Closes #42` in your PR to auto-close.
 
 ---
 
 ## Vendor Directory
 
-The `vendor/` directory contains **third-party tools** and **42-specific utilities**. These are scripts that support development but are not part of the main application.
-
-### Structure
+`vendor/` holds third-party tools and 42-specific stuff. It's not part of the app itself.
 
 ```
 vendor/
-├── scripts/                 # General utility scripts
-│   ├── checker.py           # Code validation tools
-│   ├── leaks_check.py       # Memory leak checking
-│   ├── clean_cache.sh       # Cache cleanup utilities
-│   ├── install-hooks.sh     # Git hooks installer
-│   └── hooks/               # Pre-commit, post-checkout hooks
-└── set-debian/              # 42 School VM setup tools
-    ├── Makefile             # VM automation
-    ├── rebuild_iso_create_vm.sh
-    ├── setup/               # Initial VM setup scripts
-    ├── preseeds/            # Automated install configs
-    ├── utils/               # Helper utilities
-    └── diagnostic/          # Debug tools
+├── scripts/                 # Dev utilities
+│   ├── checker.py           # Code validators
+│   ├── clean_cache.sh       # Cache cleanup
+│   ├── install-hooks.sh     # Git hooks setup
+│   └── hooks/               # The actual hooks
+└── set-debian/              # 42 VM setup (42 students only)
+    ├── Makefile
+    ├── setup/
+    ├── preseeds/
+    └── utils/
 ```
 
-### `vendor/scripts/` — Development Utilities
+**Install git hooks:** `./vendor/scripts/install-hooks.sh`
 
-| Script | Purpose |
-|--------|---------|
-| `checker.py` | Run project validators |
-| `leaks_check.py` | Check for memory leaks (C projects) |
-| `clean_cache.sh` | Clean build caches |
-| `install-hooks.sh` | Install Git hooks to `vendor/scripts/hooks/` |
-| `terminal_colors.py` | Terminal color utilities |
-| `valgrind_check.sh` | Run Valgrind (C projects) |
+The `set-debian/` directory automates Debian VM creation for 42 clusters. If you're not at 42, ignore it entirely.
 
-**Installing Git hooks:**
-```bash
-./vendor/scripts/install-hooks.sh
-```
-
-### `vendor/set-debian/` — 42 School Environment
-
-This directory contains tools for setting up **42 School VMs** with Debian. It automates the creation and configuration of development VMs matching the 42 cluster environment.
-
-> ⚠️ **42 Students Only**: These tools are specific to 42's infrastructure. Non-42 contributors can ignore this directory.
-
-**Key functionality:**
-- Preseed configurations for automated Debian installation
-- SSH setup between host and VM
-- VM backup and restore utilities
-- Environment synchronization with 42 clusters
-
-**Quick setup:**
-```bash
-cd vendor/set-debian
-make        # Follow the interactive setup
-```
-
-### When to Use Vendor Scripts
-
-| I want to... | Script |
-|--------------|--------|
-| Install Git hooks | `vendor/scripts/install-hooks.sh` |
-| Clean all caches | `vendor/scripts/clean_cache.sh` |
-| Set up 42 VM | `vendor/set-debian/` (42 students) |
-| Check code standards | `vendor/scripts/checker.py` |
-
-### Contributing to Vendor
-
-- **Don't modify vendor scripts** unless fixing a bug
-- **Document any changes** in the script's header comment
-- **New tools** should go in `scripts/` (not `vendor/`) unless they're truly third-party
+Don't modify vendor scripts unless fixing a bug. New tools go in `scripts/` at the repo root.
 
 ---
 
 ## AI Transparency
 
-Per 42's policy and our team agreement:
+Per 42's rules:
 
-- **Disclose AI usage** in every PR description
-- **Format**: "AI assisted with: [specific task]" or "No AI used"
-- **Rule**: If you can't explain the code during evaluation, it shouldn't be in the repo
-- **Peer review** is the quality checkpoint — AI doesn't replace human review
+- Every PR states whether AI was used and for what
+- Format: `AI assisted with: [task]` or `No AI used`
+- If you can't explain the code at evaluation, don't submit it
+- Review is the real quality gate — AI doesn't replace that
 
 ---
 
-## Quick Reference
+## Cheat Sheet
 
-### Essential Commands Cheat Sheet
+### Commands
 
 ```bash
-# Development
-make dev                 # Start dev servers
-make shell               # Open container shell
-make logs                # View container logs
-
-# Quality
-make lint                # Run ESLint
-make typecheck           # TypeScript check
-make test                # Run all tests
-
-# Styling
-make gen-css             # Compile SASS once
-make gen-css WATCH=1     # SASS watch mode
-
-# Database
-make db-studio           # Open Prisma Studio
-make db-migrate          # Run migrations
-make db-reset            # Reset database
-
-# Cleanup
-make clean               # Stop containers
-make fclean              # Full cleanup
-make kill-ports          # Kill conflicting ports
+make dev                 # dev servers
+make shell               # container shell
+make logs                # container logs
+make lint                # eslint
+make typecheck           # tsc
+make test                # jest
+make gen-css             # compile sass
+make gen-css WATCH=1     # sass watch
+make db-studio           # prisma studio
+make db-migrate          # run migrations
+make db-reset            # reset db
+make clean               # stop containers
+make fclean              # nuke everything
+make kill-ports          # free stuck ports
 ```
 
-### File Locations Cheat Sheet
+### File locations
 
-| What | Location |
-|------|----------|
-| API endpoints | `apps/backend/src/*/` |
+| What | Where |
+|------|-------|
+| API routes | `apps/backend/src/*/` |
 | React components | `apps/frontend/src/components/` |
 | SCSS styles | `apps/frontend/src/styles/` |
-| Graphical chart (design tokens) | `apps/frontend/src/styles/base/_graphical-chart.scss` |
-| Database schema | `apps/backend/prisma/schema.prisma` |
+| Design tokens | `apps/frontend/src/styles/base/_graphical-chart.scss` |
+| DB schema | `apps/backend/prisma/schema.prisma` |
 | Shared types | `packages/shared/src/types/` |
-| Docker config | `docker/` |
-| CI/CD | `.github/workflows/` |
+| Docker | `docker/` |
+| CI | `.github/workflows/` |
 
-### Git Workflow Cheat Sheet
+### Git
 
 ```bash
-# Start new feature
 git checkout develop && git pull
-git checkout -b feature/my-feature
-
-# Keep in sync
-git fetch origin
-git rebase origin/develop
-
-# Commit
-git add .
-git commit -m "feat(scope): description"
-
-# Push and create PR
-git push -u origin feature/my-feature
-# → Open PR to develop on GitHub
+git checkout -b feature/my-thing
+# ... work ...
+git add . && git commit -m "feat(scope): what I did"
+git push -u origin feature/my-thing
+# open PR to develop
 ```
 
 ---
 
-## 📚 Bibliographic References & Resources
+## References
 
-Deepen your knowledge with these curated resources organized by topic.
+Stuff worth reading to get better at each area of this project.
 
-### 🏗️ Architecture & Design Patterns
+### Architecture
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **Clean Architecture** | Robert C. Martin's architectural principles | [Book](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) |
-| **Patterns of Enterprise Application Architecture** | Martin Fowler's patterns catalog | [Book](https://martinfowler.com/books/eaa.html) |
-| **The Twelve-Factor App** | Methodology for building SaaS apps | [12factor.net](https://12factor.net/) |
-| **Monorepo Explained** | Monorepo architecture patterns | [monorepo.tools](https://monorepo.tools/) |
+| What | Link |
+|------|------|
+| The Twelve-Factor App | [12factor.net](https://12factor.net/) |
+| Clean Architecture — R. C. Martin | [O'Reilly](https://www.oreilly.com/library/view/clean-architecture-a/9780134494272/) |
+| Monorepo patterns | [monorepo.tools](https://monorepo.tools/) |
+| Enterprise Patterns — Fowler | [martinfowler.com](https://martinfowler.com/books/eaa.html) |
 
-### ⚛️ React & Frontend
+### React & Frontend
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **React Documentation** | Official React docs (new) | [react.dev](https://react.dev/) |
-| **React TypeScript Cheatsheet** | TypeScript patterns for React | [GitHub](https://github.com/typescript-cheatsheets/react) |
-| **Bulletproof React** | Scalable React architecture | [GitHub](https://github.com/alan2207/bulletproof-react) |
-| **Zustand Documentation** | State management library | [Docs](https://docs.pmnd.rs/zustand/getting-started/introduction) |
-| **Vite Guide** | Next-gen frontend tooling | [vitejs.dev](https://vitejs.dev/guide/) |
-| **React Patterns** | Common React design patterns | [reactpatterns.com](https://reactpatterns.com/) |
+| What | Link |
+|------|------|
+| React docs | [react.dev](https://react.dev/) |
+| React + TypeScript cheatsheet | [GitHub](https://github.com/typescript-cheatsheets/react) |
+| Bulletproof React (architecture) | [GitHub](https://github.com/alan2207/bulletproof-react) |
+| Zustand docs | [pmnd.rs](https://docs.pmnd.rs/zustand/getting-started/introduction) |
+| Vite guide | [vitejs.dev](https://vitejs.dev/guide/) |
 
-### 🔧 NestJS & Backend
+### NestJS & Backend
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **NestJS Documentation** | Official NestJS docs | [docs.nestjs.com](https://docs.nestjs.com/) |
-| **NestJS Fundamentals Course** | Official video course | [courses.nestjs.com](https://courses.nestjs.com/) |
-| **Prisma Documentation** | Modern database toolkit | [prisma.io/docs](https://www.prisma.io/docs/) |
-| **JWT Best Practices** | Auth0's JWT handbook | [Auth0](https://auth0.com/resources/ebooks/jwt-handbook) |
-| **REST API Design** | Microsoft's API guidelines | [GitHub](https://github.com/microsoft/api-guidelines) |
-| **WebSocket Protocol** | RFC 6455 specification | [RFC](https://datatracker.ietf.org/doc/html/rfc6455) |
+| What | Link |
+|------|------|
+| NestJS docs | [docs.nestjs.com](https://docs.nestjs.com/) |
+| NestJS fundamentals course | [courses.nestjs.com](https://courses.nestjs.com/) |
+| Prisma docs | [prisma.io/docs](https://www.prisma.io/docs/) |
+| JWT handbook — Auth0 | [Auth0](https://auth0.com/resources/ebooks/jwt-handbook) |
+| Microsoft REST API guidelines | [GitHub](https://github.com/microsoft/api-guidelines) |
+| WebSocket spec (RFC 6455) | [IETF](https://datatracker.ietf.org/doc/html/rfc6455) |
 
-### 🎨 CSS/SCSS & Design Systems
+### CSS / SCSS
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **SASS Documentation** | Official SASS language guide | [sass-lang.com](https://sass-lang.com/documentation/) |
-| **CSS Guidelines** | Harry Roberts' CSS architecture | [cssguidelin.es](https://cssguidelin.es/) |
-| **ITCSS Architecture** | Inverted Triangle CSS methodology | [Article](https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/) |
-| **Design Tokens** | W3C Design Tokens specification | [W3C](https://design-tokens.github.io/community-group/format/) |
-| **Inclusive Components** | Accessible component patterns | [Book](https://inclusive-components.design/) |
-| **Modern CSS** | Modern CSS techniques | [moderncss.dev](https://moderncss.dev/) |
-| **Every Layout** | Intrinsic CSS layouts | [every-layout.dev](https://every-layout.dev/) |
+| What | Link |
+|------|------|
+| SASS docs | [sass-lang.com](https://sass-lang.com/documentation/) |
+| CSS Guidelines — Harry Roberts | [cssguidelin.es](https://cssguidelin.es/) |
+| ITCSS architecture | [xfive.co](https://www.xfive.co/blog/itcss-scalable-maintainable-css-architecture/) |
+| W3C Design Tokens spec | [W3C](https://design-tokens.github.io/community-group/format/) |
+| Every Layout | [every-layout.dev](https://every-layout.dev/) |
+| Modern CSS | [moderncss.dev](https://moderncss.dev/) |
 
-### 🧪 Testing
+### Testing
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **Jest Documentation** | JavaScript testing framework | [jestjs.io](https://jestjs.io/docs/getting-started) |
-| **Testing Library** | DOM testing utilities | [testing-library.com](https://testing-library.com/docs/) |
-| **NestJS Testing** | Testing NestJS applications | [Docs](https://docs.nestjs.com/fundamentals/testing) |
-| **Test-Driven Development** | Kent Beck's TDD book | [Book](https://www.oreilly.com/library/view/test-driven-development/0321146530/) |
-| **Testing Trophy** | Kent C. Dodds' testing strategy | [Article](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications) |
+| What | Link |
+|------|------|
+| Jest docs | [jestjs.io](https://jestjs.io/docs/getting-started) |
+| Testing Library | [testing-library.com](https://testing-library.com/docs/) |
+| NestJS testing guide | [NestJS docs](https://docs.nestjs.com/fundamentals/testing) |
+| TDD — Kent Beck | [O'Reilly](https://www.oreilly.com/library/view/test-driven-development/0321146530/) |
+| The Testing Trophy — Kent C. Dodds | [Blog](https://kentcdodds.com/blog/the-testing-trophy-and-testing-classifications) |
 
-### 🔀 Git & Workflow
+### Git
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **Conventional Commits** | Commit message specification | [conventionalcommits.org](https://www.conventionalcommits.org/) |
-| **Git Flow** | Branching model by Vincent Driessen | [Article](https://nvie.com/posts/a-successful-git-branching-model/) |
-| **Semantic Versioning** | Version numbering standard | [semver.org](https://semver.org/) |
-| **GitHub Flow** | Lightweight workflow guide | [Docs](https://docs.github.com/en/get-started/quickstart/github-flow) |
-| **Pro Git Book** | Comprehensive Git guide | [git-scm.com](https://git-scm.com/book/en/v2) |
+| What | Link |
+|------|------|
+| Conventional Commits | [conventionalcommits.org](https://www.conventionalcommits.org/) |
+| Git Flow — Vincent Driessen | [nvie.com](https://nvie.com/posts/a-successful-git-branching-model/) |
+| Semantic Versioning | [semver.org](https://semver.org/) |
+| Pro Git book | [git-scm.com](https://git-scm.com/book/en/v2) |
 
-### 🐳 Docker & DevOps
+### Docker & CI
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **Docker Documentation** | Official Docker docs | [docs.docker.com](https://docs.docker.com/) |
-| **Docker Compose** | Multi-container orchestration | [Docs](https://docs.docker.com/compose/) |
-| **Dockerfile Best Practices** | Official best practices | [Docs](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/) |
-| **GitHub Actions** | CI/CD documentation | [Docs](https://docs.github.com/en/actions) |
+| What | Link |
+|------|------|
+| Docker docs | [docs.docker.com](https://docs.docker.com/) |
+| Docker Compose | [docs.docker.com/compose](https://docs.docker.com/compose/) |
+| Dockerfile best practices | [Docker docs](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/) |
+| GitHub Actions | [docs.github.com/actions](https://docs.github.com/en/actions) |
 
-### 📝 TypeScript
+### TypeScript
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **TypeScript Handbook** | Official TS documentation | [typescriptlang.org](https://www.typescriptlang.org/docs/handbook/) |
-| **Type Challenges** | Practice TS type system | [GitHub](https://github.com/type-challenges/type-challenges) |
-| **Total TypeScript** | Advanced TS tutorials | [totaltypescript.com](https://www.totaltypescript.com/) |
-| **TS Performance** | TypeScript performance tips | [Wiki](https://github.com/microsoft/TypeScript/wiki/Performance) |
+| What | Link |
+|------|------|
+| TypeScript Handbook | [typescriptlang.org](https://www.typescriptlang.org/docs/handbook/) |
+| Type Challenges (practice) | [GitHub](https://github.com/type-challenges/type-challenges) |
+| Total TypeScript | [totaltypescript.com](https://www.totaltypescript.com/) |
 
-### 🔐 Security
+### Security
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **OWASP Top 10** | Web security risks | [owasp.org](https://owasp.org/www-project-top-ten/) |
-| **OWASP Cheat Sheets** | Security best practices | [cheatsheetseries.owasp.org](https://cheatsheetseries.owasp.org/) |
-| **OAuth 2.0 Simplified** | OAuth explained | [oauth.net](https://oauth.net/2/) |
-| **Node.js Security** | Security best practices | [nodejs.org](https://nodejs.org/en/docs/guides/security/) |
+| What | Link |
+|------|------|
+| OWASP Top 10 | [owasp.org](https://owasp.org/www-project-top-ten/) |
+| OWASP Cheat Sheets | [cheatsheetseries.owasp.org](https://cheatsheetseries.owasp.org/) |
+| OAuth 2.0 explained | [oauth.net](https://oauth.net/2/) |
 
-### 🎓 42-Specific Resources
+### Code Quality
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **42 Intra** | Official 42 intranet | [intra.42.fr](https://intra.42.fr/) |
-| **ft_transcendence Subject** | Project requirements | Intra |
-| **42 API Documentation** | OAuth & API reference | [api.intra.42.fr](https://api.intra.42.fr/apidoc) |
+| What | Link |
+|------|------|
+| Clean Code — R. C. Martin | [O'Reilly](https://www.oreilly.com/library/view/clean-code-a/9780136083238/) |
+| Refactoring — Fowler | [refactoring.com](https://refactoring.com/) |
+| The Pragmatic Programmer | [pragprog.com](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) |
+| Google Code Review guide | [Google](https://google.github.io/eng-practices/review/) |
+| Airbnb JS style guide | [GitHub](https://github.com/airbnb/javascript) |
 
-### 📖 Code Quality & Best Practices
+### 42
 
-| Resource | Description | Link |
-|----------|-------------|------|
-| **Clean Code** | Robert C. Martin's principles | [Book](https://www.oreilly.com/library/view/clean-code-a/9780136083238/) |
-| **Refactoring** | Martin Fowler's refactoring guide | [refactoring.com](https://refactoring.com/) |
-| **The Pragmatic Programmer** | Software craftsmanship | [Book](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) |
-| **Code Review Guidelines** | Google's code review guide | [Google](https://google.github.io/eng-practices/review/) |
-| **Airbnb JavaScript Style** | Popular style guide | [GitHub](https://github.com/airbnb/javascript) |
+| What | Link |
+|------|------|
+| 42 Intra | [intra.42.fr](https://intra.42.fr/) |
+| 42 API docs | [api.intra.42.fr](https://api.intra.42.fr/apidoc) |
 
----
+### YouTube worth watching
 
-### 📺 Video Resources
-
-| Channel | Topics | Link |
-|---------|--------|------|
-| **Fireship** | Quick tech explanations | [YouTube](https://www.youtube.com/@Fireship) |
-| **Theo - t3.gg** | React, TypeScript, Full-stack | [YouTube](https://www.youtube.com/@t3dotgg) |
-| **Jack Herrington** | React patterns, architecture | [YouTube](https://www.youtube.com/@jherr) |
-| **Web Dev Simplified** | Web fundamentals | [YouTube](https://www.youtube.com/@WebDevSimplified) |
-| **Kevin Powell** | CSS mastery | [YouTube](https://www.youtube.com/@KevinPowell) |
+| Channel | Focus | Link |
+|---------|-------|------|
+| Fireship | Quick tech explainers | [YouTube](https://www.youtube.com/@Fireship) |
+| Theo (t3.gg) | React, TS, full-stack | [YouTube](https://www.youtube.com/@t3dotgg) |
+| Jack Herrington | React architecture | [YouTube](https://www.youtube.com/@jherr) |
+| Kevin Powell | CSS deep dives | [YouTube](https://www.youtube.com/@KevinPowell) |
+| Web Dev Simplified | Fundamentals | [YouTube](https://www.youtube.com/@WebDevSimplified) |
 
 ---
 
-*Questions about the workflow? Bring them up in the next standup or ping in Discord.*
+*Got questions? Bring them to the next standup or drop them on Discord.*
