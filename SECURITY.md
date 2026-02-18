@@ -1,89 +1,114 @@
-# 🔒 Security Policy
+# Security Policy
+
+---
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in this project, please report it responsibly.
+Do not open a public GitHub issue for security vulnerabilities.
 
-### How to Report
+Report privately by contacting the Tech Lead or Project Manager via Discord DM. Include:
 
-1. **Do NOT open a public issue** — security issues must be reported privately
-2. Contact the Tech Lead or Project Manager directly via Discord DM
-3. Include:
-   - Description of the vulnerability
-   - Steps to reproduce
-   - Potential impact
-   - Suggested fix (if you have one)
+- What the vulnerability is and where it is in the codebase
+- Steps to reproduce
+- What an attacker could do with it
+- A suggested fix if you have one
 
-### Response Timeline
-
-| Step | Timeframe |
-|------|-----------|
-| Acknowledgment | Within 24 hours |
-| Initial assessment | Within 48 hours |
-| Fix deployed | Within 1 week (critical) / 2 weeks (medium) |
+| Step | Deadline |
+|------|----------|
+| Acknowledgment | 24 hours |
+| Initial assessment | 48 hours |
+| Fix — critical severity | 1 week |
+| Fix — medium severity | 2 weeks |
 
 ---
 
-## Security Practices
+## Security Model
 
-### Authentication & Authorization
+### Authentication
 
-- **JWT** with short-lived access tokens and refresh token rotation
-- **OAuth 2.0** for third-party authentication (42 API / Google)
-- **bcrypt** for password hashing (minimum 12 salt rounds)
-- **Role-Based Access Control (RBAC)** — routes are guarded by role
-- **Session invalidation** on password change or suspicious activity
+- JWT access tokens with short expiry and refresh token rotation on each use
+- 42 OAuth 2.0 via the [official 42 API](https://api.intra.42.fr/apidoc) — authorization code flow
+- bcrypt for password hashing, minimum 12 salt rounds
+- Session invalidation on password change and on any detected anomaly
+
+Token lifecycle:
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant API as NestJS API
+    participant DB as PostgreSQL
+
+    C->>API: POST /auth/login
+    API->>DB: Verify credentials
+    DB-->>API: User record
+    API-->>C: access_token (15 min) + refresh_token (7 d, httpOnly cookie)
+
+    Note over C,API: access_token expires
+
+    C->>API: POST /auth/refresh  (cookie sent automatically)
+    API->>DB: Validate refresh token hash
+    DB-->>API: Valid
+    API->>DB: Rotate — invalidate old, store new hash
+    API-->>C: New access_token + new refresh_token cookie
+```
+
+### Authorization
+
+- Route-level guards on every protected endpoint — no endpoint is public by default
+- Role-Based Access Control (RBAC) — roles checked at the guard layer, never in the controller
+- No authorization logic in DTOs or validators
 
 ### Data Protection
 
-- **HTTPS only** — all traffic encrypted in transit (TLS 1.3)
-- **Environment variables** for secrets — never hardcoded, never committed
-- **Database** — parameterized queries via Prisma (SQL injection prevention)
-- **Input validation** — all inputs validated with `class-validator` DTOs
-- **Output sanitization** — prevent XSS via React's default escaping + CSP headers
+- All inputs validated via `class-validator` DTOs — no raw user data reaches the service layer
+- Parameterized queries only — Prisma never interpolates user input into SQL
+- No `dangerouslySetInnerHTML` in React — default escaping plus strict Content-Security-Policy headers via Helmet.js
+- Secrets in environment variables — the `pre-commit` hook blocks `.env` files from being staged
+- HTTPS in production — TLS 1.3, HSTS enforced, HTTP redirected
 
 ### Infrastructure
 
-- **Docker containers** — isolated runtime environments
-- **Non-root users** in production containers
-- **Helmet.js** — secure HTTP headers (CSP, HSTS, X-Frame-Options, etc.)
-- **Rate limiting** — per-IP and per-route rate limits
-- **CORS** — strict origin whitelist
+```mermaid
+graph LR
+    Internet --> Nginx["nginx (TLS termination)"]
+    Nginx --> Backend["NestJS API"]
+    Nginx --> Frontend["React SPA"]
+
+    subgraph Container["Each container"]
+        nonroot["Non-root user"]
+        ro["Read-only filesystem where possible"]
+    end
+
+    Backend --> Container
+
+    style Internet fill:#fecaca,stroke:#dc2626,color:#7f1d1d
+    style Nginx fill:#fef3c7,stroke:#d97706,color:#78350f
+    style Backend fill:#ede9fe,stroke:#7c3aed,color:#3b1f6e
+    style Frontend fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style Container fill:#dcfce7,stroke:#22c55e,color:#14532d
+```
+
+- Non-root user in all production containers
+- Helmet.js: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy, HSTS
+- Per-IP and per-route rate limiting on all public endpoints
+- CORS restricted to known origins only
 
 ### Dependencies
 
-- **Regular updates** — `npm audit` run in CI pipeline
-- **Lock files committed** — `package-lock.json` ensures reproducible builds
-- **No wildcard versions** — all dependencies pinned to exact or minor range
+- `pnpm audit` runs in the CI pipeline on every PR
+- Lock files committed — reproducible installs, no silent version drift
+- No wildcard version ranges — all dependencies pinned to exact or `~minor`
 
 ---
 
-## Security Checklist for PRs
+## Scope
 
-Before merging any PR, verify:
+This is a 42 school project. The following are explicitly out of scope:
 
-- [ ] No secrets or credentials in the code
-- [ ] No `console.log` with sensitive data
-- [ ] Input validation on all new endpoints
-- [ ] Authorization guards on protected routes
-- [ ] SQL injection prevention (using Prisma, no raw queries without parameterization)
-- [ ] XSS prevention (no `dangerouslySetInnerHTML` without sanitization)
-- [ ] Rate limiting considered for new public endpoints
-- [ ] Error messages don't leak internal details
-
----
-
-## Known Security Boundaries
-
-This is a **student project** for 42's Common Core. While we implement security best practices, the following are out of scope:
-
-- Penetration testing / formal security audit
-- SOC 2 / ISO 27001 compliance
+- Formal penetration testing or security audit
+- SOC 2, ISO 27001, or any compliance framework
 - Bug bounty program
-- 24/7 incident response team
+- 24/7 incident response
 
-We take security seriously as a learning exercise and implement industry best practices within the scope of an educational project.
-
----
-
-*This policy is reviewed and updated with each major release.*
+Security is taken seriously as a technical discipline, not as compliance theater. The practices above reflect what a production service at this scale actually needs.
