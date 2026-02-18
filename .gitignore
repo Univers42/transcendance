@@ -87,3 +87,4 @@ tmp/
 packages/*
 packages
 packages/.*
+static_docs/docusaurus/*.json
