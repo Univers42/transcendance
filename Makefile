@@ -15,10 +15,17 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -ec
 
-# ── Enable BuildKit (modern Docker builder) ──────────
-# Prevents "legacy builder is deprecated" warnings.
+# ── BuildKit auto-detection ──────────────────────────
+# Only enable BuildKit if buildx is available.
+# Falls back to legacy builder if buildx is missing.
+BUILDX_AVAILABLE := $(shell docker buildx version >/dev/null 2>&1 && echo 1 || echo 0)
+ifeq ($(BUILDX_AVAILABLE),1)
 export DOCKER_BUILDKIT := 1
 export COMPOSE_DOCKER_CLI_BUILD := 1
+else
+export DOCKER_BUILDKIT := 0
+export COMPOSE_DOCKER_CLI_BUILD := 0
+endif
 
 .PHONY: help
 .DEFAULT_GOAL := all
@@ -193,7 +200,7 @@ preflight: check-docker check-compose check-env check-ports
 
 .PHONY: all bootstrap banner
 
-all: banner preflight bootstrap  ## 🚀 Full setup (default — Docker only)
+all: banner preflight bootstrap dev  ## 🚀 Full setup (default — Docker only)
 
 banner:
 	$(BANNER)

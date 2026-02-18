@@ -11,7 +11,6 @@
 #   • Healthcheck uses lightweight node eval (no curl overhead)
 # ============================================
 
-# syntax=docker/dockerfile:1
 FROM node:22-alpine
 
 # ── System Dependencies (single layer) ───────────────
