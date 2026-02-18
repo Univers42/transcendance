@@ -16,6 +16,8 @@ Everything you need to know before writing code on this project. Architecture, c
 - [Git Flow](#git-flow)
 - [Branch Naming](#branch-naming)
 - [Commits](#commits)
+- [When to Commit](#when-to-commit)
+- [Git Hooks](#git-hooks)
 - [Pull Requests](#pull-requests)
 - [Code Standards](#code-standards)
 - [Code Review](#code-review)
@@ -23,6 +25,7 @@ Everything you need to know before writing code on this project. Architecture, c
 - [Vendor Directory](#vendor-directory)
 - [AI Transparency](#ai-transparency)
 - [Cheat Sheet](#cheat-sheet)
+- [Git Cheatsheet](#git-cheatsheet)
 - [References](#references)
 
 ---
@@ -54,6 +57,7 @@ git checkout -b feature/my-thing
 | `make typecheck` | TypeScript checks |
 | `make gen-css` | Compile SASS once |
 | `make gen-css WATCH=1` | SASS in watch mode |
+| `make configure-hooks` | Install git hooks |
 | `make shell` | Shell into the container |
 | `make help` | List everything |
 
@@ -688,31 +692,222 @@ gitGraph
 
 ## Commits
 
-We use [Conventional Commits](https://www.conventionalcommits.org/):
+We use [Conventional Commits](https://www.conventionalcommits.org/). Every commit message is validated by a git hook (`commit-msg`) — if the format is wrong the commit is rejected.
 
 ```
-type(scope): short description
+type(scope): Short description starting with uppercase
 ```
 
 | Type | Meaning |
 |------|---------|
 | `feat` | New feature |
 | `fix` | Bug fix |
-| `docs` | Docs only |
-| `style` | Formatting, no logic |
+| `docs` | Documentation only |
+| `style` | Formatting, whitespace — no logic change |
 | `refactor` | Neither fix nor feature |
-| `test` | Tests |
-| `chore` | Tooling, CI, deps |
-| `perf` | Performance |
+| `test` | Adding or updating tests |
+| `chore` | Tooling, CI, deps, config |
+| `perf` | Performance improvement |
+| `ci` | CI/CD pipeline changes |
+| `build` | Build system or external deps |
+| `revert` | Reverts a previous commit |
 
-**Scope** = module name: `auth`, `users`, `game`, `chat`, `docker`, `ci`, `prisma`…
+**Scope** = module name: `auth`, `users`, `game`, `chat`, `docker`, `ci`, `prisma`, `hooks`…
+
+**Rules enforced by the hook:**
+
+- Description between 25 and 170 characters
+- Must start with uppercase
+- No trailing period
+- Forbidden words: `WIP`, `squash!`, `fixup!`, `debug`, `temporary`
 
 ```bash
-feat(auth): add JWT refresh rotation
-fix(game): ball physics at high speed
-docs(readme): add env variables section
-test(chat): websocket e2e tests
-chore(docker): upgrade postgres to 16.2
+# Good
+feat(auth): Add JWT refresh rotation with sliding window
+fix(game): Clamp ball velocity on high-latency frames
+docs(readme): Add environment variables table
+test(chat): Cover websocket reconnect edge cases
+chore(docker): Upgrade postgres to 16.2
+
+# Bad — blocked by hook
+fix(auth): fix stuff              # too vague, under 25 chars
+feat(api): add endpoint.          # trailing period
+WIP save progress                 # missing type(scope), forbidden word
+feat(core): new feature           # lowercase start
+```
+
+---
+
+## When to Commit
+
+A commit should represent **one logical unit of work** — not one line, not a whole day. Think of it as answering: *"if I revert this commit, what single thing disappears?"*
+
+### Frequency guidelines
+
+| Situation | Commit when… |
+|-----------|-------------|
+| New feature | Each piece that works on its own (route, component, migration…) |
+| Bug fix | As soon as the fix is confirmed working |
+| Refactor | After each rename, extract, or move — one refactor per commit |
+| Styling | After each visual change you're satisfied with |
+| Config / tooling | After each config file is done and tested |
+| Tests | After adding tests for one module or function |
+
+### Practical rhythm
+
+- Roughly **every 20–45 minutes** of focused work, you should have something worth committing
+- If it's been 2+ hours without a commit, you're probably bundling too many changes — split them
+- If you commit every 2 minutes, you're probably too granular — group related lines
+
+### Signs you need to commit right now
+
+- You're about to switch to a different file/module
+- You just ran `make test` and it passes
+- You're about to try something risky and want a save point
+- Your staged diff is getting hard to read
+
+### Signs you need to split your commit
+
+- Your `git diff --cached` touches more than 2–3 unrelated files
+- You'd need the word "and" to describe what the commit does
+- The description is longer than 170 characters
+
+### The stash trick
+
+When you realize mid-work that you have uncommitted stuff from a previous task:
+
+```bash
+git stash                           # park current work
+git add <previous-task-files>
+git commit -m "fix(api): Handle null body in POST /users"
+git stash pop                       # resume current work
+```
+
+---
+
+## Git Hooks
+
+Hooks are shell scripts that run automatically at specific points in the git workflow. They keep the repo clean without relying on anyone's discipline.
+
+### How they activate (zero-config)
+
+Hooks activate **automatically** — you don't have to do anything. There are three independent triggers so no matter how a developer enters the project, hooks are set:
+
+| Trigger | When it fires | How it activates hooks |
+|---------|--------------|----------------------|
+| `make` / `make dev` | First build or any dev session | Makefile runs `configure-hooks` as a dependency |
+| `pnpm install` / `npm install` | Installing deps | Root `package.json` has a `prepare` script |
+| `git checkout` | Switching branches (if hooks are already active) | `post-checkout` hook warns if `core.hooksPath` is missing |
+
+Under the hood it's one git setting:
+
+```
+git config --local core.hooksPath vendor/scripts/hooks
+```
+
+This tells git "look in `vendor/scripts/hooks/` for hooks instead of `.git/hooks/`". The hooks are versioned files in the repo — no symlinks, no copying, nothing to install. Every `git pull` that updates a hook script takes effect immediately for everyone.
+
+If for some reason they're not active:
+
+```bash
+make configure-hooks    # or manually:
+git config --local core.hooksPath vendor/scripts/hooks
+```
+
+### What each hook does
+
+```mermaid
+graph LR
+    edit["Edit files"] --> add["git add"]
+    add --> precommit["pre-commit"]
+    precommit --> commit["git commit"]
+    commit --> commitmsg["commit-msg"]
+    commitmsg --> done["Commit saved"]
+    done --> push["git push"]
+    push --> prepush["pre-push"]
+    prepush --> remote["Remote"]
+
+    style edit fill:#f1f5f9,stroke:#64748b,color:#1e293b
+    style add fill:#f1f5f9,stroke:#64748b,color:#1e293b
+    style precommit fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style commit fill:#f1f5f9,stroke:#64748b,color:#1e293b
+    style commitmsg fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style done fill:#f1f5f9,stroke:#64748b,color:#1e293b
+    style push fill:#f1f5f9,stroke:#64748b,color:#1e293b
+    style prepush fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    style remote fill:#dcfce7,stroke:#22c55e,color:#14532d
+```
+
+| Hook | Trigger | What it checks |
+|------|---------|---------------|
+| `pre-commit` | Before commit is created | Merge conflict markers, `debugger` statements, `.env` files, large files (>500 KB), trailing whitespace |
+| `commit-msg` | After you write the message | Conventional commit format, description 25–170 chars, uppercase start, no trailing period, no forbidden words |
+| `pre-push` | Before push reaches remote | All commits match format, tiered branch protection (see below) |
+| `post-checkout` | After switching branch | Auto-pulls with `--ff-only` from upstream, warns if hooks are not active |
+| `pre-merge-commit` | Before merge commit is created | Auto-pulls from upstream, asks confirmation if pull fails |
+
+### Bypassing hooks
+
+Every hook has an escape hatch via environment variable. Use them when you know what you're doing — not as a habit.
+
+```bash
+SKIP_PRE_COMMIT=1 git commit -m "chore(wip): Snapshot before refactor"
+SKIP_COMMIT_MSG=1 git commit -m "whatever I want"
+SKIP_PRE_PUSH=1 git push origin main
+SKIP_POST_CHECKOUT=1 git checkout develop
+SKIP_PRE_MERGE=1 git merge feature/something
+```
+
+You can also use `git commit --no-verify` to skip `pre-commit` and `commit-msg` entirely (built-in git option). But `pre-push` still runs unless you set `SKIP_PRE_PUSH=1`.
+
+### Protected branches (tiered)
+
+Not all branches get the same level of protection. Feature branches flow freely — the friction scales with the risk:
+
+| Branch | Protection | What happens on `git push` |
+|--------|-----------|---------------------------|
+| `main` / `master` | **Hard gate** — password required | Must have `.git/allow_push` file with a password. The hook prompts for it. No password = push blocked. |
+| `develop` | **Soft gate** — confirmation prompt | Y/n interactive prompt. Press Enter to confirm, `n` to cancel. |
+| Feature branches | **None** | Push goes through. Commit messages are still validated. |
+
+Setting up the password for `main`:
+
+```bash
+echo 'your-team-secret' > .git/allow_push    # local only, never committed
+```
+
+In CI or scripts, bypass interactively:
+
+```bash
+GIT_PUSH_OVERRIDE=your-team-secret git push origin main   # password match
+GIT_CONFIRM_PUSH=yes git push origin develop               # auto-confirm
+```
+
+### Publish mode
+
+For release commits that need a long description but not strict format:
+
+```bash
+GIT_PUBLISH=1 git commit -m "Release v1.2.0 — adds tournament mode with bracket generation, spectator view, real-time score updates, and admin dashboard for match management"
+```
+
+This only enforces a 25-word minimum.
+
+### Hook logs
+
+All hooks log to `.git/hook-logs/hook.log`. Check it when something goes wrong:
+
+```bash
+cat .git/hook-logs/hook.log
+tail -20 .git/hook-logs/hook.log
+```
+
+### Debug mode
+
+For verbose output from all hooks:
+
+```bash
+GIT_HOOK_DEBUG=1 git commit -m "feat(auth): Add session timeout handling for inactive users"
 ```
 
 ---
@@ -919,6 +1114,7 @@ make gen-css WATCH=1     # sass watch
 make db-studio           # prisma studio
 make db-migrate          # run migrations
 make db-reset            # reset db
+make configure-hooks     # install git hooks
 make clean               # stop containers
 make fclean              # nuke everything
 make kill-ports          # free stuck ports
@@ -943,10 +1139,134 @@ make kill-ports          # free stuck ports
 git checkout develop && git pull
 git checkout -b feature/my-thing
 # ... work ...
-git add . && git commit -m "feat(scope): what I did"
+git add . && git commit -m "feat(scope): What I did in detail"
 git push -u origin feature/my-thing
 # open PR to develop
 ```
+
+---
+
+## Git Cheatsheet
+
+Quick reference. Copy-paste when you're stuck.
+
+### Everyday workflow
+
+```bash
+# Start a new feature
+git checkout develop && git pull
+git checkout -b feature/login-form
+
+# Save progress
+git add -p                            # stage interactively (hunk by hunk)
+git add src/components/LoginForm.tsx   # or stage specific files
+git commit -m "feat(auth): Add login form with email validation"
+
+# Push
+git push -u origin feature/login-form  # first push sets upstream
+git push                                # after that, just this
+```
+
+### Staging
+
+| Command | Effect |
+|---------|--------|
+| `git add .` | Stage everything |
+| `git add -p` | Stage interactively, hunk by hunk |
+| `git add <file>` | Stage one file |
+| `git reset HEAD <file>` | Unstage a file (keep changes) |
+| `git diff --cached` | See what's staged |
+| `git diff` | See what's NOT staged |
+
+### Branching
+
+| Command | Effect |
+|---------|--------|
+| `git branch` | List local branches |
+| `git branch -a` | List all branches (local + remote) |
+| `git checkout <branch>` | Switch branch |
+| `git checkout -b <name>` | Create + switch |
+| `git branch -d <name>` | Delete local branch (safe) |
+| `git branch -D <name>` | Delete local branch (force) |
+| `git push origin --delete <name>` | Delete remote branch |
+
+### Syncing
+
+| Command | Effect |
+|---------|--------|
+| `git fetch` | Download remote changes (no merge) |
+| `git pull` | Fetch + merge |
+| `git pull --rebase` | Fetch + rebase (cleaner history) |
+| `git pull --ff-only` | Fetch + merge only if fast-forward |
+| `git push` | Upload commits |
+| `git push -u origin <branch>` | Push + set upstream tracking |
+
+### Rebase
+
+```bash
+# Rebase your feature branch on top of develop
+git checkout feature/my-thing
+git fetch origin
+git rebase origin/develop
+
+# If conflicts:
+# 1. Fix the files
+# 2. git add <fixed-files>
+# 3. git rebase --continue
+# To bail out: git rebase --abort
+```
+
+### Stash
+
+```bash
+git stash                  # park uncommitted work
+git stash list             # see stashed items
+git stash pop              # restore + delete from stash
+git stash apply            # restore + keep in stash
+git stash drop             # delete top stash entry
+git stash -m "description" # stash with a name
+```
+
+### Undo and fix
+
+| Situation | Command |
+|-----------|---------|
+| Undo last commit (keep changes staged) | `git reset --soft HEAD~1` |
+| Undo last commit (keep changes unstaged) | `git reset HEAD~1` |
+| Undo last commit (destroy changes) | `git reset --hard HEAD~1` |
+| Amend last commit message | `git commit --amend -m "new message"` |
+| Amend last commit with more files | `git add <file> && git commit --amend --no-edit` |
+| Discard all local changes | `git checkout -- .` |
+| Discard changes to one file | `git checkout -- <file>` |
+| Revert a pushed commit (safe) | `git revert <sha>` |
+
+### Log and history
+
+```bash
+git log --oneline -20                  # last 20 commits, compact
+git log --graph --oneline --all        # visual branch graph
+git log --author="yourname" --since="1 week ago"
+git show <sha>                         # full details of one commit
+git diff HEAD~3..HEAD                  # what changed in last 3 commits
+git blame <file>                       # who wrote each line
+```
+
+### Useful flags reference
+
+| Flag | Used with | Meaning |
+|------|-----------|---------|
+| `-p` / `--patch` | `add`, `diff`, `log` | Show/stage individual hunks |
+| `--oneline` | `log` | One commit per line |
+| `--graph` | `log` | ASCII branch graph |
+| `--cached` | `diff` | Compare staged vs last commit |
+| `--soft` | `reset` | Undo commit, keep staged |
+| `--hard` | `reset` | Undo commit, destroy changes |
+| `--no-edit` | `commit --amend` | Amend without changing message |
+| `--ff-only` | `pull`, `merge` | Only fast-forward, never create merge commit |
+| `--rebase` | `pull` | Rebase instead of merge |
+| `-u` | `push` | Set upstream tracking |
+| `--force-with-lease` | `push` | Force push safely (fails if remote has new commits) |
+| `--no-verify` | `commit`, `push` | Skip hooks |
 
 ---
 

@@ -195,12 +195,37 @@ preflight: check-docker check-compose check-env check-ports
 	$(call step,$(GREEN)✓,$(BOLD)All preflight checks passed$(NC))
 
 # ============================================
+#  🪝 GIT HOOKS
+# ============================================
+
+.PHONY: configure-hooks
+
+HOOKS_DIR := vendor/scripts/hooks
+
+configure-hooks:  ## 🪝 Activate git hooks (auto-runs on make / make dev)
+	@if [ ! -d .git ]; then \
+		echo -e "  $(YELLOW)⚠$(NC)  Not a git repo — skipping hook setup"; \
+	else \
+		CURRENT=$$(git config --local core.hooksPath 2>/dev/null || echo ""); \
+		if [ "$$CURRENT" = "$(HOOKS_DIR)" ]; then \
+			echo -e "  $(GREEN)✓$(NC)  Git hooks active (core.hooksPath → $(HOOKS_DIR))"; \
+		else \
+			git config --local core.hooksPath $(HOOKS_DIR); \
+			chmod +x $(HOOKS_DIR)/*; \
+			echo -e "  $(GREEN)✓$(NC)  Git hooks activated (core.hooksPath → $(HOOKS_DIR))"; \
+		fi; \
+		for old in commit-msg pre-commit pre-push post-checkout pre-merge-commit log_hook log_hook.sh; do \
+			if [ -L ".git/hooks/$$old" ]; then rm -f ".git/hooks/$$old"; fi; \
+		done; \
+	fi
+
+# ============================================
 #  ⚡ BOOTSTRAP (default target)
 # ============================================
 
 .PHONY: all bootstrap banner
 
-all: banner preflight bootstrap dev  ## 🚀 Full setup (default — Docker only)
+all: banner preflight configure-hooks bootstrap dev  ## 🚀 Full setup (default — Docker only)
 
 banner:
 	$(BANNER)
@@ -378,7 +403,7 @@ build-frontend:  ## 🏗️ Build frontend
 
 .PHONY: dev dev-backend dev-frontend shell
 
-dev: docker-up  ## 🚀 Start all dev servers (hot reload)
+dev: configure-hooks docker-up  ## 🚀 Start all dev servers (hot reload)
 	$(call step,$(BLUE)ℹ,Starting dev servers...)
 	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run start:dev" 2>/dev/null || true
 	@docker exec -d $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm run dev -- --host 0.0.0.0" 2>/dev/null || true
