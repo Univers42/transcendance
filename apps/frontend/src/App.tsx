@@ -61,10 +61,10 @@ function WelcomePage() {
     return () => clearInterval(id);
   }, []);
 
-  const bp = 4200;
-  const fp = 4201;
-  const mp = 4212;
-  const pp = 4202;
+  const bp = 3000;
+  const fp = 5173;
+  const mp = 8025;
+  const pp = 5555;
 
   return (
     <div className="app">
@@ -165,7 +165,7 @@ function WelcomePage() {
               <span className="dot neutral" />
             </div>
             <h3>Redis</h3>
-            <p className="card-url">localhost:4211</p>
+            <p className="card-url">localhost:6379</p>
             <p className="card-desc">Cache + real-time pub/sub</p>
           </div>
         </div>

@@ -1,8 +1,9 @@
 # ============================================
-# ft_transcendence — CI Pipeline
+# Transcendence — CI Pipeline
 # ============================================
-# Runs on every push to develop and on every PR.
+# Runs on every push to develop/main and on every PR.
 # Steps: lint → typecheck → test
+# Package manager: pnpm (NOT npm)
 # ============================================
 
 name: CI
@@ -15,6 +16,7 @@ on:
 
 env:
   NODE_VERSION: "22"
+  PNPM_VERSION: "10"
 
 jobs:
   # ── Lint ─────────────────────────────────────────────
@@ -25,26 +27,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cache: "pnpm"
           cache-dependency-path: |
-            apps/backend/package-lock.json
-            apps/frontend/package-lock.json
+            apps/backend/pnpm-lock.yaml
+            apps/frontend/pnpm-lock.yaml
 
       - name: Install backend dependencies
-        run: cd apps/backend && npm ci
+        run: cd apps/backend && pnpm install --frozen-lockfile
 
       - name: Install frontend dependencies
-        run: cd apps/frontend && npm ci
+        run: cd apps/frontend && pnpm install --frozen-lockfile
 
       - name: Lint backend
-        run: cd apps/backend && npx eslint .
+        run: cd apps/backend && pnpm exec eslint .
 
       - name: Lint frontend
-        run: cd apps/frontend && npx eslint .
+        run: cd apps/frontend && pnpm exec eslint .
 
   # ── Type Check ──────────────────────────────────────
   typecheck:
@@ -55,29 +62,34 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
+          cache: "pnpm"
           cache-dependency-path: |
-            apps/backend/package-lock.json
-            apps/frontend/package-lock.json
+            apps/backend/pnpm-lock.yaml
+            apps/frontend/pnpm-lock.yaml
 
       - name: Install backend dependencies
-        run: cd apps/backend && npm ci
+        run: cd apps/backend && pnpm install --frozen-lockfile
 
       - name: Install frontend dependencies
-        run: cd apps/frontend && npm ci
+        run: cd apps/frontend && pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: cd apps/backend && npx prisma generate --schema=prisma/schema.prisma
+        run: cd apps/backend && pnpm exec prisma generate --schema=prisma/schema.prisma
 
       - name: Typecheck backend
-        run: cd apps/backend && npx tsc --noEmit
+        run: cd apps/backend && pnpm exec tsc --noEmit
 
       - name: Typecheck frontend
-        run: cd apps/frontend && npx tsc --noEmit
+        run: cd apps/frontend && pnpm exec tsc --noEmit
 
   # ── Unit Tests ──────────────────────────────────────
   test:
@@ -114,26 +126,31 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-          cache-dependency-path: apps/backend/package-lock.json
+          cache: "pnpm"
+          cache-dependency-path: apps/backend/pnpm-lock.yaml
 
       - name: Install dependencies
-        run: cd apps/backend && npm ci
+        run: cd apps/backend && pnpm install --frozen-lockfile
 
       - name: Generate Prisma client
-        run: cd apps/backend && npx prisma generate --schema=prisma/schema.prisma
+        run: cd apps/backend && pnpm exec prisma generate --schema=prisma/schema.prisma
 
       - name: Run migrations
-        run: cd apps/backend && npx prisma migrate deploy --schema=prisma/schema.prisma
+        run: cd apps/backend && pnpm exec prisma migrate deploy --schema=prisma/schema.prisma
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
       - name: Run unit tests
-        run: cd apps/backend && npm test -- --passWithNoTests
+        run: cd apps/backend && pnpm test -- --passWithNoTests
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
           REDIS_URL: redis://localhost:6379
@@ -141,7 +158,7 @@ jobs:
           NODE_ENV: test
 
       - name: Run E2E tests
-        run: cd apps/backend && npm run test:e2e -- --passWithNoTests
+        run: cd apps/backend && pnpm run test:e2e -- --passWithNoTests
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
           REDIS_URL: redis://localhost:6379

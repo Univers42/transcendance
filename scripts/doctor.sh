@@ -201,12 +201,12 @@ if [[ -f "$PROJECT_ROOT/.env" ]]; then
     set -a; source "$PROJECT_ROOT/.env" 2>/dev/null; set +a
 fi
 
-check_port "${BACKEND_PORT:-4200}"      "Backend (NestJS)"
-check_port "${FRONTEND_PORT:-4201}"     "Frontend (Vite)"
-check_port "${PRISMA_STUDIO_PORT:-4202}" "Prisma Studio"
-check_port "${DB_PORT:-4210}"           "PostgreSQL"
-check_port "${REDIS_PORT:-4211}"        "Redis"
-check_port "${MAILPIT_UI_PORT:-4212}"   "Mailpit UI"
+check_port "${BACKEND_PORT:-3000}"      "Backend (NestJS)"
+check_port "${FRONTEND_PORT:-5173}"     "Frontend (Vite)"
+check_port "${PRISMA_STUDIO_PORT:-5555}" "Prisma Studio"
+check_port "${DB_PORT:-5432}"           "PostgreSQL"
+check_port "${REDIS_PORT:-6379}"        "Redis"
+check_port "${MAILPIT_UI_PORT:-8025}"   "Mailpit UI"
 
 # ============================================
 #  4. ENVIRONMENT FILE

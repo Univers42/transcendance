@@ -34,7 +34,7 @@ Every question uses a collapsible toggle — click to expand the answer.
 - [Prisma migration fails or is out of sync](#prisma-migration-fails-or-is-out-of-sync)
 - [How to reset the database completely?](#how-to-reset-the-database-completely)
 - [Prisma Client not generated / types missing](#prisma-client-not-generated--types-missing)
-- [Prisma Studio won't open on port 4202](#prisma-studio-wont-open-on-port-4202)
+- [Prisma Studio won't open on port 5555](#prisma-studio-wont-open-on-port-5555)
 
 ### 🔐 Authentication & Environment
 - [OAuth 42 callback not working](#oauth-42-callback-not-working)
@@ -231,7 +231,7 @@ This will:
 <details>
 <summary><strong>🔹 "Port already in use"</strong></summary>
 
-**Symptom**: `Bind for 0.0.0.0:4200 failed: port is already allocated`
+**Symptom**: `Bind for 0.0.0.0:3000 failed: port is already allocated`
 
 **Fix**:
 
@@ -240,23 +240,23 @@ This will:
 make kill-ports
 
 # Option 2: Manual
-lsof -i :4200    # Find the PID
+lsof -i :3000    # Find the PID
 kill -9 <PID>    # Kill it
 
 # Option 3: Change the port in .env
-# Edit: BACKEND_PORT=4200 → BACKEND_PORT=4300
+# Edit: BACKEND_PORT=3000 → BACKEND_PORT=3100
 ```
 
-**Our port scheme** (avoids common conflicts):
+**Our port scheme** (standard ports):
 
 | Service | Port |
 |---------|------|
-| Backend API | 4200 |
-| Frontend | 4201 |
-| Prisma Studio | 4202 |
-| PostgreSQL | 4210 |
-| Redis | 4211 |
-| Mailpit | 4212 |
+| Backend API | 3000 |
+| Frontend | 5173 |
+| Prisma Studio | 5555 |
+| PostgreSQL | 5432 |
+| Redis | 6379 |
+| Mailpit | 8025 |
 
 </details>
 
@@ -266,17 +266,15 @@ kill -9 <PID>    # Kill it
 <details>
 <summary><strong>🔹 Port conflict with another project</strong></summary>
 
-**Symptom**: Another project (like vite-gourmand) uses port 3000, 5173, or 5432.
+**Symptom**: Another project running on your machine already uses port 3000, 5173, or 5432.
 
-**Why we chose the 4200 range**: Common dev tools use 3000 (Express), 5173 (Vite), 5432 (PostgreSQL). We moved all our ports to the 4200–4212 range to avoid conflicts.
-
-**If you still have conflicts**, edit `.env`:
+**We use standard ports** (3000 for the backend, 5173 for the frontend, 5432 for PostgreSQL, etc.). If another project occupies the same port, override it in `.env`:
 
 ```env
-BACKEND_PORT=4300
-FRONTEND_PORT=4301
-DB_PORT=4310
-REDIS_PORT=4311
+BACKEND_PORT=3100
+FRONTEND_PORT=5174
+DB_PORT=5433
+REDIS_PORT=6380
 ```
 
 Then restart:
@@ -305,8 +303,8 @@ DATABASE_URL=postgresql://transcendence:transcendence@db:5432/transcendence
 REDIS_URL=redis://redis:6379
 
 # ❌ Wrong (these are for host-machine access)
-DATABASE_URL=postgresql://transcendence:transcendence@localhost:4210/transcendence
-REDIS_URL=redis://localhost:4211
+DATABASE_URL=postgresql://transcendence:transcendence@localhost:5432/transcendence
+REDIS_URL=redis://localhost:6379
 ```
 
 **Also check** that containers are running:
@@ -574,22 +572,22 @@ make compile
 
 ---
 
-<a id="prisma-studio-wont-open-on-port-4202"></a>
+<a id="prisma-studio-wont-open-on-port-5555"></a>
 <details>
-<summary><strong>🔹 Prisma Studio won't open on port 4202</strong></summary>
+<summary><strong>🔹 Prisma Studio won't open on port 5555</strong></summary>
 
 **Fix**:
 
 ```bash
 # Make sure the port is free
-lsof -i :4202
+lsof -i :5555
 
 # Start Prisma Studio
 make db-studio
-# Opens http://localhost:4202
+# Opens http://localhost:5555
 ```
 
-If port 4202 is busy, change `PRISMA_STUDIO_PORT` in `.env`.
+If port 5555 is busy, change `PRISMA_STUDIO_PORT` in `.env`.
 
 </details>
 
@@ -607,15 +605,15 @@ If port 4202 is busy, change `PRISMA_STUDIO_PORT` in `.env`.
 
 1. **42 API app settings** → Redirect URI must match exactly:
    ```
-   http://localhost:4200/api/auth/42/callback
+   http://localhost:3000/api/auth/42/callback
    ```
 2. **`.env` variables** — must match your 42 API app:
    ```env
    FORTYTWO_CLIENT_ID=u-s4t2...
    FORTYTWO_CLIENT_SECRET=s-s4t2...
-   FORTYTWO_CALLBACK_URL=http://localhost:4200/api/auth/42/callback
+   FORTYTWO_CALLBACK_URL=http://localhost:3000/api/auth/42/callback
    ```
-3. **Backend is running** — the callback URL points to port 4200 (backend)
+3. **Backend is running** — the callback URL points to port 3000 (backend)
 
 </details>
 

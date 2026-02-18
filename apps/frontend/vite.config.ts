@@ -30,6 +30,14 @@ export default defineConfig({
       '@shared': path.resolve(__dirname, '../../packages/shared/src'),
     },
   },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // Make variables/mixins available globally (optional)
+        additionalData: `@use "@/styles/abstracts" as *;\n`,
+      },
+    },
+  },
   server: {
     host: '0.0.0.0',
     port: 5173,

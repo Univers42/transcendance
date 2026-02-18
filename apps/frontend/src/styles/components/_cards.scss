@@ -1,0 +1,104 @@
+// ============================================
+// Transcendence — Card Components
+// ============================================
+
+@use '../abstracts' as *;
+
+.section-title {
+  font-size: 1.35rem;
+  font-weight: 600;
+  margin-bottom: 1.25rem;
+  color: $text-primary;
+}
+
+.services {
+  margin-top: 2rem;
+}
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 1rem;
+
+  @include sm {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  @include card;
+  padding: 1.25rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+  cursor: default;
+
+  &.active {
+    border-color: rgba($accent, 0.3);
+    background: linear-gradient(135deg, $bg-card 0%, rgba($accent, 0.06) 100%);
+  }
+}
+
+a.card {
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: none;
+  }
+}
+
+.card-header {
+  @include flex-between;
+  margin-bottom: 0.75rem;
+}
+
+.card-icon {
+  font-size: 1.5rem;
+}
+
+.card h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.card-url {
+  font-size: 0.8rem;
+  color: $text-muted;
+  font-family: $font-mono;
+  margin-bottom: 0.4rem;
+}
+
+.card-desc {
+  font-size: 0.85rem;
+  color: $text-secondary;
+}
+
+// ── Status Dots ────────────────────────────────────
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+
+  &.ok {
+    background: $success;
+    box-shadow: 0 0 8px rgba($success, 0.5);
+  }
+
+  &.error {
+    background: $error;
+    box-shadow: 0 0 8px rgba($error, 0.5);
+  }
+
+  &.loading {
+    background: $warning;
+    animation: blink 1.2s ease-in-out infinite;
+  }
+
+  &.neutral {
+    background: $neutral;
+    box-shadow: 0 0 6px rgba($neutral, 0.4);
+  }
+}

@@ -15,6 +15,11 @@
 SHELL := /bin/bash
 .SHELLFLAGS := -ec
 
+# ── Enable BuildKit (modern Docker builder) ──────────
+# Prevents "legacy builder is deprecated" warnings.
+export DOCKER_BUILDKIT := 1
+export COMPOSE_DOCKER_CLI_BUILD := 1
+
 .PHONY: help
 .DEFAULT_GOAL := all
 
@@ -163,7 +168,7 @@ check-env:
 
 # Checks for port conflicts and offers to kill them.
 check-ports:
-	@PORTS="$${BACKEND_PORT:-4200} $${FRONTEND_PORT:-4201} $${PRISMA_STUDIO_PORT:-4202} $${DB_PORT:-4210} $${REDIS_PORT:-4211} $${MAILPIT_UI_PORT:-4212}"; \
+	@PORTS="$${BACKEND_PORT:-3000} $${FRONTEND_PORT:-5173} $${PRISMA_STUDIO_PORT:-5555} $${DB_PORT:-5432} $${REDIS_PORT:-6379} $${MAILPIT_UI_PORT:-8025}"; \
 	BLOCKED=""; \
 	for p in $$PORTS; do \
 		if ss -tlnp 2>/dev/null | grep -q ":$$p "; then \
@@ -199,11 +204,11 @@ bootstrap: docker-up install compile db-migrate  ## Full bootstrap sequence
 	@echo -e "$(GREEN)║$(NC)  ✅  $(BOLD)Setup complete!$(NC)                                       $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)╠══════════════════════════════════════════════════════════╣$(NC)"
 	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Frontend  →  http://localhost:$${FRONTEND_PORT:-4201}                      $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Backend   →  http://localhost:$${BACKEND_PORT:-4200}                      $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  API Docs  →  http://localhost:$${BACKEND_PORT:-4200}/api/docs             $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Prisma    →  http://localhost:$${PRISMA_STUDIO_PORT:-4202}                      $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Mailpit   →  http://localhost:$${MAILPIT_UI_PORT:-4212}                      $(GREEN)║$(NC)"
+	@echo -e "$(GREEN)║$(NC)  Frontend  →  http://localhost:$${FRONTEND_PORT:-5173}                      $(GREEN)║$(NC)"
+	@echo -e "$(GREEN)║$(NC)  Backend   →  http://localhost:$${BACKEND_PORT:-3000}                      $(GREEN)║$(NC)"
+	@echo -e "$(GREEN)║$(NC)  API Docs  →  http://localhost:$${BACKEND_PORT:-3000}/api/docs             $(GREEN)║$(NC)"
+	@echo -e "$(GREEN)║$(NC)  Prisma    →  http://localhost:$${PRISMA_STUDIO_PORT:-5555}                      $(GREEN)║$(NC)"
+	@echo -e "$(GREEN)║$(NC)  Mailpit   →  http://localhost:$${MAILPIT_UI_PORT:-8025}                      $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)║$(NC)  Run $(BOLD)make dev$(NC) to start dev servers                        $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)║$(NC)  Run $(BOLD)make help$(NC) to see all commands                        $(GREEN)║$(NC)"
@@ -316,6 +321,26 @@ install-shared:
 	@docker exec $(CONTAINER) sh -c "cd $(SHARED) && pnpm install 2>/dev/null || true"
 
 # ============================================
+#  🎨 CSS / SASS
+# ============================================
+
+.PHONY: gen-css
+
+# ── make gen-css ──────────────────────────────────────
+# Usage:
+#   make gen-css           → compile SASS to CSS once
+#   make gen-css WATCH=1   → watch mode (auto-recompile)
+gen-css:  ## 🎨 Compile SASS → CSS (WATCH=1 for watch mode)
+	@if [ -n "$${WATCH:-}" ]; then \
+		$(call step,$(BLUE)ℹ,Starting SASS watcher...);\
+		docker exec -it $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec sass --watch src/styles:src/styles"; \
+	else \
+		$(call step,$(BLUE)ℹ,Compiling SASS...); \
+		docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec sass src/styles:src/styles --style=compressed --source-map"; \
+		$(call step,$(GREEN)✓,SASS compiled); \
+	fi
+
+# ============================================
 #  🔧 COMPILE & BUILD
 # ============================================
 
@@ -329,9 +354,6 @@ compile:  ## 🔧 Generate Prisma client + compile TypeScript
 	$(call step,$(GREEN)✓,Compilation done)
 
 build: build-backend build-frontend  ## 🏗️ Production build (all)
-
-audit:
-	docker-compose -f /home/dlesieur/Documents/studi/vite-gourmand/transcendance/docker-compose.dev.yml exec -T dev sh -c 'cd /app/apps/backend && pnpm audit 2>&1'
 
 build-backend:  ## 🏗️ Build backend
 	$(call step,$(BLUE)ℹ,Building backend...)
@@ -354,9 +376,9 @@ dev: docker-up  ## 🚀 Start all dev servers (hot reload)
 	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run start:dev" 2>/dev/null || true
 	@docker exec -d $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm run dev -- --host 0.0.0.0" 2>/dev/null || true
 	$(call step,$(GREEN)✓,Dev servers started)
-	@echo -e "  Frontend → http://localhost:$${FRONTEND_PORT:-4201}"
-	@echo -e "  Backend  → http://localhost:$${BACKEND_PORT:-4200}"
-	@echo -e "  Mailpit  → http://localhost:$${MAILPIT_UI_PORT:-4212}"
+	@echo -e "  Frontend → http://localhost:$${FRONTEND_PORT:-5173}"
+	@echo -e "  Backend  → http://localhost:$${BACKEND_PORT:-3000}"
+	@echo -e "  Mailpit  → http://localhost:$${MAILPIT_UI_PORT:-8025}"
 
 dev-backend:  ## 🚀 Start backend only
 	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run start:dev"
@@ -380,12 +402,12 @@ turn-on: docker-up  ## ⚡ Start dev servers + open browser
 	@sleep 2
 	$(call step,$(GREEN)✓,Dev servers started)
 	@echo ""
-	@echo -e "  Frontend → http://localhost:$${FRONTEND_PORT:-4201}"
-	@echo -e "  Backend  → http://localhost:$${BACKEND_PORT:-4200}"
-	@echo -e "  API Docs → http://localhost:$${BACKEND_PORT:-4200}/api/docs"
-	@echo -e "  Mailpit  → http://localhost:$${MAILPIT_UI_PORT:-4212}"
+	@echo -e "  Frontend → http://localhost:$${FRONTEND_PORT:-5173}"
+	@echo -e "  Backend  → http://localhost:$${BACKEND_PORT:-3000}"
+	@echo -e "  API Docs → http://localhost:$${BACKEND_PORT:-3000}/api/docs"
+	@echo -e "  Mailpit  → http://localhost:$${MAILPIT_UI_PORT:-8025}"
 	@echo ""
-	@URL="http://localhost:$${FRONTEND_PORT:-4201}"; \
+	@URL="http://localhost:$${FRONTEND_PORT:-5173}"; \
 	if command -v xdg-open >/dev/null 2>&1; then \
 		xdg-open "$$URL" 2>/dev/null & disown; \
 	elif command -v open >/dev/null 2>&1; then \
@@ -400,7 +422,7 @@ turn-off:  ## 🔌 Stop everything (servers + containers + ports)
 	@$(COMPOSE_DEV) down 2>/dev/null || { \
 		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
 	}
-	@PORTS="$${BACKEND_PORT:-4200} $${FRONTEND_PORT:-4201} $${PRISMA_STUDIO_PORT:-4202} $${DB_PORT:-4210} $${REDIS_PORT:-4211} $${MAILPIT_UI_PORT:-4212}"; \
+	@PORTS="$${BACKEND_PORT:-3000} $${FRONTEND_PORT:-5173} $${PRISMA_STUDIO_PORT:-5555} $${DB_PORT:-5432} $${REDIS_PORT:-6379} $${MAILPIT_UI_PORT:-8025}"; \
 	for p in $$PORTS; do \
 		PIDS=$$(ss -tlnp 2>/dev/null | grep ":$$p " | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | sort -u); \
 		if [ -n "$$PIDS" ]; then \
@@ -428,10 +450,10 @@ db-seed:  ## 🗄️ Seed database with sample data
 	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma db seed"
 	$(call step,$(GREEN)✓,Database seeded)
 
-db-studio:  ## 🗄️ Open Prisma Studio (port 4202)
+db-studio:  ## 🗄️ Open Prisma Studio (port 5555)
 	$(call step,$(BLUE)ℹ,Opening Prisma Studio...)
 	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma studio"
-	$(call step,$(GREEN)✓,Prisma Studio → http://localhost:4202)
+	$(call step,$(GREEN)✓,Prisma Studio → http://localhost:5555)
 
 db-reset:  ## 🗄️ Reset database (drop + migrate + seed)
 	@echo -e "$(RED)⚠  This will DROP the entire database$(NC)"
@@ -446,7 +468,7 @@ db-push:  ## 🗄️ Push schema changes (dev only, no migration)
 #  ✅ QUALITY
 # ============================================
 
-.PHONY: lint format typecheck
+.PHONY: lint format prettier typecheck audit
 
 lint:  ## ✅ Run ESLint on all workspaces
 	$(call step,$(BLUE)ℹ,Running linter...)
@@ -457,8 +479,67 @@ lint:  ## ✅ Run ESLint on all workspaces
 format:  ## ✅ Run Prettier on all workspaces
 	$(call step,$(BLUE)ℹ,Formatting code...)
 	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prettier --write 'src/**/*.ts' 2>/dev/null || true"
-	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec prettier --write 'src/**/*.{ts,tsx}' 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec prettier --write 'src/**/*.{ts,tsx,css}' 2>/dev/null || true"
 	$(call step,$(GREEN)✓,Formatting complete)
+
+# ── make prettier ─────────────────────────────────────
+# Usage:
+#   make prettier              → check all files (no changes)
+#   make prettier FIX=1        → auto-fix all files
+#   make prettier PATH=src/    → check specific path
+prettier:  ## ✅ Prettier — check / fix code formatting
+	$(call step,$(BLUE)ℹ,Running Prettier...)
+	@TARGET="$${PATH:-apps/ packages/}"; \
+	if [ -n "$${FIX:-}" ]; then \
+		docker exec $(CONTAINER) sh -c "pnpm -C $(BACKEND) exec prettier --write $$TARGET 2>/dev/null || true"; \
+		docker exec $(CONTAINER) sh -c "pnpm -C $(FRONTEND) exec prettier --write $$TARGET 2>/dev/null || true"; \
+		echo -e "  $(GREEN)✓$(NC)  Files formatted"; \
+	else \
+		docker exec $(CONTAINER) sh -c "pnpm -C $(BACKEND) exec prettier --check 'src/**/*.ts' 2>&1 || true"; \
+		docker exec $(CONTAINER) sh -c "pnpm -C $(FRONTEND) exec prettier --check 'src/**/*.{ts,tsx,css}' 2>&1 || true"; \
+		echo -e "  $(CYAN)ℹ$(NC)  Run $(BOLD)make prettier FIX=1$(NC) to auto-format"; \
+	fi
+
+# ── make audit ────────────────────────────────────────
+# Usage:
+#   make audit                          → audit backend (10 errors at a time)
+#   make audit PATH=apps/frontend       → audit a specific workspace
+#   make audit VERBOSE=1                → show full verbose output
+#   make audit PATH=apps/frontend VERBOSE=1
+AUDIT_PATH ?= apps/backend
+audit:  ## ✅ Security & lint audit (strict mode)
+	@_PATH="$${PATH:-$(AUDIT_PATH)}"; \
+	_VERBOSE="$${VERBOSE:-0}"; \
+	echo -e "  $(BLUE)ℹ$(NC)  Auditing: $(BOLD)$$_PATH$(NC)"; \
+	echo ""; \
+	echo -e "  $(BOLD)── ESLint (strict) ──$(NC)"; \
+	if [ "$$_VERBOSE" = "1" ]; then \
+		docker exec $(CONTAINER) sh -c "cd /app/$$_PATH && pnpm exec eslint . --max-warnings 0 2>&1" || true; \
+	else \
+		docker exec $(CONTAINER) sh -c "cd /app/$$_PATH && pnpm exec eslint . --max-warnings 0 -f compact 2>&1" \
+			| head -n 10 || true; \
+		echo -e "  $(DIM)… showing first 10 lines. Use $(BOLD)VERBOSE=1$(NC)$(DIM) for full output$(NC)"; \
+	fi; \
+	echo ""; \
+	echo -e "  $(BOLD)── Prettier (check) ──$(NC)"; \
+	if [ "$$_VERBOSE" = "1" ]; then \
+		docker exec $(CONTAINER) sh -c "cd /app/$$_PATH && pnpm exec prettier --check 'src/**/*.{ts,tsx,css}' 2>&1" || true; \
+	else \
+		docker exec $(CONTAINER) sh -c "cd /app/$$_PATH && pnpm exec prettier --check 'src/**/*.{ts,tsx,css}' 2>&1" \
+			| head -n 10 || true; \
+		echo -e "  $(DIM)… showing first 10 lines. Use $(BOLD)VERBOSE=1$(NC)$(DIM) for full output$(NC)"; \
+	fi; \
+	echo ""; \
+	echo -e "  $(BOLD)── pnpm audit (security) ──$(NC)"; \
+	if [ "$$_VERBOSE" = "1" ]; then \
+		docker exec $(CONTAINER) sh -c "cd /app/$$_PATH && pnpm audit 2>&1" || true; \
+	else \
+		docker exec $(CONTAINER) sh -c "cd /app/$$_PATH && pnpm audit 2>&1" \
+			| head -n 10 || true; \
+		echo -e "  $(DIM)… showing first 10 lines. Use $(BOLD)VERBOSE=1$(NC)$(DIM) for full output$(NC)"; \
+	fi; \
+	echo ""; \
+	echo -e "  $(CYAN)ℹ$(NC)  Full verbose: $(BOLD)make audit PATH=$$_PATH VERBOSE=1$(NC)"
 
 typecheck:  ## ✅ TypeScript type checking (no emit)
 	$(call step,$(BLUE)ℹ,Type checking...)
@@ -557,9 +638,19 @@ local-dev:  ## 💻 Start dev servers locally (requires Node.js)
 
 .PHONY: kill-ports
 
-kill-ports:  ## 🔌 Kill processes on all project ports
-	@echo -e "$(YELLOW)⚠$(NC)  Killing processes on project ports..."
-	@PORTS="$${BACKEND_PORT:-4200} $${FRONTEND_PORT:-4201} $${PRISMA_STUDIO_PORT:-4202} $${DB_PORT:-4210} $${REDIS_PORT:-4211} $${MAILPIT_UI_PORT:-4212}"; \
+kill-ports:  ## 🔌 Kill processes + containers on all project ports
+	@echo -e "$(YELLOW)⚠$(NC)  Freeing project ports..."
+	@# Stop any Docker containers using our ports (from other projects)
+	@for p in 3000 5173 5555; do \
+		CONTAINER=$$(docker ps -q --filter "publish=$$p" 2>/dev/null | head -1); \
+		if [ -n "$$CONTAINER" ]; then \
+			NAME=$$(docker inspect --format '{{.Name}}' $$CONTAINER 2>/dev/null | sed 's/^\///'); \
+			echo -e "  Stopping container $(BOLD)$$NAME$(NC) on port $$p"; \
+			docker stop $$CONTAINER >/dev/null 2>&1 || true; \
+		fi; \
+	done
+	@# Kill host processes on our ports
+	@PORTS="$${BACKEND_PORT:-3000} $${FRONTEND_PORT:-5173} $${PRISMA_STUDIO_PORT:-5555} $${DB_PORT:-5432} $${REDIS_PORT:-6379} $${MAILPIT_UI_PORT:-8025}"; \
 	for p in $$PORTS; do \
 		PIDS=$$(ss -tlnp 2>/dev/null | grep ":$$p " | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | sort -u); \
 		if [ -n "$$PIDS" ]; then \

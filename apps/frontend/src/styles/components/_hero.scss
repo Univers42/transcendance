@@ -1,0 +1,84 @@
+// ============================================
+// Transcendence — Hero Component
+// ============================================
+
+@use '../abstracts' as *;
+
+.hero {
+  text-align: center;
+  padding: 6rem 1rem 3rem;
+  position: relative;
+
+  @include sm {
+    padding: 4rem 1rem 2rem;
+  }
+}
+
+.hero-glow {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, $accent-glow 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.title {
+  position: relative;
+  z-index: 1;
+  font-size: 3.5rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  @include gradient-text(linear-gradient(135deg, #ffffff 0%, $accent-light 50%, #60a5fa 100%));
+
+  @include sm {
+    font-size: 2.2rem;
+  }
+}
+
+.title-icon {
+  display: inline-block;
+  margin-right: 0.25em;
+  -webkit-text-fill-color: initial;
+  background: none;
+  animation: pulse 2.5s ease-in-out infinite;
+}
+
+.subtitle {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.75rem;
+  font-size: 1.15rem;
+  color: $text-secondary;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+.badge-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 1.5rem;
+}
+
+.badge {
+  padding: 0.3em 0.9em;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: $accent-light;
+  border: 1px solid rgba($accent, 0.25);
+  border-radius: $radius-full;
+  background: rgba($accent, 0.08);
+  transition: all $transition-base;
+
+  &:hover {
+    background: rgba($accent, 0.15);
+    border-color: rgba($accent, 0.4);
+  }
+}

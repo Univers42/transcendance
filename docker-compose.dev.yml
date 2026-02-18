@@ -1,5 +1,5 @@
 # ============================================
-# ft_transcendence — Development Stack
+# Transcendence — Development Stack
 # ============================================
 # Full-stack development environment for IV.1 Web requirements:
 #
@@ -8,7 +8,7 @@
 #   mailpit  → Mailpit        (notification system — catches all outgoing email)
 #   dev      → Node.js 22     (NestJS backend + React frontend + Prisma)
 #
-# Ports default to 4200-range to AVOID conflicts with other projects.
+# Ports use standard defaults (3000, 5173, 5432, 6379, etc.).
 # Override in .env if needed.
 #
 # Compatibility: docker-compose v1.25+ / docker compose v2+
@@ -29,7 +29,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-transcendence}
       POSTGRES_DB: ${POSTGRES_DB:-transcendence}
     ports:
-      - "${DB_PORT:-4210}:5432"
+      - "${DB_PORT:-5432}:5432"
     volumes:
       - pg-data:/var/lib/postgresql/data
     healthcheck:
@@ -50,7 +50,7 @@ services:
     restart: unless-stopped
     command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
     ports:
-      - "${REDIS_PORT:-4211}:6379"
+      - "${REDIS_PORT:-6379}:6379"
     volumes:
       - redis-data:/data
     healthcheck:
@@ -63,14 +63,14 @@ services:
 
   # ── Mailpit (dev email catcher) ──────────────────────
   # Catches ALL outgoing emails from the notification system.
-  # Web UI: http://localhost:4212  (view emails in browser)
+  # Web UI: http://localhost:8025  (view emails in browser)
   # SMTP:   port 1025 (internal) — used by NestJS mailer.
   mailpit:
     image: axllent/mailpit:latest
     container_name: transcendence-mailpit
     restart: unless-stopped
     ports:
-      - "${MAILPIT_UI_PORT:-4212}:8025"
+      - "${MAILPIT_UI_PORT:-8025}:8025"
     environment:
       MP_SMTP_AUTH_ACCEPT_ANY: 1
       MP_SMTP_AUTH_ALLOW_INSECURE: 1
@@ -95,9 +95,9 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "${BACKEND_PORT:-4200}:3000"       # NestJS API + WebSocket
-      - "${FRONTEND_PORT:-4201}:5173"      # Vite dev server + HMR
-      - "${PRISMA_STUDIO_PORT:-4202}:5555" # Prisma Studio
+      - "${BACKEND_PORT:-3000}:3000"       # NestJS API + WebSocket
+      - "${FRONTEND_PORT:-5173}:5173"      # Vite dev server + HMR
+      - "${PRISMA_STUDIO_PORT:-5555}:5555" # Prisma Studio
     volumes:
       # ── Source Code (bind mounts — hot reload) ─────
       - ./apps:/app/apps
@@ -128,7 +128,7 @@ services:
       - JWT_EXPIRATION=${JWT_EXPIRATION:-7d}
       - OAUTH_42_CLIENT_ID=${OAUTH_42_CLIENT_ID:-}
       - OAUTH_42_CLIENT_SECRET=${OAUTH_42_CLIENT_SECRET:-}
-      - OAUTH_42_CALLBACK_URL=${OAUTH_42_CALLBACK_URL:-http://localhost:4200/api/auth/42/callback}
+      - OAUTH_42_CALLBACK_URL=${OAUTH_42_CALLBACK_URL:-http://localhost:3000/api/auth/42/callback}
       # ── Mail (notifications) ───────────────────────
       - SMTP_HOST=mailpit
       - SMTP_PORT=1025
@@ -143,7 +143,7 @@ services:
       # ── Ports (internal) ───────────────────────────
       - BACKEND_PORT=3000
       - FRONTEND_PORT=5173
-      - CORS_ORIGINS=http://localhost:${FRONTEND_PORT:-4201}
+      - CORS_ORIGINS=http://localhost:${FRONTEND_PORT:-5173}
     networks:
       - transcendence
 

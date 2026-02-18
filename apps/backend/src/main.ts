@@ -11,7 +11,7 @@
 // ============================================
 
 import { NestFactory } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { IoAdapter } from '@nestjs/platform-socket.io';
 import helmet from 'helmet';
@@ -29,7 +29,7 @@ async function bootstrap() {
 
   // ── CORS ──────────────────────────────────────────
   app.enableCors({
-    origin: process.env.CORS_ORIGINS?.split(',') ?? ['http://localhost:4201'],
+    origin: process.env.CORS_ORIGINS?.split(',') ?? ['http://localhost:5173'],
     credentials: true,
   });
 
@@ -75,9 +75,10 @@ async function bootstrap() {
   const port = process.env.BACKEND_PORT ?? 3000;
   await app.listen(port);
 
-  console.log(`🚀 Backend running on http://localhost:${port}`);
-  console.log(`📖 Swagger docs: http://localhost:${port}/api/docs`);
-  console.log(`🔌 WebSocket ready on ws://localhost:${port}`);
+  const logger = new Logger('Bootstrap');
+  logger.log(`🚀 Backend running on http://localhost:${port}`);
+  logger.log(`📖 Swagger docs: http://localhost:${port}/api/docs`);
+  logger.log(`🔌 WebSocket ready on ws://localhost:${port}`);
 }
 
-bootstrap();
+void bootstrap();

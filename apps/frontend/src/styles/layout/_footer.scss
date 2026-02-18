@@ -1,0 +1,17 @@
+// ============================================
+// Transcendence — Footer
+// ============================================
+
+@use '../abstracts' as *;
+
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid $border;
+  text-align: center;
+
+  p {
+    color: $text-muted;
+    font-size: 0.85rem;
+  }
+}

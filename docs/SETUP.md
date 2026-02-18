@@ -49,7 +49,7 @@ sequenceDiagram
     Make->>Containers: pnpm install (frontend)
     Make->>Containers: prisma generate
     Make->>Containers: prisma migrate deploy
-    Make-->>You: ✅ Ready! Frontend :4201, Backend :4200
+    Make-->>You: ✅ Ready! Frontend :5173, Backend :3000
 ```
 
 ### Daily Development
@@ -134,7 +134,7 @@ cd apps/frontend && pnpm run dev
 
 ```bash
 make db-studio
-# Open http://localhost:4202
+# Open http://localhost:5555
 ```
 
 ### psql (Command Line)
@@ -167,9 +167,9 @@ redis-cli -h localhost -p 6379
 
 ```bash
 # Find what's using the port
-lsof -i :4200    # Backend
-lsof -i :4201    # Frontend
-lsof -i :4210    # PostgreSQL
+lsof -i :3000    # Backend
+lsof -i :5173    # Frontend
+lsof -i :5432    # PostgreSQL
 
 # Kill it
 kill -9 <PID>

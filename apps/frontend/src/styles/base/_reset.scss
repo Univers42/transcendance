@@ -1,0 +1,59 @@
+// ============================================
+// Transcendence — Reset / Base Styles
+// ============================================
+
+@use '../abstracts' as *;
+
+// ── External Fonts ─────────────────────────────────
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  // CSS custom properties (for runtime theming)
+  --bg-primary: #{$bg-primary};
+  --bg-card: #{$bg-card};
+  --bg-card-hover: #{$bg-card-hover};
+  --text-primary: #{$text-primary};
+  --text-secondary: #{$text-secondary};
+  --text-muted: #{$text-muted};
+  --accent: #{$accent};
+  --accent-light: #{$accent-light};
+  --accent-glow: #{$accent-glow};
+  --success: #{$success};
+  --warning: #{$warning};
+  --error: #{$error};
+  --neutral: #{$neutral};
+  --border: #{$border};
+  --radius: #{$radius};
+
+  font-family: $font-family;
+  line-height: 1.6;
+  color: $text-primary;
+  background: $bg-primary;
+  @include font-smooth;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba($accent, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(#3b82f6, 0.07) 0%, transparent 50%),
+    $bg-primary;
+}
+
+a {
+  color: $accent-light;
+  text-decoration: none;
+  transition: color $transition-base;
+
+  &:hover {
+    color: #c4b5fd;
+  }
+}

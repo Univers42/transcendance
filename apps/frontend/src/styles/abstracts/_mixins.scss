@@ -1,0 +1,114 @@
+// ============================================
+// Transcendence — SASS Mixins
+// ============================================
+
+@use 'variables' as *;
+
+// ── Responsive Breakpoints ─────────────────────────
+@mixin sm {
+  @media (max-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin md {
+  @media (max-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin lg {
+  @media (max-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (max-width: $breakpoint-xl) {
+    @content;
+  }
+}
+
+// ── Min-width variants ─────────────────────────────
+@mixin sm-up {
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
+}
+
+@mixin md-up {
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
+}
+
+@mixin lg-up {
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
+}
+
+// ── Card Styles ────────────────────────────────────
+@mixin card {
+  background: $bg-card;
+  border: 1px solid $border;
+  border-radius: $radius;
+  transition: all $transition-slow;
+
+  &:hover {
+    background: $bg-card-hover;
+    border-color: rgba($accent, 0.2);
+    transform: translateY(-2px);
+    box-shadow: $shadow-lg;
+  }
+}
+
+// ── Status Dot ─────────────────────────────────────
+@mixin status-dot($color) {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: $color;
+  box-shadow: 0 0 8px rgba($color, 0.5);
+}
+
+// ── Gradient Text ──────────────────────────────────
+@mixin gradient-text($gradient) {
+  background: $gradient;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+// ── Flex Center ────────────────────────────────────
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+// ── Focus Ring ─────────────────────────────────────
+@mixin focus-ring {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba($accent, 0.3);
+}
+
+// ── Truncate Text ──────────────────────────────────
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// ── Font Smoothing ─────────────────────────────────
+@mixin font-smooth {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

@@ -10,7 +10,7 @@
 #   - redis:    Redis 7 (cache + pub/sub)
 #
 # Compatibility: docker-compose v1.25+ / docker compose v2+
-# Port scheme:   4200-range (avoids common dev port conflicts)
+# Port scheme:   standard (3000, 5173, etc.)
 # ============================================
 
 version: '3.8'
@@ -69,7 +69,7 @@ services:
       redis:
         condition: service_healthy
     ports:
-      - "${BACKEND_PORT:-4200}:3000"
+      - "${BACKEND_PORT:-3000}:3000"
     environment:
       - NODE_ENV=production
       - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
@@ -97,7 +97,7 @@ services:
     depends_on:
       - backend
     ports:
-      - "${FRONTEND_PORT:-4201}:80"
+      - "${FRONTEND_PORT:-5173}:80"
     networks:
       - transcendence
 
