@@ -1,0 +1,122 @@
+# ================================================================
+# PR Review Watchdog
+# ================================================================
+# Posts a single comment on any PR that has been open for more than
+# 8 hours with no reviews. Comment includes the full team mention.
+# Only posts once per PR — no spam.
+# Also applies the "needs-review" label so PRs are visible on the board.
+#
+# Runs three times on weekdays (morning, afternoon, end of day).
+# Use workflow_dispatch to trigger manually.
+# ================================================================
+
+name: PR Review Watchdog
+
+on:
+  schedule:
+    - cron: "0 9,13,16 * * 1-5"   # 09:00 / 13:00 / 16:00 UTC on weekdays
+  workflow_dispatch:
+
+permissions:
+  pull-requests: write
+  issues: write
+
+env:
+  TEAM_MENTIONS: "@LESdylan @login2 @login3 @login4 @login5"
+  THRESHOLD_HOURS: "8"
+
+jobs:
+  watchdog:
+    name: Check unreviewed PRs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Find PRs and notify
+        uses: actions/github-script@v7
+        env:
+          PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+        with:
+          script: |
+            const thresholdMs = parseInt(process.env.THRESHOLD_HOURS, 10) * 60 * 60 * 1000;
+            const now         = Date.now();
+            const team        = process.env.TEAM_MENTIONS;
+
+            // Ensure the "needs-review" label exists
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                name:  'needs-review',
+                color: 'd93f0b',
+                description: 'PR is waiting for a reviewer',
+              });
+            } catch (_) { /* already exists — fine */ }
+
+            const { data: openPRs } = await github.rest.pulls.list({
+              owner:    context.repo.owner,
+              repo:     context.repo.repo,
+              state:    'open',
+              per_page: 50,
+            });
+
+            for (const pr of openPRs) {
+              const age = now - new Date(pr.created_at).getTime();
+
+              // Skip PRs that are too young
+              if (age < thresholdMs) {
+                core.info(`PR #${pr.number} is ${Math.round(age / 3600000)}h old — skipping.`);
+                continue;
+              }
+
+              // Check if any review has been submitted
+              const { data: reviews } = await github.rest.pulls.listReviews({
+                owner:       context.repo.owner,
+                repo:        context.repo.repo,
+                pull_number: pr.number,
+              });
+              if (reviews.length > 0) {
+                core.info(`PR #${pr.number} already has ${reviews.length} review(s) — skipping.`);
+                continue;
+              }
+
+              // Check if this bot already posted a watchdog comment
+              const { data: comments } = await github.rest.issues.listComments({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: pr.number,
+                per_page:     50,
+              });
+              const alreadyNotified = comments.some(c =>
+                c.body.includes('<!-- pr-watchdog -->') &&
+                c.user.type === 'Bot'
+              );
+              if (alreadyNotified) {
+                core.info(`PR #${pr.number} already notified — skipping.`);
+                continue;
+              }
+
+              // Post the notification comment
+              const hours = Math.round(age / 3600000);
+              await github.rest.issues.createComment({
+                owner:        context.repo.owner,
+                repo:         context.repo.repo,
+                issue_number: pr.number,
+                body: [
+                  '<!-- pr-watchdog -->',
+                  `**Review needed.** This PR has been open for ${hours} hours with no reviews.`,
+                  '',
+                  `${team} — one of you, please take this. The 24-hour review window in [CODE_OF_CONDUCT.md](../blob/main/CODE_OF_CONDUCT.md) is there for a reason.`,
+                ].join('\n'),
+              });
+
+              // Apply the label
+              try {
+                await github.rest.issues.addLabels({
+                  owner:        context.repo.owner,
+                  repo:         context.repo.repo,
+                  issue_number: pr.number,
+                  labels:       ['needs-review'],
+                });
+              } catch (_) { /* label may not exist — non-fatal */ }
+
+              core.info(`Notified on PR #${pr.number} (${hours}h old, no reviews).`);
+            }

@@ -1,0 +1,211 @@
+# ================================================================
+# Daily Standup Bot
+# ================================================================
+# Creates one GitHub Issue per team member on their scheduled days.
+# Issues are assignee-targeted, labeled, and (optionally) added to
+# a GitHub Project v2.
+#
+# SETUP — required:
+#   • Update the matrix.member array below with real GitHub logins
+#     and each person's working schedule.
+#     working_days: comma-separated ISO weekday numbers
+#     0=Sun  1=Mon  2=Tue  3=Wed  4=Thu  5=Fri  6=Sat
+#
+# SETUP — optional (GitHub Project integration):
+#   • Settings > Variables > Actions > New repository variable
+#     Name: PROJECT_NUMBER   Value: the number in your project URL
+#   • The default GITHUB_TOKEN works for user-owned projects.
+#     For org projects you may need a PAT with "project" scope
+#     stored as secrets.PROJECT_PAT.
+#
+# Required labels (create once via Settings > Labels):
+#   • standup        color #c5f015   "Daily standup issue"
+#
+# Timezone:
+#   08:00 UTC = 09:00 CET (winter) / 10:00 CEST (summer).
+#   Adjust the cron line if your team is in a different timezone.
+# ================================================================
+
+name: Daily Standup Bot
+
+on:
+  schedule:
+    - cron: "0 8 * * 1-6"   # Mon–Sat at 08:00 UTC
+  workflow_dispatch:
+    inputs:
+      target_login:
+        description: "Create standup for one login only (blank = all)"
+        required: false
+        default: ""
+      override_day:
+        description: "Force day of week: 0=Sun 1=Mon … 6=Sat (blank = today)"
+        required: false
+        default: ""
+
+permissions:
+  issues: write
+  contents: read
+
+env:
+  # Update when real logins are confirmed
+  TEAM_MENTIONS: "@LESdylan @login2 @login3 @login4 @login5"
+
+jobs:
+  standup:
+    name: "${{ matrix.member.login }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        member:
+          # ── Replace login2 … login5 with real GitHub usernames ──────
+          - login: "LESdylan"
+            name: "Dylan"
+            working_days: "1,2,3,4,5"    # Mon–Fri
+          - login: "login2"
+            name: "Teammate 2"
+            working_days: "1,2,3,4,5"    # Mon–Fri
+          - login: "login3"
+            name: "Teammate 3"
+            working_days: "1,2,3,4,5,6"  # Mon–Sat
+          - login: "login4"
+            name: "Teammate 4"
+            working_days: "1,2,3,4,5"    # Mon–Fri
+          - login: "login5"
+            name: "Teammate 5"
+            working_days: "1,2,3,4,5"    # Mon–Fri
+
+    steps:
+      - name: Create standup issue
+        uses: actions/github-script@v7
+        env:
+          MEMBER_LOGIN:   ${{ matrix.member.login }}
+          MEMBER_NAME:    ${{ matrix.member.name }}
+          WORKING_DAYS:   ${{ matrix.member.working_days }}
+          TARGET_LOGIN:   ${{ inputs.target_login }}
+          OVERRIDE_DAY:   ${{ inputs.override_day }}
+          PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
+        with:
+          script: |
+            const login       = process.env.MEMBER_LOGIN;
+            const name        = process.env.MEMBER_NAME;
+            const workingDays = process.env.WORKING_DAYS.split(',').map(Number);
+            const target      = process.env.TARGET_LOGIN;
+            const override    = process.env.OVERRIDE_DAY;
+
+            // Targeted dispatch — skip everyone except the requested login
+            if (target && target !== login) {
+              core.info(`Skipping ${login} — this run targets ${target}.`);
+              return;
+            }
+
+            // Day-of-week check
+            const now  = new Date();
+            const day  = override !== '' ? parseInt(override, 10) : now.getDay();
+            if (!workingDays.includes(day)) {
+              const names = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+              core.info(`Skipping ${login} — ${names[day]} is not in their schedule (${process.env.WORKING_DAYS}).`);
+              return;
+            }
+
+            const date    = now.toISOString().split('T')[0];
+            const dayName = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'][day];
+            const team    = process.env.TEAM_MENTIONS;
+
+            // Ensure the "standup" label exists (no-op if it already does)
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                name:  'standup',
+                color: 'c5f015',
+                description: 'Daily standup issue',
+              });
+            } catch (_) { /* 422 = already exists — fine */ }
+
+            const body = [
+              `## Standup — ${name} · ${date} · ${dayName}`,
+              '',
+              '> Fill this in before your first commit of the day. One line per item is enough.',
+              '> Close the issue when done — it keeps the board clean.',
+              '',
+              '### Done since last standup',
+              '',
+              '-\u0020',
+              '',
+              "### Today's plan",
+              '',
+              '-\u0020',
+              '',
+              '### Blockers',
+              '',
+              `<!-- Need help? Tag someone: ${team} -->`,
+              '',
+              '- None',
+              '',
+              '### Time on project today',
+              '',
+              '<!-- Helps the PM track workload. Approximate is fine. -->',
+              '',
+              '- [ ] ~1 hour',
+              '- [ ] ~2 hours',
+              '- [ ] 3 hours or more',
+              '- [ ] Unavailable today',
+              '',
+              '---',
+              '',
+              '*Created by the standup bot · [daily-log.yml](.github/workflows/daily-log.yml)*',
+            ].join('\n');
+
+            const { data: issue } = await github.rest.issues.create({
+              owner:     context.repo.owner,
+              repo:      context.repo.repo,
+              title:     `[Standup] ${name} · ${date}`,
+              body,
+              labels:    ['standup'],
+              assignees: [login],
+            });
+
+            core.info(`Created issue #${issue.number}: ${issue.html_url}`);
+
+            // ── GitHub Projects v2 integration (optional) ──────────────
+            const projectNumber = parseInt(process.env.PROJECT_NUMBER || '0', 10);
+            if (!projectNumber) {
+              core.info('PROJECT_NUMBER not set — skipping project integration.');
+              return;
+            }
+
+            // Resolve project node ID (try user project, then org project)
+            let projectId;
+            for (const entity of ['user', 'organization']) {
+              try {
+                const res = await github.graphql(`
+                  query($owner: String!, $num: Int!) {
+                    ${entity}(login: $owner) {
+                      projectV2(number: $num) { id }
+                    }
+                  }
+                `, { owner: context.repo.owner, num: projectNumber });
+                projectId = res?.[entity]?.projectV2?.id;
+                if (projectId) break;
+              } catch (_) { /* try next entity type */ }
+            }
+
+            if (!projectId) {
+              core.warning(`Project #${projectNumber} not found. Check PROJECT_NUMBER and token permissions.`);
+              return;
+            }
+
+            try {
+              await github.graphql(`
+                mutation($projectId: ID!, $contentId: ID!) {
+                  addProjectV2ItemById(input: { projectId: $projectId, contentId: $contentId }) {
+                    item { id }
+                  }
+                }
+              `, { projectId, contentId: issue.node_id });
+              core.info(`Added issue #${issue.number} to project #${projectNumber}.`);
+            } catch (err) {
+              core.warning(`Project mutation failed: ${err.message}`);
+              core.warning('Ensure the token has "projects: write" permission. See workflow header comments.');
+            }

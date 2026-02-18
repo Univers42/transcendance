@@ -1,0 +1,177 @@
+# ================================================================
+# Weekly Summary
+# ================================================================
+# Runs every Monday at 07:45 UTC — 15 minutes before standup.
+# Creates a summary issue with:
+#   • PRs merged in the past 7 days
+#   • PRs still open and waiting for review
+#   • Open issues (non-standup)
+#   • A retrospective section to fill in at standup
+#
+# The issue is assigned to the Project Manager (update PM_LOGIN below).
+# Also creates a "weekly-summary" label on first run.
+#
+# Required labels:
+#   • weekly-summary   color #0075ca   "Weekly team summary"
+#
+# To trigger manually: Actions > Weekly Summary > Run workflow
+# ================================================================
+
+name: Weekly Summary
+
+on:
+  schedule:
+    - cron: "45 7 * * 1"   # Monday at 07:45 UTC
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+  pull-requests: read
+
+env:
+  # Update to the Project Manager's real GitHub login
+  PM_LOGIN: "login2"
+
+jobs:
+  weekly-summary:
+    name: Create weekly summary issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate and post summary
+        uses: actions/github-script@v7
+        env:
+          PM_LOGIN: ${{ env.PM_LOGIN }}
+        with:
+          script: |
+            const now       = new Date();
+            const weekAgo   = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+            const todayStr  = now.toISOString().split('T')[0];
+            const weekStart = weekAgo.toISOString().split('T')[0];
+            const pm        = process.env.PM_LOGIN;
+
+            // Ensure the "weekly-summary" label exists
+            try {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo:  context.repo.repo,
+                name:  'weekly-summary',
+                color: '0075ca',
+                description: 'Weekly team summary issue',
+              });
+            } catch (_) { /* already exists — fine */ }
+
+            // ── Merged PRs last 7 days ──────────────────────────────────
+            const { data: closedPRs } = await github.rest.pulls.list({
+              owner:     context.repo.owner,
+              repo:      context.repo.repo,
+              state:     'closed',
+              per_page:  50,
+              sort:      'updated',
+              direction: 'desc',
+            });
+            const mergedLastWeek = closedPRs.filter(pr =>
+              pr.merged_at && new Date(pr.merged_at) >= weekAgo
+            );
+
+            // ── Open PRs ────────────────────────────────────────────────
+            const { data: openPRs } = await github.rest.pulls.list({
+              owner:    context.repo.owner,
+              repo:     context.repo.repo,
+              state:    'open',
+              per_page: 20,
+            });
+
+            // ── Open issues (exclude PRs and standup/weekly labels) ────
+            const { data: allIssues } = await github.rest.issues.listForRepo({
+              owner:    context.repo.owner,
+              repo:     context.repo.repo,
+              state:    'open',
+              per_page: 50,
+            });
+            const openIssues = allIssues.filter(i =>
+              !i.pull_request &&
+              !i.labels.some(l => ['standup', 'weekly-summary'].includes(l.name))
+            );
+
+            // ── Build body sections ─────────────────────────────────────
+            const mergedLines = mergedLastWeek.length > 0
+              ? mergedLastWeek
+                  .map(pr => `- [#${pr.number}](${pr.html_url}) ${pr.title} — @${pr.user.login}`)
+                  .join('\n')
+              : '- Nothing merged last week.';
+
+            const openPRLines = openPRs.length > 0
+              ? openPRs
+                  .map(pr => {
+                    const days = Math.round((now - new Date(pr.created_at)) / (24 * 60 * 60 * 1000));
+                    const age  = days === 1 ? '1 day' : `${days} days`;
+                    const noReview = pr.requested_reviewers.length === 0 ? ' · **no reviewer assigned**' : '';
+                    return `- [#${pr.number}](${pr.html_url}) ${pr.title} — @${pr.user.login} (${age} open${noReview})`;
+                  })
+                  .join('\n')
+              : '- No open PRs.';
+
+            const issueLines = openIssues.length > 0
+              ? openIssues
+                  .slice(0, 15)
+                  .map(i => `- [#${i.number}](${i.html_url}) ${i.title}`)
+                  .join('\n')
+              : '- No open issues.';
+
+            const body = [
+              `## Weekly Summary — ${todayStr}`,
+              '',
+              `Week of ${weekStart} → ${todayStr}`,
+              '',
+              '---',
+              '',
+              `### Merged last week (${mergedLastWeek.length})`,
+              '',
+              mergedLines,
+              '',
+              '---',
+              '',
+              `### Open PRs (${openPRs.length})`,
+              '',
+              openPRLines,
+              '',
+              '---',
+              '',
+              `### Open issues (${openIssues.length})`,
+              '',
+              issueLines,
+              '',
+              '---',
+              '',
+              '### Retrospective',
+              '',
+              '> Fill this in at Monday standup. Keep it short — one bullet each is enough.',
+              '',
+              '**What went well last week?**',
+              '',
+              '-\u0020',
+              '',
+              '**What slowed us down?**',
+              '',
+              '-\u0020',
+              '',
+              '**One thing to improve this week**',
+              '',
+              '-\u0020',
+              '',
+              '---',
+              '',
+              '*Auto-generated by weekly-summary.yml · Close after Monday standup*',
+            ].join('\n');
+
+            const { data: issue } = await github.rest.issues.create({
+              owner:     context.repo.owner,
+              repo:      context.repo.repo,
+              title:     `[Weekly] ${todayStr}`,
+              body,
+              labels:    ['weekly-summary'],
+              assignees: [pm],
+            });
+
+            core.info(`Created weekly summary issue #${issue.number}: ${issue.html_url}`);

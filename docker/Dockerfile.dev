@@ -45,19 +45,19 @@ WORKDIR /app
 # phantom dependencies, version leaks and tree conflicts.
 ENV PNPM_HOME="/pnpm" \
     PATH="/pnpm:$PATH"
-RUN corepack enable && corepack prepare pnpm@latest --activate
 
 # ── Global Tools (pinned versions = reproducible) ────
 # Installed once via pnpm, cached in image layer.
-RUN pnpm add -g \
-    typescript@~5.7 \
-    @nestjs/cli@~11 \
-    prisma@~7 \
-    concurrently@~9 \
-    && pnpm approve-builds -g
-
-# ── Upload directory (with correct permissions) ──────
-RUN mkdir -p /app/uploads && chmod 777 /app/uploads
+RUN corepack enable \
+    && corepack prepare pnpm@latest --activate \
+    && pnpm add -g \
+        typescript@~5.7 \
+        @nestjs/cli@~11 \
+        prisma@~7 \
+        concurrently@~9 \
+    && pnpm approve-builds -g \
+    && mkdir -p /app/uploads \
+    && chmod 777 /app/uploads
 
 # ── Healthcheck (lightweight — no curl) ──────────────
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \

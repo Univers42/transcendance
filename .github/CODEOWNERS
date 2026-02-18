@@ -1,0 +1,42 @@
+# ================================================================
+# CODEOWNERS
+# ================================================================
+# Defines who is automatically requested for review when a PR
+# changes files in specific paths.
+#
+# Rules are evaluated top-to-bottom. The last matching rule wins.
+# Owners are @github-username.
+#
+# Update login2 … login5 with real GitHub usernames.
+# ================================================================
+
+# Default — every file requires review from the Tech Lead and LESdylan
+*                               @LESdylan @login3
+
+# Backend — NestJS, Prisma, API
+apps/backend/                   @LESdylan @login2 @login3
+
+# Frontend — React, Vite, SCSS
+apps/frontend/                  @login4 @LESdylan
+
+# Shared types package
+packages/                       @login3 @LESdylan
+
+# Database schema — high-risk changes require extra eyes
+apps/backend/prisma/            @login5 @login3 @LESdylan
+
+# Infrastructure — Docker, nginx, Compose
+docker/                         @login5 @login3
+docker-compose*.yml             @login5 @login3
+Makefile                        @login5 @login3
+
+# CI/CD — any change here affects every developer
+.github/                        @login3 @LESdylan
+.github/workflows/              @login3 @LESdylan
+
+# Documentation — anyone can review, PM is default assignee
+*.md                            @login2
+docs/                           @login2
+
+# Environment config — sensitive, restricted
+.env.example                    @login3 @LESdylan
