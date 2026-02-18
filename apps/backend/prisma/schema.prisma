@@ -1,26 +1,25 @@
 // ============================================
-// Prisma Schema — ft_transcendence
+// Prisma Schema — Transcendence
 // ============================================
-// This schema covers ALL IV.1 Web requirements:
-//   • Users, profiles, friends      (Major: user interaction)
-//   • Chat messages                 (Major: chat system)
-//   • Game history                  (Core: Pong game)
-//   • Notifications                 (Minor: notification system)
-//   • File uploads                  (Minor: file management)
-//   • API keys                      (Major: public API)
+// Models:
+//   • Users, profiles, friends      (user interaction)
+//   • Chat messages                 (chat system)
+//   • Notifications                 (notification system)
+//   • File uploads                  (file management)
+//   • API keys                      (public API)
 //
 // Run after editing:
-//   npx prisma migrate dev --name <description>
-//   npx prisma generate
+//   pnpm exec prisma migrate dev --name <description>
+//   pnpm exec prisma generate
 // ============================================
 
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 // ── Users & Authentication ──────────────────────────
@@ -49,8 +48,6 @@ model User {
   notifications    Notification[]
   files            FileUpload[]
   apiKeys          ApiKey[]
-  gamesAsPlayer1   Game[]          @relation("Player1")
-  gamesAsPlayer2   Game[]          @relation("Player2")
   channelMembers   ChannelMember[]
 
   @@map("users")
@@ -59,7 +56,7 @@ model User {
 enum UserStatus {
   ONLINE
   OFFLINE
-  IN_GAME
+  BUSY
   AWAY
 }
 
@@ -163,34 +160,6 @@ model ChatMessage {
   @@map("chat_messages")
 }
 
-// ── Game (Pong) ─────────────────────────────────────
-
-model Game {
-  id          String     @id @default(uuid())
-  player1Id   String
-  player2Id   String
-  player1Score Int       @default(0)
-  player2Score Int       @default(0)
-  status      GameStatus @default(WAITING)
-  winnerId    String?
-  player1     User       @relation("Player1", fields: [player1Id], references: [id])
-  player2     User       @relation("Player2", fields: [player2Id], references: [id])
-  startedAt   DateTime?
-  finishedAt  DateTime?
-  createdAt   DateTime   @default(now())
-
-  @@index([player1Id])
-  @@index([player2Id])
-  @@map("games")
-}
-
-enum GameStatus {
-  WAITING
-  IN_PROGRESS
-  FINISHED
-  CANCELLED
-}
-
 // ── Notifications ───────────────────────────────────
 
 model Notification {
@@ -211,8 +180,6 @@ model Notification {
 enum NotificationType {
   FRIEND_REQUEST
   FRIEND_ACCEPTED
-  GAME_INVITE
-  GAME_RESULT
   CHAT_MESSAGE
   SYSTEM
   FILE_SHARED

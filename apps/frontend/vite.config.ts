@@ -11,9 +11,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'robots.txt'],
       manifest: {
-        name: 'ft_transcendence',
+        name: 'Transcendence',
         short_name: 'Transcendence',
-        description: 'Real-time multiplayer Pong game',
+        description: 'Full-Stack Platform — Built with TypeScript',
         theme_color: '#1a1a2e',
         background_color: '#1a1a2e',
         display: 'standalone',

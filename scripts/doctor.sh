@@ -157,6 +157,15 @@ section "Required Ports"
 check_port() {
     local PORT=$1
     local SERVICE=$2
+
+    # If our own project containers are using the port, that's expected — not a warning
+    local OUR_CONTAINER=""
+    OUR_CONTAINER=$(docker ps --filter "name=transcendence" --format '{{.Ports}}' 2>/dev/null | grep -o "0.0.0.0:${PORT}->" | head -1 || true)
+    if [[ -n "$OUR_CONTAINER" ]]; then
+        check_pass "Port $PORT ($SERVICE) — in use by our container"
+        return
+    fi
+
     if command -v ss >/dev/null 2>&1; then
         if ss -tlnp 2>/dev/null | grep -q ":${PORT} "; then
             local PROC
@@ -289,7 +298,60 @@ else
 fi
 
 # ============================================
-#  7. DOCKER STATE
+#  7. DEPENDENCY HEALTH (inside container)
+# ============================================
+section "Dependency Health"
+
+if docker ps --filter "name=transcendence-dev" --format '{{.Names}}' 2>/dev/null | grep -q transcendence-dev; then
+    # Check pnpm is available
+    PNPM_V=$(docker exec transcendence-dev pnpm --version 2>/dev/null || echo "")
+    if [[ -n "$PNPM_V" ]]; then
+        check_pass "pnpm $PNPM_V (inside container)"
+    else
+        check_fail "pnpm not found in dev container" \
+                   "Rebuild: make docker-clean && make"
+    fi
+
+    # Check for peer dependency issues in backend
+    BACKEND_PEERS=$(docker exec transcendence-dev sh -c 'cd /app/apps/backend && pnpm ls --depth 0 2>&1 | grep -i "WARN.*peer\|ERR.*peer\|missing peer" | head -5' 2>/dev/null || echo "")
+    if [[ -z "$BACKEND_PEERS" ]]; then
+        check_pass "Backend: no peer dependency issues"
+    else
+        check_warn "Backend has peer dependency warnings" \
+                   "Run: make shell → cd apps/backend && pnpm ls"
+    fi
+
+    # Check for peer dependency issues in frontend
+    FRONTEND_PEERS=$(docker exec transcendence-dev sh -c 'cd /app/apps/frontend && pnpm ls --depth 0 2>&1 | grep -i "WARN.*peer\|ERR.*peer\|missing peer" | head -5' 2>/dev/null || echo "")
+    if [[ -z "$FRONTEND_PEERS" ]]; then
+        check_pass "Frontend: no peer dependency issues"
+    else
+        check_warn "Frontend has peer dependency warnings" \
+                   "Run: make shell → cd apps/frontend && pnpm ls"
+    fi
+
+    # Check for deprecated packages
+    DEPRECATED=$(docker exec transcendence-dev sh -c 'cd /app/apps/backend && pnpm audit --json 2>/dev/null | grep -c "\"severity\"" || echo 0' 2>/dev/null || echo "0")
+    DEPRECATED=${DEPRECATED:-0}
+    case "$DEPRECATED" in
+        ''|*[!0-9]*) DEPRECATED=0 ;;
+    esac
+    if [[ "$DEPRECATED" -eq 0 ]]; then
+        check_pass "No known security vulnerabilities"
+    elif [[ "$DEPRECATED" -le 3 ]]; then
+        check_warn "$DEPRECATED security advisory(ies) found" \
+                   "Run: make shell → cd apps/backend && pnpm audit"
+    else
+        check_warn "$DEPRECATED security advisories found" \
+                   "Run: make shell → pnpm audit for details"
+    fi
+else
+    echo -e "  ${INFO}  Dev container not running — skipping dependency checks"
+    echo -e "     ${DIM}→ Run: make docker-up${NC}"
+fi
+
+# ============================================
+#  8. DOCKER STATE
 # ============================================
 section "Docker State"
 

@@ -105,13 +105,14 @@ services:
       # ── Config files (read-only in container) ──────
       - ./Makefile:/app/Makefile:ro
       - ./.env:/app/.env:ro
+      - ./.npmrc:/app/.npmrc:ro
       # ── Node modules (named volumes = fast) ────────
       # Prevents host↔container sync overhead on Linux/Mac.
       - backend-modules:/app/apps/backend/node_modules
       - frontend-modules:/app/apps/frontend/node_modules
       - shared-modules:/app/packages/shared/node_modules
       # ── Caches (persist across rebuilds) ───────────
-      - npm-cache:/root/.npm
+      - pnpm-store:/root/.local/share/pnpm/store
       - prisma-engines:/root/.cache/prisma
       # ── File uploads (persist across restarts) ─────
       - uploads:/app/uploads
@@ -155,7 +156,7 @@ volumes:
   backend-modules:
   frontend-modules:
   shared-modules:
-  npm-cache:
+  pnpm-store:
   prisma-engines:
   uploads:
 

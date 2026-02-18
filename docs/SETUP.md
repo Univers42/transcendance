@@ -45,11 +45,11 @@ sequenceDiagram
     Docker->>Containers: Start PostgreSQL 16
     Docker->>Containers: Start Redis 7
     Docker->>Containers: Build dev container (Alpine + Node 22)
-    Make->>Containers: npm install (backend)
-    Make->>Containers: npm install (frontend)
+    Make->>Containers: pnpm install (backend)
+    Make->>Containers: pnpm install (frontend)
     Make->>Containers: prisma generate
     Make->>Containers: prisma migrate deploy
-    Make-->>You: ✅ Ready! Frontend :5173, Backend :3000
+    Make-->>You: ✅ Ready! Frontend :4201, Backend :4200
 ```
 
 ### Daily Development
@@ -72,20 +72,20 @@ make shell              # Get inside the container, then:
 
 # Backend
 cd apps/backend
-npm run start:dev       # Start with hot reload
-npx prisma studio       # Visual database browser
-npx prisma migrate dev  # Create a new migration
+pnpm run start:dev       # Start with hot reload
+pnpm exec prisma studio  # Visual database browser
+pnpm exec prisma migrate dev  # Create a new migration
 
 # Frontend
 cd apps/frontend
-npm run dev             # Start with HMR
+pnpm run dev             # Start with HMR
 ```
 
 ---
 
 ## Option B: Local Development
 
-**Requirements**: Node.js ≥ 22, npm ≥ 10, PostgreSQL 16, Redis 7
+**Requirements**: Node.js ≥ 22, pnpm ≥ 10, PostgreSQL 16, Redis 7
 
 ```bash
 # 1. Clone
@@ -98,21 +98,21 @@ cp .env.example .env
 # Edit REDIS_URL to point to your local Redis
 
 # 3. Install dependencies
-cd apps/backend && npm install
-cd ../frontend && npm install
-cd ../../packages/shared && npm install
+cd apps/backend && pnpm install
+cd ../frontend && pnpm install
+cd ../../packages/shared && pnpm install
 
 # 4. Database setup
 cd apps/backend
-npx prisma generate --schema=prisma/schema.prisma
-npx prisma migrate deploy --schema=prisma/schema.prisma
+pnpm exec prisma generate --schema=prisma/schema.prisma
+pnpm exec prisma migrate deploy --schema=prisma/schema.prisma
 
 # 5. Start servers (in separate terminals)
 # Terminal 1: Backend
-cd apps/backend && npm run start:dev
+cd apps/backend && pnpm run start:dev
 
 # Terminal 2: Frontend
-cd apps/frontend && npm run dev
+cd apps/frontend && pnpm run dev
 ```
 
 ---
@@ -134,7 +134,7 @@ cd apps/frontend && npm run dev
 
 ```bash
 make db-studio
-# Open http://localhost:5555
+# Open http://localhost:4202
 ```
 
 ### psql (Command Line)
@@ -167,9 +167,9 @@ redis-cli -h localhost -p 6379
 
 ```bash
 # Find what's using the port
-lsof -i :3000    # Backend
-lsof -i :5173    # Frontend
-lsof -i :5432    # PostgreSQL
+lsof -i :4200    # Backend
+lsof -i :4201    # Frontend
+lsof -i :4210    # PostgreSQL
 
 # Kill it
 kill -9 <PID>
@@ -204,7 +204,7 @@ make db-reset
 # Or manually:
 make shell
 cd apps/backend
-npx prisma migrate reset --force --schema=prisma/schema.prisma
+pnpm exec prisma migrate reset --force --schema=prisma/schema.prisma
 ```
 
 ### "ECONNREFUSED" to database

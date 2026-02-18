@@ -1,5 +1,5 @@
 // ============================================
-// ft_transcendence — NestJS Entry Point
+// Transcendence — NestJS Entry Point
 // ============================================
 // Boots the NestJS application with:
 //   • Swagger API documentation
@@ -52,16 +52,16 @@ async function bootstrap() {
   // ── Swagger API Documentation ─────────────────────
   if (process.env.NODE_ENV !== 'production') {
     const config = new DocumentBuilder()
-      .setTitle('ft_transcendence API')
+      .setTitle('Transcendence API')
       .setDescription(
-        'Public API — Chat, Profiles, Friends, Game, Notifications, Files',
+        'Public API — Chat, Profiles, Friends, Notifications, Files',
       )
       .setVersion('0.1.0')
       .addBearerAuth()
+      .addTag('health', 'Health check')
       .addTag('auth', 'Authentication & OAuth')
       .addTag('users', 'User profiles & friends')
       .addTag('chat', 'Real-time messaging')
-      .addTag('game', 'Pong game & matchmaking')
       .addTag('notifications', 'Push & email notifications')
       .addTag('files', 'File upload & management')
       .addTag('search', 'Search with filters & pagination')

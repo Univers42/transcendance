@@ -1,8 +1,8 @@
-# 🏓 ft_transcendence
+# ⚡ Transcendence
 
-*Final Project — 42 Common Core — Team Univers42, 2026*
+*Full-Stack Platform — Team Univers42, 2026*
 
-> A real-time multiplayer web application built as a team. Full-stack, containerized, production-ready.
+> A modern full-stack web application. TypeScript everywhere, containerized, production-ready.
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-strict-blue?logo=typescript&logoColor=white)]()
 [![NestJS](https://img.shields.io/badge/NestJS-11-e0234e?logo=nestjs&logoColor=white)]()

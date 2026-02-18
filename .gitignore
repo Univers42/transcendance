@@ -1,39 +1,57 @@
 # ============================================
-# ft_transcendence — .gitignore
+# Transcendence — .gitignore
+# ============================================
+# Keep the repo clean: dependencies, build artifacts,
+# secrets, IDE files, and generated content stay local.
 # ============================================
 
 # ── Dependencies ─────────────────────────────────────
 node_modules/
-.npm
+.pnpm-store/
+.npm/
+.yarn/
 
 # ── Build Outputs ────────────────────────────────────
 dist/
 build/
 .next/
+.nuxt/
 *.js.map
+*.tsbuildinfo
 
-# ── Environment ──────────────────────────────────────
+# ── Environment & Secrets ────────────────────────────
+# ⚠️ NEVER commit secrets — only .env.example is tracked
 .env
 .env.local
 .env.development
 .env.test
 .env.production
+*.pem
+*.key
+*.cert
+*.p12
 
-# ── Prisma ───────────────────────────────────────────
+# ── Prisma (generated client) ───────────────────────
 apps/backend/generated/
+**/node_modules/.prisma/
 
-# ── IDE ──────────────────────────────────────────────
+# ── IDE & Editor ─────────────────────────────────────
 .vscode/*
 !.vscode/settings.json
 !.vscode/extensions.json
+!.vscode/launch.json
 .idea/
 *.swp
 *.swo
 *~
+*.sublime-project
+*.sublime-workspace
 
 # ── OS ───────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+Desktop.ini
+ehthumbs.db
 
 # ── Logs ─────────────────────────────────────────────
 logs/
@@ -49,10 +67,23 @@ coverage/
 .nyc_output/
 test-results*.json
 
-# ── Docker ───────────────────────────────────────────
+# ── Cache ────────────────────────────────────────────
+.cache/
+.turbo/
+.parcel-cache/
+.eslintcache
+.stylelintcache
+
+# ── Docker (dev data volumes) ────────────────────────
 data/
 
+# ── Uploads (user-generated content) ────────────────
+uploads/
+
 # ── Temporary ────────────────────────────────────────
-.temp
-.tmp
+.temp/
+.tmp/
 tmp/
+packages/*
+packages
+packages/.*

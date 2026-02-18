@@ -7,6 +7,5 @@
 
 export * from './types/user';
 export * from './types/chat';
-export * from './types/game';
 export * from './types/notification';
 export * from './types/api';

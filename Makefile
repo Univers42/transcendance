@@ -1,12 +1,12 @@
 # ============================================
-# FT_TRANSCENDENCE — MAKEFILE
+# TRANSCENDENCE — MAKEFILE
 # ============================================
 # Usage: make <target>
 # Run 'make help' to see all available targets
 #
 # 🐳 FULLY CONTAINERIZED: Only Docker required!
 #    Running `make` bootstraps everything inside Docker containers.
-#    No Node.js, npm, PostgreSQL, or Redis needed on your host.
+#    No Node.js, pnpm, PostgreSQL, or Redis needed on your host.
 #
 # 🛡️ RESILIENT: Auto-detects docker compose v2 / docker-compose v1 /
 #    podman-compose — works on any team member's machine.
@@ -63,7 +63,7 @@ DIM     := \033[2m
 define BANNER
 	@echo ""
 	@echo -e "$(BLUE)╔══════════════════════════════════════════════════════════╗$(NC)"
-	@echo -e "$(BLUE)║$(NC)  🏓  $(BOLD)ft_transcendence$(NC) — Team Univers42                     $(BLUE)║$(NC)"
+	@echo -e "$(BLUE)║$(NC)  ⚡  $(BOLD)Transcendence$(NC) — Full-Stack Platform                   $(BLUE)║$(NC)"
 	@echo -e "$(BLUE)╚══════════════════════════════════════════════════════════╝$(NC)"
 	@echo ""
 endef
@@ -281,10 +281,10 @@ install: install-shared install-backend install-frontend  ## 📦 Install all de
 
 install-backend:
 	$(call step,$(BLUE)ℹ,Installing backend dependencies...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npm install --legacy-peer-deps" 2>&1 || { \
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm install" 2>&1 || { \
 		echo ""; \
 		echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-		echo -e "$(RED)│  ✗  FAILED: $(BOLD)npm install (backend)$(NC)"; \
+		echo -e "$(RED)│  ✗  FAILED: $(BOLD)pnpm install (backend)$(NC)"; \
 		echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
 		echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Container '$(CONTAINER)' may not be running,"; \
 		echo -e "$(RED)│$(NC)        or apps/backend/package.json is missing/invalid."; \
@@ -297,10 +297,10 @@ install-backend:
 
 install-frontend:
 	$(call step,$(BLUE)ℹ,Installing frontend dependencies...)
-	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && npm install" 2>&1 || { \
+	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm install" 2>&1 || { \
 		echo ""; \
 		echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-		echo -e "$(RED)│  ✗  FAILED: $(BOLD)npm install (frontend)$(NC)"; \
+		echo -e "$(RED)│  ✗  FAILED: $(BOLD)pnpm install (frontend)$(NC)"; \
 		echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
 		echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Container '$(CONTAINER)' may not be running,"; \
 		echo -e "$(RED)│$(NC)        or apps/frontend/package.json is missing/invalid."; \
@@ -313,7 +313,7 @@ install-frontend:
 
 install-shared:
 	$(call step,$(BLUE)ℹ,Installing shared package dependencies...)
-	@docker exec $(CONTAINER) sh -c "cd $(SHARED) && npm install 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(SHARED) && pnpm install 2>/dev/null || true"
 
 # ============================================
 #  🔧 COMPILE & BUILD
@@ -323,21 +323,24 @@ install-shared:
 
 compile:  ## 🔧 Generate Prisma client + compile TypeScript
 	$(call step,$(BLUE)ℹ,Generating Prisma client...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx prisma generate --schema=prisma/schema.prisma 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma generate 2>/dev/null || true"
 	$(call step,$(BLUE)ℹ,Compiling TypeScript...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx tsc --noEmit 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec tsc --noEmit 2>/dev/null || true"
 	$(call step,$(GREEN)✓,Compilation done)
 
 build: build-backend build-frontend  ## 🏗️ Production build (all)
 
+audit:
+	docker-compose -f /home/dlesieur/Documents/studi/vite-gourmand/transcendance/docker-compose.dev.yml exec -T dev sh -c 'cd /app/apps/backend && pnpm audit 2>&1'
+
 build-backend:  ## 🏗️ Build backend
 	$(call step,$(BLUE)ℹ,Building backend...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npm run build"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run build"
 	$(call step,$(GREEN)✓,Backend built)
 
 build-frontend:  ## 🏗️ Build frontend
 	$(call step,$(BLUE)ℹ,Building frontend...)
-	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && npm run build"
+	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm run build"
 	$(call step,$(GREEN)✓,Frontend built)
 
 # ============================================
@@ -348,21 +351,66 @@ build-frontend:  ## 🏗️ Build frontend
 
 dev: docker-up  ## 🚀 Start all dev servers (hot reload)
 	$(call step,$(BLUE)ℹ,Starting dev servers...)
-	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && npm run start:dev" 2>/dev/null || true
-	@docker exec -d $(CONTAINER) sh -c "cd $(FRONTEND) && npm run dev -- --host 0.0.0.0" 2>/dev/null || true
+	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run start:dev" 2>/dev/null || true
+	@docker exec -d $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm run dev -- --host 0.0.0.0" 2>/dev/null || true
 	$(call step,$(GREEN)✓,Dev servers started)
 	@echo -e "  Frontend → http://localhost:$${FRONTEND_PORT:-4201}"
 	@echo -e "  Backend  → http://localhost:$${BACKEND_PORT:-4200}"
 	@echo -e "  Mailpit  → http://localhost:$${MAILPIT_UI_PORT:-4212}"
 
 dev-backend:  ## 🚀 Start backend only
-	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && npm run start:dev"
+	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run start:dev"
 
 dev-frontend:  ## 🚀 Start frontend only
-	@docker exec -it $(CONTAINER) sh -c "cd $(FRONTEND) && npm run dev -- --host 0.0.0.0"
+	@docker exec -it $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm run dev -- --host 0.0.0.0"
 
 shell:  ## 🐚 Interactive shell in dev container
 	@docker exec -it $(CONTAINER) bash
+
+# ============================================
+#  ⚡ QUICK START
+# ============================================
+
+.PHONY: turn-on turn-off
+
+turn-on: docker-up  ## ⚡ Start dev servers + open browser
+	$(call step,$(BLUE)ℹ,Starting dev servers...)
+	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run start:dev" 2>/dev/null || true
+	@docker exec -d $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm run dev -- --host 0.0.0.0" 2>/dev/null || true
+	@sleep 2
+	$(call step,$(GREEN)✓,Dev servers started)
+	@echo ""
+	@echo -e "  Frontend → http://localhost:$${FRONTEND_PORT:-4201}"
+	@echo -e "  Backend  → http://localhost:$${BACKEND_PORT:-4200}"
+	@echo -e "  API Docs → http://localhost:$${BACKEND_PORT:-4200}/api/docs"
+	@echo -e "  Mailpit  → http://localhost:$${MAILPIT_UI_PORT:-4212}"
+	@echo ""
+	@URL="http://localhost:$${FRONTEND_PORT:-4201}"; \
+	if command -v xdg-open >/dev/null 2>&1; then \
+		xdg-open "$$URL" 2>/dev/null & disown; \
+	elif command -v open >/dev/null 2>&1; then \
+		open "$$URL" 2>/dev/null & disown; \
+	else \
+		echo -e "  $(DIM)→ Open $$URL in your browser$(NC)"; \
+	fi
+
+turn-off:  ## 🔌 Stop everything (servers + containers + ports)
+	$(call step,$(YELLOW)⚠,Shutting everything down...)
+	@docker exec $(CONTAINER) sh -c "pkill -f 'node.*nest' 2>/dev/null; pkill -f 'node.*vite' 2>/dev/null; true" 2>/dev/null || true
+	@$(COMPOSE_DEV) down 2>/dev/null || { \
+		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
+	}
+	@PORTS="$${BACKEND_PORT:-4200} $${FRONTEND_PORT:-4201} $${PRISMA_STUDIO_PORT:-4202} $${DB_PORT:-4210} $${REDIS_PORT:-4211} $${MAILPIT_UI_PORT:-4212}"; \
+	for p in $$PORTS; do \
+		PIDS=$$(ss -tlnp 2>/dev/null | grep ":$$p " | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | sort -u); \
+		if [ -n "$$PIDS" ]; then \
+			for pid in $$PIDS; do \
+				kill $$pid 2>/dev/null || true; \
+			done; \
+		fi; \
+	done
+	@sleep 1
+	$(call step,$(GREEN)✓,Everything stopped — all ports freed)
 
 # ============================================
 #  🗄️ DATABASE
@@ -372,27 +420,27 @@ shell:  ## 🐚 Interactive shell in dev container
 
 db-migrate:  ## 🗄️ Run Prisma migrations
 	$(call step,$(BLUE)ℹ,Running migrations...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx prisma migrate deploy --schema=prisma/schema.prisma 2>/dev/null || npx prisma migrate dev --schema=prisma/schema.prisma 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma migrate deploy 2>/dev/null || pnpm exec prisma migrate dev 2>/dev/null || true"
 	$(call step,$(GREEN)✓,Migrations applied)
 
 db-seed:  ## 🗄️ Seed database with sample data
 	$(call step,$(BLUE)ℹ,Seeding database...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx prisma db seed"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma db seed"
 	$(call step,$(GREEN)✓,Database seeded)
 
-db-studio:  ## 🗄️ Open Prisma Studio (port 5555)
+db-studio:  ## 🗄️ Open Prisma Studio (port 4202)
 	$(call step,$(BLUE)ℹ,Opening Prisma Studio...)
-	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && npx prisma studio --schema=prisma/schema.prisma"
-	$(call step,$(GREEN)✓,Prisma Studio → http://localhost:5555)
+	@docker exec -d $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma studio"
+	$(call step,$(GREEN)✓,Prisma Studio → http://localhost:4202)
 
 db-reset:  ## 🗄️ Reset database (drop + migrate + seed)
 	@echo -e "$(RED)⚠  This will DROP the entire database$(NC)"
 	@read -p "Are you sure? [y/N] " confirm && [ "$$confirm" = "y" ] || exit 1
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx prisma migrate reset --force --schema=prisma/schema.prisma"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma migrate reset --force"
 	$(call step,$(GREEN)✓,Database reset)
 
 db-push:  ## 🗄️ Push schema changes (dev only, no migration)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx prisma db push --schema=prisma/schema.prisma"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prisma db push"
 
 # ============================================
 #  ✅ QUALITY
@@ -402,20 +450,20 @@ db-push:  ## 🗄️ Push schema changes (dev only, no migration)
 
 lint:  ## ✅ Run ESLint on all workspaces
 	$(call step,$(BLUE)ℹ,Running linter...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx eslint . 2>/dev/null || true"
-	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && npx eslint . 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec eslint . 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec eslint . 2>/dev/null || true"
 	$(call step,$(GREEN)✓,Lint complete)
 
 format:  ## ✅ Run Prettier on all workspaces
 	$(call step,$(BLUE)ℹ,Formatting code...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx prettier --write 'src/**/*.ts' 2>/dev/null || true"
-	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && npx prettier --write 'src/**/*.{ts,tsx}' 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec prettier --write 'src/**/*.ts' 2>/dev/null || true"
+	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec prettier --write 'src/**/*.{ts,tsx}' 2>/dev/null || true"
 	$(call step,$(GREEN)✓,Formatting complete)
 
 typecheck:  ## ✅ TypeScript type checking (no emit)
 	$(call step,$(BLUE)ℹ,Type checking...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npx tsc --noEmit"
-	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && npx tsc --noEmit"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm exec tsc --noEmit"
+	@docker exec $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec tsc --noEmit"
 	$(call step,$(GREEN)✓,No type errors)
 
 # ============================================
@@ -428,16 +476,16 @@ test: test-unit test-e2e  ## 🧪 Run all tests
 
 test-unit:  ## 🧪 Run unit tests
 	$(call step,$(BLUE)ℹ,Running unit tests...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npm test"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm test"
 	$(call step,$(GREEN)✓,Unit tests passed)
 
 test-e2e:  ## 🧪 Run E2E tests
 	$(call step,$(BLUE)ℹ,Running E2E tests...)
-	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && npm run test:e2e"
+	@docker exec $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run test:e2e"
 	$(call step,$(GREEN)✓,E2E tests passed)
 
 test-watch:  ## 🧪 Run tests in watch mode
-	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && npm run test:watch"
+	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run test:watch"
 
 # ============================================
 #  🧹 CLEANUP
@@ -489,16 +537,16 @@ local: local-install  ## 💻 Setup using host Node.js (no Docker)
 
 local-install:
 	$(call step,$(BLUE)ℹ,Installing dependencies locally...)
-	@cd $(BACKEND) && npm install
-	@cd $(FRONTEND) && npm install
-	@cd $(SHARED) && npm install 2>/dev/null || true
-	@cd $(BACKEND) && npx prisma generate --schema=prisma/schema.prisma
+	@cd $(BACKEND) && pnpm install
+	@cd $(FRONTEND) && pnpm install
+	@cd $(SHARED) && pnpm install 2>/dev/null || true
+	@cd $(BACKEND) && pnpm exec prisma generate
 	$(call step,$(GREEN)✓,Dependencies installed)
 
 local-dev:  ## 💻 Start dev servers locally (requires Node.js)
 	$(call step,$(BLUE)ℹ,Starting local dev servers...)
-	@cd $(BACKEND) && npm run start:dev &
-	@cd $(FRONTEND) && npm run dev &
+	@cd $(BACKEND) && pnpm run start:dev &
+	@cd $(FRONTEND) && pnpm run dev &
 	$(call step,$(GREEN)✓,Dev servers starting...)
 	@echo -e "  Frontend → http://localhost:5173"
 	@echo -e "  Backend  → http://localhost:3000"
@@ -537,7 +585,7 @@ doctor:  ## 🩺 Full environment diagnostic (run this first!)
 
 info:  ## 🩺 Show detected environment
 	@echo ""
-	@echo -e "$(BOLD)ft_transcendence — Environment Info$(NC)"
+	@echo -e "$(BOLD)Transcendence — Environment Info$(NC)"
 	@echo ""
 	@echo -e "  $(BOLD)Compose tool:$(NC)    $(COMPOSE_CMD)"
 	@echo -e "  $(BOLD)Compose version:$(NC) $(COMPOSE_VERSION)"
@@ -558,7 +606,7 @@ info:  ## 🩺 Show detected environment
 
 help:  ## ❓ Show this help message
 	@echo ""
-	@echo -e "$(BOLD)ft_transcendence — Available Commands$(NC)"
+	@echo -e "$(BOLD)Transcendence — Available Commands$(NC)"
 	@echo -e "$(DIM)Compose: $(COMPOSE_CMD) $(COMPOSE_VERSION)$(NC)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \

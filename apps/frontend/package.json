@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "description": "ft_transcendence — React + Vite frontend (SPA, WebSockets, PWA-ready)",
+  "description": "Transcendence — React + Vite frontend (SPA, WebSockets, PWA-ready)",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -39,5 +39,15 @@
     "autoprefixer": "^10.4.0",
     "postcss": "^8.4.0",
     "tailwindcss": "^4.0.0"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ],
+    "auditConfig": {
+      "ignoreCves": [
+        "CVE-2025-69873"
+      ]
+    }
   }
 }

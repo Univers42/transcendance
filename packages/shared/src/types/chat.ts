@@ -43,12 +43,4 @@ export const WS_EVENTS = {
 
   // Notifications
   NOTIFICATION_NEW: 'notification:new',
-
-  // Game
-  GAME_INVITE: 'game:invite',
-  GAME_ACCEPT: 'game:accept',
-  GAME_STATE: 'game:state',
-  GAME_INPUT: 'game:input',
-  GAME_END: 'game:end',
-  GAME_MATCHMAKING: 'game:matchmaking',
 } as const;

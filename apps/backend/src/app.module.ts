@@ -1,8 +1,7 @@
 // ============================================
-// ft_transcendence — Root Application Module
+// Transcendence — Root Application Module
 // ============================================
 // Wires together ALL feature modules.
-// Each module maps to an IV.1 Web requirement.
 // ============================================
 
 import { Module } from '@nestjs/common';
@@ -10,12 +9,12 @@ import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { ScheduleModule } from '@nestjs/schedule';
+import { HealthController } from './health.controller';
 
 // Feature modules (uncomment as you implement them)
 // import { AuthModule } from './auth/auth.module';
 // import { UsersModule } from './users/users.module';
 // import { ChatModule } from './chat/chat.module';
-// import { GameModule } from './game/game.module';
 // import { NotificationsModule } from './notifications/notifications.module';
 // import { FilesModule } from './files/files.module';
 // import { SearchModule } from './search/search.module';
@@ -62,10 +61,10 @@ import { ScheduleModule } from '@nestjs/schedule';
     // AuthModule,      // JWT + OAuth 42
     // UsersModule,     // Profiles + friends
     // ChatModule,      // Real-time messaging (WebSocket)
-    // GameModule,      // Pong game (WebSocket)
     // NotificationsModule,  // Push + email
     // FilesModule,     // Upload + management
     // SearchModule,    // Filters + pagination
   ],
+  controllers: [HealthController],
 })
 export class AppModule {}
