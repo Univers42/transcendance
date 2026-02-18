@@ -1,0 +1,6 @@
+[submodule "vendor/scripts"]
+	path = vendor/scripts
+	url = https://github.com/Univers42/scripts.git
+[submodule "vendor/set-debian"]
+	path = vendor/set-debian
+	url = https://github.com/LESdylan/setup_arch_linux.git

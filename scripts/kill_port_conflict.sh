@@ -1,0 +1,1 @@
+cd /home/dlesieur/Documents/studi/vite-gourmand/transcendance && docker-compose -f docker-compose.dev.yml down -v --remove-orphans 2>/dev/null; ss -tlnp 2>/dev/null | grep -E ':(3000|5173|5432|6379|5555) ' || echo "All ports free" && ss -tlnp 2>/dev/null | grep -E ':(3000|5173|5432|6379|5555) ' || echo "All project ports are free"

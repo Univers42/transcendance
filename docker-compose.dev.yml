@@ -1,0 +1,164 @@
+# ============================================
+# ft_transcendence — Development Stack
+# ============================================
+# Full-stack development environment for IV.1 Web requirements:
+#
+#   db       → PostgreSQL 16  (ORM via Prisma, public API, persistence)
+#   redis    → Redis 7        (WebSocket pub/sub, sessions, rate limiting, cache)
+#   mailpit  → Mailpit        (notification system — catches all outgoing email)
+#   dev      → Node.js 22     (NestJS backend + React frontend + Prisma)
+#
+# Ports default to 4200-range to AVOID conflicts with other projects.
+# Override in .env if needed.
+#
+# Compatibility: docker-compose v1.25+ / docker compose v2+
+# ============================================
+
+version: '3.8'
+
+services:
+  # ── PostgreSQL 16 ────────────────────────────────────
+  # Stores: users, profiles, friends, chat messages, game data,
+  #         notifications, file metadata, API keys, sessions.
+  db:
+    image: postgres:16-alpine
+    container_name: transcendence-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-transcendence}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-transcendence}
+      POSTGRES_DB: ${POSTGRES_DB:-transcendence}
+    ports:
+      - "${DB_PORT:-4210}:5432"
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-transcendence}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - transcendence
+
+  # ── Redis 7 ──────────────────────────────────────────
+  # Serves: WebSocket adapter (pub/sub across instances),
+  #         session store, rate-limit counters, real-time
+  #         presence tracking, notification queue, caching.
+  redis:
+    image: redis:7-alpine
+    container_name: transcendence-redis
+    restart: unless-stopped
+    command: redis-server --maxmemory 128mb --maxmemory-policy allkeys-lru
+    ports:
+      - "${REDIS_PORT:-4211}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - transcendence
+
+  # ── Mailpit (dev email catcher) ──────────────────────
+  # Catches ALL outgoing emails from the notification system.
+  # Web UI: http://localhost:4212  (view emails in browser)
+  # SMTP:   port 1025 (internal) — used by NestJS mailer.
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: transcendence-mailpit
+    restart: unless-stopped
+    ports:
+      - "${MAILPIT_UI_PORT:-4212}:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+    networks:
+      - transcendence
+
+  # ── Development Container ────────────────────────────
+  # Runs both NestJS (backend) and Vite (frontend) dev servers.
+  # Source code is bind-mounted for hot reload.
+  # node_modules use named volumes for performance.
+  dev:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.dev
+    container_name: transcendence-dev
+    working_dir: /app
+    stdin_open: true
+    tty: true
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-4200}:3000"       # NestJS API + WebSocket
+      - "${FRONTEND_PORT:-4201}:5173"      # Vite dev server + HMR
+      - "${PRISMA_STUDIO_PORT:-4202}:5555" # Prisma Studio
+    volumes:
+      # ── Source Code (bind mounts — hot reload) ─────
+      - ./apps:/app/apps
+      - ./packages:/app/packages
+      # ── Config files (read-only in container) ──────
+      - ./Makefile:/app/Makefile:ro
+      - ./.env:/app/.env:ro
+      # ── Node modules (named volumes = fast) ────────
+      # Prevents host↔container sync overhead on Linux/Mac.
+      - backend-modules:/app/apps/backend/node_modules
+      - frontend-modules:/app/apps/frontend/node_modules
+      - shared-modules:/app/packages/shared/node_modules
+      # ── Caches (persist across rebuilds) ───────────
+      - npm-cache:/root/.npm
+      - prisma-engines:/root/.cache/prisma
+      # ── File uploads (persist across restarts) ─────
+      - uploads:/app/uploads
+    environment:
+      # ── Node ───────────────────────────────────────
+      - NODE_ENV=development
+      # ── Database ───────────────────────────────────
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-transcendence}:${POSTGRES_PASSWORD:-transcendence}@db:5432/${POSTGRES_DB:-transcendence}
+      # ── Redis (WebSockets, cache, rate-limit) ──────
+      - REDIS_URL=redis://redis:6379
+      # ── Auth ───────────────────────────────────────
+      - JWT_SECRET=${JWT_SECRET:-dev-secret-change-me-in-production}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-7d}
+      - OAUTH_42_CLIENT_ID=${OAUTH_42_CLIENT_ID:-}
+      - OAUTH_42_CLIENT_SECRET=${OAUTH_42_CLIENT_SECRET:-}
+      - OAUTH_42_CALLBACK_URL=${OAUTH_42_CALLBACK_URL:-http://localhost:4200/api/auth/42/callback}
+      # ── Mail (notifications) ───────────────────────
+      - SMTP_HOST=mailpit
+      - SMTP_PORT=1025
+      - SMTP_SECURE=false
+      - EMAIL_FROM=noreply@transcendence.local
+      # ── File uploads ───────────────────────────────
+      - UPLOAD_DIR=/app/uploads
+      - UPLOAD_MAX_SIZE_MB=${UPLOAD_MAX_SIZE_MB:-10}
+      # ── API ────────────────────────────────────────
+      - API_RATE_LIMIT_TTL=${API_RATE_LIMIT_TTL:-60}
+      - API_RATE_LIMIT_MAX=${API_RATE_LIMIT_MAX:-100}
+      # ── Ports (internal) ───────────────────────────
+      - BACKEND_PORT=3000
+      - FRONTEND_PORT=5173
+      - CORS_ORIGINS=http://localhost:${FRONTEND_PORT:-4201}
+    networks:
+      - transcendence
+
+# ── Named Volumes ──────────────────────────────────────
+# Named volumes are WAY faster than bind-mounting node_modules
+# from the host, especially on macOS / Windows (no FS translation).
+volumes:
+  pg-data:
+  redis-data:
+  backend-modules:
+  frontend-modules:
+  shared-modules:
+  npm-cache:
+  prisma-engines:
+  uploads:
+
+networks:
+  transcendence:
+    driver: bridge

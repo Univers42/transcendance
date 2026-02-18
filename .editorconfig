@@ -1,0 +1,46 @@
+# ============================================
+# ft_transcendence — EditorConfig
+# ============================================
+# Ensures consistent coding style across all editors and IDEs.
+# See: https://editorconfig.org
+# ============================================
+
+root = true
+
+# ── Default for all files ────────────────────────────
+[*]
+charset = utf-8
+end_of_line = lf
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+# ── Markdown (preserve trailing spaces for line breaks) ──
+[*.md]
+trim_trailing_whitespace = false
+
+# ── Makefile (tabs required) ─────────────────────────
+[Makefile]
+indent_style = tab
+indent_size = 4
+
+# ── YAML ─────────────────────────────────────────────
+[*.{yml,yaml}]
+indent_size = 2
+
+# ── JSON ─────────────────────────────────────────────
+[*.json]
+indent_size = 2
+
+# ── Python (vendor scripts) ──────────────────────────
+[*.py]
+indent_size = 4
+
+# ── Shell scripts ────────────────────────────────────
+[*.sh]
+indent_size = 4
+
+# ── SQL ──────────────────────────────────────────────
+[*.sql]
+indent_size = 4

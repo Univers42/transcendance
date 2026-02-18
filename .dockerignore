@@ -1,0 +1,74 @@
+# ============================================
+# ft_transcendence — Docker Build Context Exclusions
+# ============================================
+# This file dramatically speeds up `docker build` by excluding
+# files that should NEVER be sent to the Docker daemon.
+# ============================================
+
+# ── Git ──
+.git
+.gitignore
+.github
+
+# ── Dependencies (rebuilt inside container) ──
+**/node_modules
+**/.npm
+**/.pnpm-store
+
+# ── Build artifacts ──
+**/dist
+**/build
+**/.next
+**/.nuxt
+**/.cache
+**/.turbo
+**/.parcel-cache
+
+# ── Environment & secrets ──
+.env
+.env.*
+!.env.example
+
+# ── IDE & editor ──
+.vscode
+.idea
+**/.DS_Store
+**/*.swp
+**/*.swo
+*~
+
+# ── Documentation (not needed in container) ──
+docs/
+*.md
+!README.md
+LICENSE
+CODE_OF_CONDUCT.md
+CONTRIBUTING.md
+SECURITY.md
+CHANGELOG.md
+
+# ── Testing artifacts ──
+**/coverage
+**/.nyc_output
+**/test-results*
+**/*.test.ts
+**/*.spec.ts
+**/*.test.tsx
+**/*.spec.tsx
+
+# ── Docker files (no recursion) ──
+docker-compose*.yml
+Dockerfile*
+
+# ── Scripts & vendor ──
+scripts/
+vendor/
+
+# ── OS junk ──
+Thumbs.db
+.DS_Store
+
+# ── Uploads / data (dev only) ──
+uploads/
+data/
+*.log

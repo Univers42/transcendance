@@ -1,0 +1,111 @@
+# ============================================
+# ft_transcendence — Production Stack
+# ============================================
+# Run: make prod  (auto-detects docker compose variant)
+#
+# Services:
+#   - backend:  NestJS (multi-stage build)
+#   - frontend: React + Nginx (multi-stage build)
+#   - db:       PostgreSQL 16
+#   - redis:    Redis 7 (cache + pub/sub)
+#
+# Compatibility: docker-compose v1.25+ / docker compose v2+
+# Port scheme:   4200-range (avoids common dev port conflicts)
+# ============================================
+
+version: '3.8'
+
+services:
+  # ── PostgreSQL 16 ────────────────────────────────────
+  db:
+    image: postgres:16-alpine
+    container_name: transcendence-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - transcendence
+
+  # ── Redis 7 ──────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: transcendence-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --save 60 1000
+      --loglevel warning
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - transcendence
+
+  # ── Backend (NestJS) ─────────────────────────────────
+  backend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.backend
+    container_name: transcendence-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "${BACKEND_PORT:-4200}:3000"
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      - REDIS_URL=redis://redis:6379
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRATION=${JWT_EXPIRATION:-7d}
+      - OAUTH_42_CLIENT_ID=${OAUTH_42_CLIENT_ID}
+      - OAUTH_42_CLIENT_SECRET=${OAUTH_42_CLIENT_SECRET}
+      - OAUTH_42_CALLBACK_URL=${OAUTH_42_CALLBACK_URL}
+      - CORS_ORIGINS=${CORS_ORIGINS}
+      - UPLOAD_DIR=/app/uploads
+      - UPLOAD_MAX_SIZE_MB=${UPLOAD_MAX_SIZE_MB:-5}
+    volumes:
+      - uploads:/app/uploads
+    networks:
+      - transcendence
+
+  # ── Frontend (React + Nginx) ─────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.frontend
+    container_name: transcendence-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-4201}:80"
+    networks:
+      - transcendence
+
+volumes:
+  pg-data:
+  redis-data:
+  uploads:
+
+networks:
+  transcendence:
+    driver: bridge

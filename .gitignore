@@ -1,11 +1,42 @@
-# Nestjs specific
-/dist
-/node_modules
-/build
-/tmp
+# ============================================
+# ft_transcendence — .gitignore
+# ============================================
 
-# Logs
-logs
+# ── Dependencies ─────────────────────────────────────
+node_modules/
+.npm
+
+# ── Build Outputs ────────────────────────────────────
+dist/
+build/
+.next/
+*.js.map
+
+# ── Environment ──────────────────────────────────────
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# ── Prisma ───────────────────────────────────────────
+apps/backend/generated/
+
+# ── IDE ──────────────────────────────────────────────
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ───────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────────────
+logs/
 *.log
 npm-debug.log*
 pnpm-debug.log*
@@ -13,12 +44,15 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
-# dotenv environment variable files
-.env
-.env.development
-.env.test
-.env.production
+# ── Testing ──────────────────────────────────────────
+coverage/
+.nyc_output/
+test-results*.json
 
-# temp directory
+# ── Docker ───────────────────────────────────────────
+data/
+
+# ── Temporary ────────────────────────────────────────
 .temp
 .tmp
+tmp/

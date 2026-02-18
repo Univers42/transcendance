@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 Team Discord
+    url: https://discord.gg/your-server
+    about: For quick questions and discussions, use our Discord channel
+  - name: 📖 Documentation
+    url: https://github.com/Univers42/ft_transcendence/tree/main/docs
+    about: Check the docs before opening an issue
