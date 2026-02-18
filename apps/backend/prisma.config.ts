@@ -8,7 +8,10 @@
 // ============================================
 
 import "dotenv/config";
-import { defineConfig, env } from "prisma/config";
+import { defineConfig } from "prisma/config";
+
+// Fallback URL for CI/generate-only scenarios (not used for actual connections)
+const DATABASE_URL = process.env.DATABASE_URL || "postgresql://placeholder:placeholder@localhost:5432/placeholder";
 
 export default defineConfig({
   // Schema location
@@ -16,7 +19,7 @@ export default defineConfig({
 
   // Database connection (used by Prisma CLI: migrate, studio, etc.)
   datasource: {
-    url: env("DATABASE_URL"),
+    url: DATABASE_URL,
   },
 
   // Migrations directory
