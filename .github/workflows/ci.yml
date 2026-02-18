@@ -150,7 +150,7 @@ jobs:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
 
       - name: Run unit tests
-        run: cd apps/backend && pnpm test -- --passWithNoTests
+        run: cd apps/backend && pnpm test
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
           REDIS_URL: redis://localhost:6379
@@ -158,7 +158,7 @@ jobs:
           NODE_ENV: test
 
       - name: Run E2E tests
-        run: cd apps/backend && pnpm run test:e2e -- --passWithNoTests
+        run: cd apps/backend && pnpm run test:e2e
         env:
           DATABASE_URL: postgresql://test:test@localhost:5432/test
           REDIS_URL: redis://localhost:6379
