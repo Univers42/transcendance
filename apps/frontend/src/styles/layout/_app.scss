@@ -1,11 +1,12 @@
 // ============================================
 // Transcendence — App Layout
 // ============================================
+// Uses variables from graphical-chart.scss
+// ============================================
 
 @use '../abstracts' as *;
 
 .app {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: 0 1.5rem 4rem;
+  @include container($container-lg);
+  padding-bottom: $spacing-16;
 }

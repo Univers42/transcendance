@@ -33,7 +33,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        // Make variables/mixins available globally (optional)
+        // Auto-import graphical chart + mixins in every SCSS file
+        // This makes all design tokens available without explicit @use
         additionalData: `@use "@/styles/abstracts" as *;\n`,
       },
     },

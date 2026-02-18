@@ -1,16 +1,18 @@
 // ============================================
 // Transcendence — Hero Component
 // ============================================
+// Uses variables from graphical-chart.scss
+// ============================================
 
 @use '../abstracts' as *;
 
 .hero {
   text-align: center;
-  padding: 6rem 1rem 3rem;
+  padding: $spacing-24 $spacing-4 $spacing-12;
   position: relative;
 
   @include sm {
-    padding: 4rem 1rem 2rem;
+    padding: $spacing-16 $spacing-4 $spacing-8;
   }
 }
 
@@ -23,19 +25,19 @@
   height: 600px;
   background: radial-gradient(circle, $accent-glow 0%, transparent 70%);
   pointer-events: none;
-  z-index: 0;
+  z-index: $z-base;
 }
 
 .title {
   position: relative;
   z-index: 1;
-  font-size: 3.5rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  @include gradient-text(linear-gradient(135deg, #ffffff 0%, $accent-light 50%, #60a5fa 100%));
+  font-size: $font-size-5xl;
+  font-weight: $font-weight-extrabold;
+  letter-spacing: $letter-spacing-tight;
+  @include gradient-text(linear-gradient(135deg, #ffffff 0%, $accent-light 50%, $color-info-light 100%));
 
   @include sm {
-    font-size: 2.2rem;
+    font-size: $font-size-3xl;
   }
 }
 
@@ -50,27 +52,27 @@
 .subtitle {
   position: relative;
   z-index: 1;
-  margin-top: 0.75rem;
-  font-size: 1.15rem;
+  margin-top: $spacing-3;
+  font-size: $font-size-md;
   color: $text-secondary;
-  font-weight: 400;
-  letter-spacing: 0.02em;
+  font-weight: $font-weight-normal;
+  letter-spacing: $letter-spacing-wide;
 }
 
 .badge-row {
   position: relative;
   z-index: 1;
   display: flex;
-  gap: 0.5rem;
+  gap: $spacing-2;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 1.5rem;
+  margin-top: $spacing-6;
 }
 
 .badge {
-  padding: 0.3em 0.9em;
-  font-size: 0.8rem;
-  font-weight: 500;
+  padding: $spacing-1 $spacing-3;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
   color: $accent-light;
   border: 1px solid rgba($accent, 0.25);
   border-radius: $radius-full;

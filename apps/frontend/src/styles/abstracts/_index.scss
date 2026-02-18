@@ -1,8 +1,15 @@
 // ============================================
 // Transcendence — Abstracts Index
 // ============================================
-// This file is auto-imported via Vite config
-// (additionalData in vite.config.ts)
+// Re-exports graphical chart + mixins for easy importing
+//
+// Usage in any SCSS file:
+//   @use '@/styles/abstracts' as *;
+// ============================================
 
-@forward 'variables';
+// The graphical chart is the SINGLE SOURCE OF TRUTH
+// All variables come from here
+@forward '../base/graphical-chart';
+
+// Mixins extend the graphical chart with reusable patterns
 @forward 'mixins';

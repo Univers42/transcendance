@@ -1,17 +1,19 @@
 // ============================================
 // Transcendence — Footer
 // ============================================
+// Uses variables from graphical-chart.scss
+// ============================================
 
 @use '../abstracts' as *;
 
 .footer {
-  margin-top: 4rem;
-  padding-top: 2rem;
-  border-top: 1px solid $border;
+  margin-top: $spacing-16;
+  padding-top: $spacing-8;
+  border-top: 1px solid $border-color;
   text-align: center;
 
   p {
     color: $text-muted;
-    font-size: 0.85rem;
+    font-size: $font-size-sm;
   }
 }

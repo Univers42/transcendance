@@ -1,24 +1,26 @@
 // ============================================
 // Transcendence — Card Components
 // ============================================
+// Uses variables from graphical-chart.scss
+// ============================================
 
 @use '../abstracts' as *;
 
 .section-title {
-  font-size: 1.35rem;
-  font-weight: 600;
-  margin-bottom: 1.25rem;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-5;
   color: $text-primary;
 }
 
 .services {
-  margin-top: 2rem;
+  margin-top: $spacing-8;
 }
 
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: 1rem;
+  gap: $spacing-4;
 
   @include sm {
     grid-template-columns: 1fr;
@@ -27,14 +29,14 @@
 
 .card {
   @include card;
-  padding: 1.25rem 1.5rem;
+  padding: $spacing-5 $spacing-6;
   text-decoration: none;
   color: inherit;
   display: block;
   cursor: default;
 
   &.active {
-    border-color: rgba($accent, 0.3);
+    border-color: $border-accent;
     background: linear-gradient(135deg, $bg-card 0%, rgba($accent, 0.06) 100%);
   }
 }
@@ -49,28 +51,28 @@ a.card {
 
 .card-header {
   @include flex-between;
-  margin-bottom: 0.75rem;
+  margin-bottom: $spacing-3;
 }
 
 .card-icon {
-  font-size: 1.5rem;
+  font-size: $font-size-xl;
 }
 
 .card h3 {
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 0.25rem;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  margin-bottom: $spacing-1;
 }
 
 .card-url {
-  font-size: 0.8rem;
+  font-size: $font-size-sm;
   color: $text-muted;
-  font-family: $font-mono;
-  margin-bottom: 0.4rem;
+  font-family: $font-family-mono;
+  margin-bottom: $spacing-2;
 }
 
 .card-desc {
-  font-size: 0.85rem;
+  font-size: $font-size-sm;
   color: $text-secondary;
 }
 
@@ -79,26 +81,26 @@ a.card {
   display: inline-block;
   width: 10px;
   height: 10px;
-  border-radius: 50%;
+  border-radius: $radius-full;
   flex-shrink: 0;
 
   &.ok {
-    background: $success;
-    box-shadow: 0 0 8px rgba($success, 0.5);
+    background: $color-success;
+    box-shadow: 0 0 8px rgba($color-success, 0.5);
   }
 
   &.error {
-    background: $error;
-    box-shadow: 0 0 8px rgba($error, 0.5);
+    background: $color-error;
+    box-shadow: 0 0 8px rgba($color-error, 0.5);
   }
 
   &.loading {
-    background: $warning;
+    background: $color-warning;
     animation: blink 1.2s ease-in-out infinite;
   }
 
   &.neutral {
-    background: $neutral;
-    box-shadow: 0 0 6px rgba($neutral, 0.4);
+    background: $color-neutral;
+    box-shadow: 0 0 6px rgba($color-neutral, 0.4);
   }
 }

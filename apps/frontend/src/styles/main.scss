@@ -1,14 +1,20 @@
 // ============================================
 // Transcendence — Main SCSS Entry Point
 // ============================================
-// Import order matters! Base → Layout → Components → Utilities
-
-// ── Abstracts (variables, mixins) ──────────────────
-// Note: Already auto-imported via Vite's additionalData
-// @use 'abstracts' as *;
+// 🎨 IMPORT ORDER MATTERS!
+//
+// 1. Base (graphical-chart, reset) — Foundation
+// 2. Layout (app, footer) — Page structure
+// 3. Components (hero, cards) — UI elements
+// 4. Utilities (animations) — Helpers
+//
+// The graphical-chart is auto-imported via Vite's
+// additionalData config, so all variables are available.
+// ============================================
 
 // ── Base Styles ────────────────────────────────────
-@use 'base/reset';
+@use 'base/graphical-chart';  // Design system tokens
+@use 'base/reset';            // Global reset
 
 // ── Layout ─────────────────────────────────────────
 @use 'layout/app';
