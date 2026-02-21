@@ -65,33 +65,119 @@ body {
 
 /* ─── COVER ────────────────────────────────────────────── */
 .cover {
-  /* 2. Assign the named page to this container */
   page: cover_page; 
-  height: 297mm; /* Exact A4 height */
-  width: 210mm;  /* Exact A4 width */
-  overflow: hidden; /* Prevents stray pixels from triggering a blank second page */
+  height: 297mm;
+  width: 210mm;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  background: #0b0f19;
+  
+  /* 1. The Base Gradient: Deep Obsidian to Slate */
+  background: linear-gradient(135deg, #050b14 0%, #111827 50%, #0f172a 100%);
   color: #f5f1ea;
   margin: 0;
   padding: 0;
+  position: relative;
+}
+
+/* 2. The Designer Touch: A subtle radial glow in the top right */
+.cover::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(200,117,51,0.12) 0%, transparent 60%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 2b. Decorative halo / circle in the lower-left for depth */
+.cover::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  bottom: -6%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle at 30% 30%, rgba(232,164,73,0.10) 0%, rgba(232,164,73,0.02) 40%, transparent 60%);
+  border-radius: 50%;
+  transform: rotate(8deg);
+  z-index: 0;
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* 2c. Faint dotted ring using multiple radial-gradients for subtle ornament */
+.cover .decor-ring {
+  position: absolute;
+  right: 14%;
+  top: 28%;
+  width: 220px;
+  height: 220px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(232,164,73,0.06) 2%, transparent 2%),
+    radial-gradient(circle at 50% 50%, rgba(232,164,73,0.03) 10%, transparent 10%);
+  border-radius: 50%;
+  filter: blur(6px);
+}
+
+/* Ensure all text sits above the background glow */
+.cover > * {
+  z-index: 1;
+  position: relative;
+}
+
+/* 3. The New Header Layout */
+.cover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 10% 20px; /* Aligns perfectly with the body padding */
+  width: 100%;
+}
+
+.brand-logo {
+  font-size: 11pt;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #e5e7eb;
+}
+
+.doc-badge {
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(200, 117, 51, 0.15);
+  color: #e8a449;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(200, 117, 51, 0.25);
+  backdrop-filter: blur(4px);
 }
 
 .cover-stripe {
-  height: 6px;
-  background: linear-gradient(90deg, #c87533 0%, #e8a449 55%, #fcd34d 100%);
+  height: 4px;
+  background: linear-gradient(90deg, #c87533 0%, #e8a449 55%, transparent 100%);
   flex-shrink: 0;
+  margin: 0 10%; /* Inset the stripe to match the padding */
+  border-radius: 2px;
+  opacity: 0.8;
 }
 
 .cover-body {
   flex: 1;
-  padding: 12% 10% 10%; /* Percentage padding adapts perfectly without overflowing */
+  padding: 10%;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
+/* Keep your existing .cover-eyebrow, .cover-h1, etc. below this */
 .cover-eyebrow {
   font-size: 8pt;
   font-weight: 700;
@@ -101,64 +187,64 @@ body {
   margin-bottom: 24px;
 }
 
-h1.cover-h1 {
-  font-size: 34pt !important;
+/* Restore original cover title, subtitle and meta styles */
+.cover-h1, h1.cover-h1 {
+  font-size: 30pt !important;
   font-weight: 800 !important;
-  color: #ffffff !important;
-  line-height: 1.15 !important;
+  color: #f5f1ea !important;
+  line-height: 1.12 !important;
   margin: 0 0 16px !important;
   padding: 0 !important;
   border: none !important;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.02em;
 }
-
 .cover-title-accent {
   display: block;
-  margin-top: 8px;
+  margin-top: 6px;
   color: #e8a449;
-  font-size: 0.65em;
+  font-size: 0.7em;
   font-weight: 600;
 }
-
 .cover-sub {
-  font-size: 12pt;
-  color: #9ca3af;
-  font-style: normal;
-  line-height: 1.5;
-  margin-bottom: 40px;
-  max-width: 85%;
+  font-size: 11pt;
+  color: #8c8782;
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 34px;
 }
-
 .cover-rule {
-  width: 48px;
-  height: 3px;
+  width: 36px;
+  height: 2px;
   background: #c87533;
-  margin-bottom: 32px;
-  border-radius: 2px;
+  margin-bottom: 26px;
 }
-
-.cover-meta { display: flex; flex-direction: column; gap: 12px; }
-.meta-row { display: flex; align-items: baseline; }
+.cover-meta { display: flex; flex-direction: column; gap: 10px; }
+.meta-row   { display: flex; align-items: baseline; }
 .meta-k {
-  min-width: 80px;
-  font-size: 7.5pt;
+  min-width: 72px;
+  font-size: 7pt;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: #6b7280;
+  color: #4a4540;
 }
-.meta-v { font-size: 10.5pt; font-weight: 500; color: #e5e7eb; }
-
+.meta-v { font-size: 10pt; font-weight: 500; color: #bfb9b0; }
 .cover-foot {
-  padding: 16px 10%;
-  border-top: 1px solid rgba(255,255,255,.08);
+  padding: 12px 48px;
+  border-top: 1px solid rgba(255,255,255,0.10);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(0,0,0,0.2);
+  background: rgba(255,255,255,0.02);
 }
-.cover-foot-text { font-size: 7.5pt; letter-spacing: .1em; text-transform: uppercase; color: #6b7280; font-weight: 600;}
-.cover-foot-dots { font-size: 6pt; color: #c87533; letter-spacing: 6px; opacity: .7; }
+.cover-foot-text {
+  font-size: 7pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #f5f1ea;
+  font-weight: 600;
+}
+.cover-foot-dots { font-size: 5pt; color: rgba(245,241,234,0.6); letter-spacing: 4px; opacity: .9; }
 
 /* ─── TABLE OF CONTENTS ────────────────────────────────── */
 .toc { page-break-after: always; padding-bottom: 20px; margin-top: 20px; }
@@ -334,23 +420,31 @@ img { max-width: 100%; border-radius: 6px; border: 1px solid var(--border); }
 </head>
 <body>
 <div class="cover">
-  <div class="cover-stripe"></div>
-  <div class="cover-body">
-    <p class="cover-eyebrow">Project Brief</p>
-    <h1 class="cover-h1">PRISMATICA</h1>
-    <p class="cover-sub">Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</p>
-    <div class="cover-rule"></div>
-    <div class="cover-meta">
       
-      <div class="meta-row"><span class="meta-k">Date</span><span class="meta-v">February 21, 2026</span></div>
-      <div class="meta-row"><span class="meta-k">Type</span><span class="meta-v">Technical Document</span></div>
+      <header class="cover-header">
+        <div class="brand-logo">◆ 42 Transcendance</div>
+        <div class="doc-badge">Tech Brief</div>
+      </header>
+
+      <div class="cover-stripe"></div>
+      
+      <div class="cover-body">
+        <p class="cover-eyebrow">Project Documentation</p>
+        <h1 class="cover-h1">PRISMATICA</h1>
+        <p class="cover-sub">Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</p>
+        <div class="cover-rule"></div>
+        <div class="cover-meta">
+          
+          <div class="meta-row"><span class="meta-k">Date</span><span class="meta-v">February 21, 2026</span></div>
+          <div class="meta-row"><span class="meta-k">Status</span><span class="meta-v">Final Release</span></div>
+        </div>
+      </div>
+      
+      <div class="cover-foot">
+        <span class="cover-foot-text">Confidential · Internal use only</span>
+        <span class="cover-foot-dots">● ● ●</span>
+      </div>
     </div>
-  </div>
-  <div class="cover-foot">
-    <span class="cover-foot-text">Confidential · Internal use only</span>
-    <span class="cover-foot-dots">● ● ●</span>
-  </div>
-</div>
 
 <nav class="toc">
 <h2 class="toc-title">Table of Contents</h2>
