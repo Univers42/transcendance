@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>PRISMATICA</title>
+<style>
+/*
+ * PALETTE — Modern Editorial (Obsidian & Amber)
+ */
+:root {
+  --ink: #111827;
+  --mid: #374151;
+  --muted: #6b7280;
+  --surface: #f9fafb;
+  --border: #e5e7eb;
+  --accent: #c87533;
+  --accent-light: #fbcfe8;
+}
+
+@font-face { font-family: BodySans; src: local("Liberation Sans"),local("Noto Sans"),local("DejaVu Sans"); }
+@font-face { font-family: CodeMono; src: local("Liberation Mono"),local("Consolas"),local("Courier New"); }
+
+/* ─── PAGE SETUP ───────────────────────────────────────── */
+@page {
+  size: A4;
+  margin: 25mm 20mm 25mm 20mm;
+  @bottom-center {
+    content: counter(page) " / " counter(pages);
+    font-size: 8pt;
+    color: #9ca3af;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: 0.05em;
+  }
+  @top-right {
+    content: "PRISMATICA";
+    font-size: 7.5pt;
+    color: #d1d5db;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* 1. THE MAGIC FIX: Create a margin-less named page for the cover */
+@page cover_page {
+  margin: 0;
+  @bottom-center { content: none; }
+  @top-right { content: none; }
+}
+
+/* ─── RESET ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+
+/* ─── BODY ─────────────────────────────────────────────── */
+body {
+  /* Modern UI font stack */
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 10pt;
+  color: var(--mid);
+  line-height: 1.7;
+  overflow-wrap: break-word;
+  -weasyprint-hyphens: none;
+  background: #ffffff;
+}
+
+/* ─── COVER ────────────────────────────────────────────── */
+.cover {
+  page: cover_page; 
+  height: 297mm;
+  width: 210mm;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  
+  /* 1. The Base Gradient: Deep Obsidian to Slate */
+  background: linear-gradient(135deg, #050b14 0%, #111827 50%, #0f172a 100%);
+  color: #f5f1ea;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+/* 2. The Designer Touch: A subtle radial glow in the top right */
+.cover::before {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 80%;
+  height: 80%;
+  background: radial-gradient(circle, rgba(200,117,51,0.12) 0%, transparent 60%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* 2b. Decorative halo / circle in the lower-left for depth */
+.cover::after {
+  content: "";
+  position: absolute;
+  left: -8%;
+  bottom: -6%;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle at 30% 30%, rgba(232,164,73,0.10) 0%, rgba(232,164,73,0.02) 40%, transparent 60%);
+  border-radius: 50%;
+  transform: rotate(8deg);
+  z-index: 0;
+  filter: blur(12px);
+  pointer-events: none;
+}
+
+/* 2c. Faint dotted ring using multiple radial-gradients for subtle ornament */
+.cover .decor-ring {
+  position: absolute;
+  right: 14%;
+  top: 28%;
+  width: 220px;
+  height: 220px;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 50%, rgba(232,164,73,0.06) 2%, transparent 2%),
+    radial-gradient(circle at 50% 50%, rgba(232,164,73,0.03) 10%, transparent 10%);
+  border-radius: 50%;
+  filter: blur(6px);
+}
+
+/* Ensure all text sits above the background glow */
+.cover > * {
+  z-index: 1;
+  position: relative;
+}
+
+/* 3. The New Header Layout */
+.cover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 10% 20px; /* Aligns perfectly with the body padding */
+  width: 100%;
+}
+
+.brand-logo {
+  font-size: 11pt;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #e5e7eb;
+}
+
+.doc-badge {
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: rgba(200, 117, 51, 0.15);
+  color: #e8a449;
+  padding: 6px 12px;
+  border-radius: 4px;
+  border: 1px solid rgba(200, 117, 51, 0.25);
+  backdrop-filter: blur(4px);
+}
+
+.cover-stripe {
+  height: 4px;
+  background: linear-gradient(90deg, #c87533 0%, #e8a449 55%, transparent 100%);
+  flex-shrink: 0;
+  margin: 0 10%; /* Inset the stripe to match the padding */
+  border-radius: 2px;
+  opacity: 0.8;
+}
+
+.cover-body {
+  flex: 1;
+  padding: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* Keep your existing .cover-eyebrow, .cover-h1, etc. below this */
+.cover-eyebrow {
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #e8a449;
+  margin-bottom: 24px;
+}
+
+/* Restore original cover title, subtitle and meta styles */
+.cover-h1, h1.cover-h1 {
+  font-size: 30pt !important;
+  font-weight: 800 !important;
+  color: #f5f1ea !important;
+  line-height: 1.12 !important;
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  border: none !important;
+  letter-spacing: -0.02em;
+}
+.cover-title-accent {
+  display: block;
+  margin-top: 6px;
+  color: #e8a449;
+  font-size: 0.7em;
+  font-weight: 600;
+}
+.cover-sub {
+  font-size: 11pt;
+  color: #8c8782;
+  font-style: italic;
+  line-height: 1.6;
+  margin-bottom: 34px;
+}
+.cover-rule {
+  width: 36px;
+  height: 2px;
+  background: #c87533;
+  margin-bottom: 26px;
+}
+.cover-meta { display: flex; flex-direction: column; gap: 10px; }
+.meta-row   { display: flex; align-items: baseline; }
+.meta-k {
+  min-width: 72px;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #4a4540;
+}
+.meta-v { font-size: 10pt; font-weight: 500; color: #bfb9b0; }
+.cover-foot {
+  padding: 12px 48px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255,255,255,0.02);
+}
+.cover-foot-text {
+  font-size: 7pt;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #f5f1ea;
+  font-weight: 600;
+}
+.cover-foot-dots { font-size: 5pt; color: rgba(245,241,234,0.6); letter-spacing: 4px; opacity: .9; }
+
+/* ─── TABLE OF CONTENTS ────────────────────────────────── */
+.toc { page-break-after: always; padding-bottom: 20px; margin-top: 20px; }
+h2.toc-title {
+  font-size: 18pt !important;
+  font-weight: 800 !important;
+  color: var(--ink) !important;
+  border: none !important;
+  background: transparent !important;
+  padding: 0 0 16px !important;
+  margin: 0 0 12px !important;
+  letter-spacing: -0.02em;
+}
+.toc-root { list-style: none; counter-reset: toc-h2; padding: 0; margin: 0; }
+li.toc-h2 {
+  counter-increment: toc-h2;
+  border-bottom: 1px solid var(--border);
+  padding: 0;
+}
+li.toc-h2 a {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 10px 0 8px;
+  text-decoration: none;
+  color: var(--ink);
+  font-size: 10.5pt;
+  font-weight: 600;
+}
+li.toc-h2 .toc-num::before {
+  content: counter(toc-h2, decimal-leading-zero);
+  font-size: 8.5pt;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: .05em;
+}
+.toc-sub { list-style: none; padding: 4px 0 10px 32px; margin: 0; counter-reset: toc-h3; }
+li.toc-h3 { counter-increment: toc-h3; padding: 4px 0; }
+li.toc-h3 a { font-size: 9.5pt; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+li.toc-h3 a::before {
+  content: counter(toc-h2) "." counter(toc-h3) " ";
+  font-size: 8.5pt;
+  color: #9ca3af;
+  font-weight: 500;
+  margin-right: 6px;
+}
+
+/* ─── HEADINGS (Modern & Clean) ────────────────────────── */
+h1 {
+  font-size: 22pt;
+  font-weight: 800;
+  color: var(--ink);
+  margin: 48px 0 20px;
+  padding-bottom: 12px;
+  letter-spacing: -0.03em;
+  page-break-after: avoid;
+}
+
+h2 {
+  font-size: 16pt;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 40px 0 16px;
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--border);
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  page-break-after: avoid;
+}
+
+h3 {
+  font-size: 13pt;
+  font-weight: 700;
+  color: var(--ink);
+  margin: 28px 0 12px;
+  page-break-after: avoid;
+}
+
+h4 {
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--accent);
+  margin: 20px 0 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  page-break-after: avoid;
+}
+
+/* ─── PROSE & LINKS ────────────────────────────────────── */
+p { margin: 0 0 12px; orphans: 3; widows: 3; }
+strong { color: var(--ink); font-weight: 700; }
+em { color: var(--muted); font-style: italic; }
+
+a { 
+  color: var(--ink); 
+  font-weight: 500;
+  text-decoration: underline; 
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px; /* Professional spacing for underlines */
+}
+
+/* ─── BLOCKQUOTES ──────────────────────────────────────── */
+blockquote {
+  margin: 20px 0;
+  padding: 16px 20px;
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 6px 6px 0;
+  font-size: 10.5pt;
+  color: var(--mid);
+  page-break-inside: avoid;
+}
+blockquote p { margin: 0; }
+
+/* ─── TABLES ───────────────────────────────────────────── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 9pt;
+  border: 1px solid var(--border);
+  page-break-inside: auto;
+  border-radius: 6px;
+  overflow: hidden;
+}
+thead th {
+  background: var(--surface);
+  color: var(--ink);
+  padding: 10px 14px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+}
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:nth-child(even) { background: #fafafa; }
+tbody td { padding: 10px 14px; vertical-align: top; line-height: 1.5; }
+tbody td:first-child { font-weight: 600; color: var(--ink); }
+
+/* ─── CODE ─────────────────────────────────────────────── */
+code {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 0.85em;
+  background: #f3f4f6;
+  color: #b45309;
+  padding: 3px 6px;
+  border-radius: 4px;
+}
+pre {
+  background: #111827;
+  color: #e5e7eb;
+  padding: 16px 20px;
+  border-radius: 8px;
+  font-size: 8.5pt;
+  line-height: 1.6;
+  margin: 16px 0;
+  white-space: pre-wrap;
+  page-break-inside: avoid;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+pre code { background: none; color: inherit; padding: 0; font-size: inherit; }
+
+/* ─── LISTS & MISC ─────────────────────────────────────── */
+ul, ol { padding-left: 24px; margin: 12px 0 16px; }
+li { margin-bottom: 6px; }
+li::marker { color: var(--accent); font-weight: 600; }
+hr { border: none; height: 1px; background: var(--border); margin: 32px 0; }
+img { max-width: 100%; border-radius: 6px; border: 1px solid var(--border); }
+
+.diagram { text-align: center; margin: 24px 0; page-break-inside: avoid; }
+.diagram img { max-width: 100%; max-height: 800px; border: none; }
+</style>
+</head>
+<body>
+<div class="cover">
+      
+      <header class="cover-header">
+        <div class="brand-logo">◆ 42 Transcendance</div>
+        <div class="doc-badge">Tech Brief</div>
+      </header>
+
+      <div class="cover-stripe"></div>
+      
+      <div class="cover-body">
+        <p class="cover-eyebrow">Project Documentation</p>
+        <h1 class="cover-h1">PRISMATICA</h1>
+        <p class="cover-sub">Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</p>
+        <div class="cover-rule"></div>
+        <div class="cover-meta">
+          
+          <div class="meta-row"><span class="meta-k">Date</span><span class="meta-v">February 21, 2026</span></div>
+          <div class="meta-row"><span class="meta-k">Status</span><span class="meta-v">Final Release</span></div>
+        </div>
+      </div>
+      
+      <div class="cover-foot">
+        <span class="cover-foot-text">Confidential · Internal use only</span>
+        <span class="cover-foot-dots">● ● ●</span>
+      </div>
+    </div>
+
+<nav class="toc">
+<h2 class="toc-title">Table of Contents</h2>
+<ol class="toc-root">
+    <ol class="toc-sub">
+      <li class="toc-h3"><a href="#professional-polymorphic-data-platform-project-brief">Professional Polymorphic Data Platform — Project Brief</a></li>
+      </ol>
+    </li>
+  <li class="toc-h2">
+    <a href="#1-project-overview"><span class="toc-num"></span>1. Project Overview</a>
+  <li class="toc-h2">
+    <a href="#2-competencies-assessed"><span class="toc-num"></span>2. Competencies Assessed</a>
+  <li class="toc-h2">
+    <a href="#3-company-context"><span class="toc-num"></span>3. Company Context</a>
+  <li class="toc-h2">
+    <a href="#4-project-description"><span class="toc-num"></span>4. Project Description</a>
+  <li class="toc-h2">
+    <a href="#5-core-concept-polymorphic-data-architecture"><span class="toc-num"></span>5. Core Concept — Polymorphic Data Architecture</a>
+    <ol class="toc-sub">
+      <li class="toc-h3"><a href="#51-the-three-layers">5.1 The Three Layers</a></li>
+      <li class="toc-h3"><a href="#52-why-polymorphic">5.2 Why "Polymorphic"?</a></li>
+      </ol>
+    </li>
+  <li class="toc-h2">
+    <a href="#6-functional-requirements"><span class="toc-num"></span>6. Functional Requirements</a>
+    <ol class="toc-sub">
+      <li class="toc-h3"><a href="#61-database-builder">6.1 Database Builder</a></li>
+      <li class="toc-h3"><a href="#62-view-system-polymorphic-views">6.2 View System (Polymorphic Views)</a></li>
+      <li class="toc-h3"><a href="#63-adapter-layer">6.3 Adapter Layer</a></li>
+      <li class="toc-h3"><a href="#64-dashboard-builder">6.4 Dashboard Builder</a></li>
+      <li class="toc-h3"><a href="#65-embed-external-impact">6.5 Embed &amp; External Impact</a></li>
+      <li class="toc-h3"><a href="#66-authentication-accounts">6.6 Authentication &amp; Accounts</a></li>
+      <li class="toc-h3"><a href="#67-user-space">6.7 User Space</a></li>
+      <li class="toc-h3"><a href="#68-employee-space">6.8 Employee Space</a></li>
+      <li class="toc-h3"><a href="#69-administrator-space">6.9 Administrator Space</a></li>
+      <li class="toc-h3"><a href="#610-contact-page">6.10 Contact Page</a></li>
+      </ol>
+    </li>
+  <li class="toc-h2">
+    <a href="#7-business-rules-constraints"><span class="toc-num"></span>7. Business Rules &amp; Constraints</a>
+    <ol class="toc-sub">
+      <li class="toc-h3"><a href="#71-scalability-of-views">7.1 Scalability of Views</a></li>
+      <li class="toc-h3"><a href="#72-schema-modification-rules">7.2 Schema Modification Rules</a></li>
+      <li class="toc-h3"><a href="#73-adapter-rules">7.3 Adapter Rules</a></li>
+      <li class="toc-h3"><a href="#74-dashboard-rules">7.4 Dashboard Rules</a></li>
+      </ol>
+    </li>
+  <li class="toc-h2">
+    <a href="#8-security-gdpr"><span class="toc-num"></span>8. Security &amp; GDPR</a>
+  <li class="toc-h2">
+    <a href="#9-accessibility"><span class="toc-num"></span>9. Accessibility</a>
+  <li class="toc-h2">
+    <a href="#10-technical-stack"><span class="toc-num"></span>10. Technical Stack</a>
+  <li class="toc-h2">
+    <a href="#11-deliverables"><span class="toc-num"></span>11. Deliverables</a>
+    <ol class="toc-sub">
+      <li class="toc-h3"><a href="#111-required-links-to-submit">11.1 Required Links (to submit)</a></li>
+      <li class="toc-h3"><a href="#112-git-repository-contents">11.2 Git Repository Contents</a></li>
+      <li class="toc-h3"><a href="#113-pdf-documentation-package">11.3 PDF Documentation Package</a></li>
+      </ol>
+    </li>
+  <li class="toc-h2">
+    <a href="#annex-1-relational-database-schema-indicative-mcd"><span class="toc-num"></span>Annex 1 — Relational Database Schema (indicative MCD)</a>
+  <li class="toc-h2">
+    <a href="#annex-2-key-use-cases"><span class="toc-num"></span>Annex 2 — Key Use Cases</a>
+  <li class="toc-h2">
+    <a href="#annex-3-polymorphic-architecture-overview"><span class="toc-num"></span>Annex 3 — Polymorphic Architecture Overview</a>
+  </li>
+</ol>
+</nav>
+
+<h1 id="prismatica">PRISMATICA</h1>
+<h3 id="professional-polymorphic-data-platform-project-brief">Professional Polymorphic Data Platform — Project Brief</h3>
+<blockquote>
+<p><em>Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</em></p>
+</blockquote>
+<hr>
+<hr>
+<h2 id="1-project-overview">1. Project Overview</h2>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Project name</strong></td>
+<td>Prismatica</td>
+</tr>
+<tr>
+<td><strong>Type</strong></td>
+<td>Polymorphic Data Platform / Professional Dashboard Tool</td>
+</tr>
+<tr>
+<td><strong>Estimated duration</strong></td>
+<td>70 hours</td>
+</tr>
+<tr>
+<td><strong>Authorised resources</strong></td>
+<td>Annexes, official documentation</td>
+</tr>
+<tr>
+<td><strong>Submission format</strong></td>
+<td>Public GitHub repository + deployed URL + project management link</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="2-competencies-assessed">2. Competencies Assessed</h2>
+<p>All competencies of the <strong>Web &amp; Web Mobile Developer</strong> professional qualification are evaluated through this project.</p>
+<p><strong>Activity Type 1 — Front-end development of a secure web application:</strong></p>
+<ul>
+<li>Install and configure the work environment according to the project</li>
+<li>Design and prototype user interfaces (wireframes and mockups)</li>
+<li>Build static and responsive interfaces</li>
+<li>Develop dynamic, interactive front-end components (schema builder, drag-and-drop layout, live charts)</li>
+</ul>
+<p><strong>Activity Type 2 — Back-end development of a secure web application:</strong></p>
+<ul>
+<li>Set up a relational database (schema creation, migrations, seeding)</li>
+<li>Develop SQL and NoSQL data access components</li>
+<li>Design a REST (or GraphQL) API to serve the polymorphic adapter layer</li>
+<li>Document and deploy the full application to a production environment</li>
+</ul>
+<hr>
+<h2 id="3-company-context">3. Company Context</h2>
+<p><strong>NovaSphere</strong> is a consulting firm of seven developers and designers. They work with clients ranging from logistics companies, marketing agencies, to independent restaurant chains — all of them sharing the same pain point: their data lives in spreadsheets, disconnected tools, or proprietary software with no visual interface they actually own.</p>
+<p>NovaSphere&rsquo;s team has been manually building custom dashboards for each client for years. It is no longer sustainable. They have decided to invest in building <strong>Prismatica</strong> — an internal product that any professional can use to:</p>
+<ul>
+<li><strong>Own their data</strong> by creating and managing their own database schemas directly in the tool</li>
+<li><strong>Define how they see it</strong> through a polymorphic view system (tables, charts, KPIs, calendars&hellip;)</li>
+<li><strong>Connect it to their world</strong> via an adapter layer that pushes or pulls data to/from external systems</li>
+<li><strong>Share it professionally</strong> through embeddable widgets and public/private dashboards</li>
+</ul>
+<p>You have been hired by <strong>DevForge</strong>, a development agency contracted by NovaSphere, and you are now assigned to this project.</p>
+<hr>
+<h2 id="4-project-description">4. Project Description</h2>
+<p>Your project manager has gathered requirements from NovaSphere&rsquo;s team and translates them for you as follows.</p>
+<p>The goal of Prismatica is not just to <em>display</em> data — it is to let a professional user <strong>model their data, structure it, query it visually, and surface it anywhere they need</strong>, without writing a single line of SQL or code. The key differentiator from existing tools (Airtable, Notion, Metabase, Grafana) is the <strong>polymorphic adapter system</strong>: a single data model can simultaneously power a dashboard widget, a live feed on a client&rsquo;s website, a filtered export, and a REST endpoint — all derived from the same underlying schema and kept in sync.</p>
+<hr>
+<h2 id="5-core-concept-polymorphic-data-architecture">5. Core Concept — Polymorphic Data Architecture</h2>
+<p>This is the philosophical and technical foundation of the entire project. Before reading the functional requirements, your team must understand this model.</p>
+<h3 id="51-the-three-layers">5.1 The Three Layers</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────┐
+│  LAYER 1 — DATA MODEL (Schema)                                      │
+│  The user defines their own database: tables, columns, types,       │
+│  relations. Prismatica stores this in a secure, managed schema      │
+│  on the platform's servers.                                         │
+│                                                                     │
+│  Example: A restaurant owner creates a &quot;Reservations&quot; table        │
+│  with fields: date, name, party_size, status, special_requests     │
+└────────────────────────┬────────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  LAYER 2 — VIEWS (Polymorphic)                                      │
+│  The user creates multiple views on the same data — each view is    │
+│  a different representation: a bar chart, a calendar, a KPI tile,  │
+│  a filterable table, a map. Views are reusable and composable.     │
+│                                                                     │
+│  Same &quot;Reservations&quot; data → Timeline view + KPI &quot;total tonight&quot;    │
+│  + Bar chart &quot;bookings per day&quot; + Table with inline edit            │
+└────────────────────────┬────────────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────────────┐
+│  LAYER 3 — ADAPTERS (Output / Input connectors)                     │
+│  Adapters connect the views or raw data to the outside world.       │
+│  An adapter can be an embed script, a REST endpoint, a webhook,    │
+│  a CSV export, a live feed, or a read/write sync with an           │
+│  external API.                                                      │
+│                                                                     │
+│  Same &quot;Reservations&quot; data →                                        │
+│    • Embed on restaurant website (live availability widget)         │
+│    • REST endpoint GET /api/reservations (for mobile app)          │
+│    • Webhook to notify staff when new booking arrives              │
+│    • CSV export every Monday at 8am                                │
+└─────────────────────────────────────────────────────────────────────┘
+</code></pre>
+<h3 id="52-why-polymorphic">5.2 Why &ldquo;Polymorphic&rdquo;?</h3>
+<p>The same underlying data model produces <strong>multiple forms</strong> depending on context: a view is not tied to one output. This is the polymorphic contract: any view can be mounted in a dashboard, embedded externally, or exposed as an adapter endpoint — without duplicating data or logic. Your architecture must reflect this: views and adapters must be loosely coupled to the data model through a clean interface layer (think strategy pattern or plugin architecture on the back end).</p>
+<hr>
+<h2 id="6-functional-requirements">6. Functional Requirements</h2>
+<h3 id="61-database-builder">6.1 Database Builder</h3>
+<p>This is the entry point for any new project in Prismatica. A user creates a <strong>Project</strong>, and inside a project they define one or more <strong>Collections</strong> (the equivalent of database tables).</p>
+<p><strong>A Collection has the following characteristics:</strong></p>
+<ul>
+<li>A unique name within the project (e.g. &ldquo;Products&rdquo;, &ldquo;Invoices&rdquo;, &ldquo;Site Visits&rdquo;)</li>
+<li>A list of <strong>Fields</strong>, each with:</li>
+<li>A name and a display label</li>
+<li>A type: <code>text</code>, <code>number</code>, <code>boolean</code>, <code>date</code>, <code>datetime</code>, <code>email</code>, <code>url</code>, <code>select</code> (enum), <code>relation</code> (foreign key to another collection), <code>file</code> (attachment), <code>computed</code> (formula based on other fields)</li>
+<li>Validation rules per field: required, min/max, regex, uniqueness</li>
+<li>Default value</li>
+<li>A primary key (auto-generated UUID by default, or custom)</li>
+<li>Optional: soft-delete support (adds a <code>deleted_at</code> field and never hard-deletes rows)</li>
+<li>Optional: audit trail (auto-tracks <code>created_at</code>, <code>updated_at</code>, <code>created_by</code>, <code>updated_by</code>)</li>
+</ul>
+<p><strong>The schema builder interface must:</strong></p>
+<ul>
+<li>Allow creating, editing, and deleting collections and fields through a visual drag-and-drop interface</li>
+<li>Show a live preview of the schema as a diagram (entity-relationship style)</li>
+<li>Detect and warn about breaking changes (e.g. deleting a field that is used in a view)</li>
+<li>Support adding relations between collections (one-to-one, one-to-many, many-to-many via pivot)</li>
+<li>Allow importing a schema from a CSV header row (auto-detect column names and suggest types)</li>
+<li>Allow exporting the schema as a SQL file or JSON schema</li>
+</ul>
+<p><strong>Data entry and management:</strong></p>
+<ul>
+<li>Once a collection is defined, the user can enter data through a spreadsheet-style inline editor</li>
+<li>Bulk import from CSV or JSON</li>
+<li>Filtering, sorting, and searching rows directly in the collection editor</li>
+<li>Row-level actions: edit, duplicate, delete, view history (if audit trail enabled)</li>
+</ul>
+<h3 id="62-view-system-polymorphic-views">6.2 View System (Polymorphic Views)</h3>
+<p>A <strong>View</strong> is a named, configurable representation of data from one or more Collections. Views are the central object of the system — they are the unit that gets placed on dashboards and exposed through adapters.</p>
+<p><strong>Available view types (minimum required):</strong></p>
+<table>
+<thead>
+<tr>
+<th>View Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Table View</strong></td>
+<td>Paginated, sortable, filterable spreadsheet of rows. Supports inline editing.</td>
+</tr>
+<tr>
+<td><strong>Bar Chart</strong></td>
+<td>Vertical or horizontal. Supports grouping and stacking.</td>
+</tr>
+<tr>
+<td><strong>Line Chart</strong></td>
+<td>Single or multi-series. Supports time-axis with smart tick spacing.</td>
+</tr>
+<tr>
+<td><strong>Pie / Donut Chart</strong></td>
+<td>For proportional data. Configurable legend position.</td>
+</tr>
+<tr>
+<td><strong>Scatter Plot</strong></td>
+<td>Two numeric axes, optional colour grouping by a third field.</td>
+</tr>
+<tr>
+<td><strong>KPI Tile</strong></td>
+<td>Single computed value (sum, count, average, min, max) with label, unit, trend indicator, and configurable threshold colours (green / orange / red).</td>
+</tr>
+<tr>
+<td><strong>Calendar View</strong></td>
+<td>Renders rows as events on a monthly/weekly calendar using a date field.</td>
+</tr>
+<tr>
+<td><strong>Kanban View</strong></td>
+<td>Renders rows as cards grouped by a <code>select</code> field. Cards are draggable between columns to update status.</td>
+</tr>
+<tr>
+<td><strong>Map View</strong></td>
+<td>Renders rows on a geographic map using <code>lat</code>/<code>lng</code> fields or address geocoding. <em>(Advanced — optional bonus)</em></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Each view is configured with:</strong></p>
+<ul>
+<li>A name and optional description</li>
+<li>Source collection(s) — a view can join two related collections</li>
+<li>Field mappings (which field maps to which axis / dimension / label)</li>
+<li>Aggregation function per metric field: <code>sum</code>, <code>avg</code>, <code>count</code>, <code>min</code>, <code>max</code>, <code>count_distinct</code></li>
+<li>A filter set: one or more conditions combined with AND/OR logic</li>
+<li>A sort order</li>
+<li>A refresh strategy: <code>manual</code>, <code>every 10s</code>, <code>every 30s</code>, <code>every 1min</code>, <code>every 5min</code></li>
+<li>Visibility: <code>private</code> (owner only), <code>workspace</code> (all project members), <code>public</code> (embed-accessible)</li>
+<li>Colour theme: predefined palettes or custom hex values per series</li>
+</ul>
+<p><strong>A view must be re-renderable without reloading the page when its data source updates.</strong></p>
+<h3 id="63-adapter-layer">6.3 Adapter Layer</h3>
+<p>Adapters are the connectors between Prismatica&rsquo;s internal data and the outside world. Each adapter is linked to a view or a collection and defines how data flows in or out.</p>
+<p><strong>Supported adapter types:</strong></p>
+<p><strong>Outbound adapters (Prismatica → Outside):</strong></p>
+<ul>
+<li><strong>Embed Script</strong>: generates a <code>&lt;script&gt;</code> tag and optionally an <code>&lt;iframe&gt;</code> that renders a view on any external website in read-only mode. The embed respects the view&rsquo;s filter and refresh settings. Theming (light/dark, accent colour) is configurable via URL parameters.</li>
+<li><strong>REST Endpoint</strong>: exposes a collection&rsquo;s data (filtered by the view&rsquo;s conditions) as a JSON API endpoint. Supports <code>GET</code> only (read-only by default), with optional API key protection. Pagination via <code>?page=</code> and <code>?limit=</code> parameters.</li>
+<li><strong>Webhook (Push)</strong>: when a row in a collection is created, updated, or deleted, Prismatica sends a POST request to a configured URL with the row payload. Configurable per event type.</li>
+<li><strong>Scheduled CSV Export</strong>: generates a CSV of the view&rsquo;s data on a configurable schedule (daily, weekly, monthly) and sends it to a configured email address or deposits it in a configured FTP/S3 path. <em>(Advanced — optional)</em></li>
+</ul>
+<p><strong>Inbound adapters (Outside → Prismatica):</strong></p>
+<ul>
+<li><strong>REST Write Endpoint</strong>: exposes a collection as a writable API endpoint (POST / PATCH / DELETE) protected by an API key. Enables external apps to push data into Prismatica collections.</li>
+<li><strong>CSV Import Schedule</strong>: Prismatica polls a given URL at a defined interval, downloads a CSV, and upserts rows into a collection based on a configurable unique key field.</li>
+<li><strong>Form Endpoint</strong>: generates a hosted form URL that non-authenticated users can visit to submit a row into a collection (e.g. a contact form, a survey, a booking request). The form fields and validation are derived from the collection schema.</li>
+</ul>
+<p><strong>Adapter management interface must:</strong></p>
+<ul>
+<li>List all active adapters per project with status (active, error, paused)</li>
+<li>Show the last execution time and result (success / error + message) for scheduled/webhook adapters</li>
+<li>Allow pausing and resuming adapters individually</li>
+<li>Allow regenerating API keys without deleting the adapter configuration</li>
+<li>Show a live log of the last 50 adapter executions</li>
+</ul>
+<h3 id="64-dashboard-builder">6.4 Dashboard Builder</h3>
+<p>A <strong>Dashboard</strong> is a named canvas that organises multiple Views into a coherent interface.</p>
+<p><strong>A Dashboard has:</strong></p>
+<ul>
+<li>A title and optional description</li>
+<li>A workspace (belongs to a project)</li>
+<li>A visibility setting: <code>private</code>, <code>team</code>, or <code>public</code> (generates a shareable read-only URL)</li>
+<li>A grid layout: views are placed as resizable, draggable widgets on a 12-column grid</li>
+<li>Global filter controls: one or more filter inputs at the dashboard level that propagate to all compatible views (views that share the filtered field)</li>
+<li>A global refresh toggle: force all views to refresh simultaneously</li>
+<li>A last-modified timestamp and author</li>
+</ul>
+<p><strong>The dashboard layout must:</strong></p>
+<ul>
+<li>Be fully drag-and-drop within the builder interface</li>
+<li>Support widget resize handles (width and height independently)</li>
+<li>Persist the layout automatically after every change (debounced, max 2s delay)</li>
+<li>Render correctly at desktop (≥1280px), tablet (768–1279px), and mobile (&lt; 768px) screen sizes. On mobile, widgets stack vertically in a configurable order.</li>
+<li>Allow adding a <strong>text/markdown block</strong> as a non-data widget (for headings, notes, instructions)</li>
+<li>Allow adding a <strong>divider</strong> widget</li>
+</ul>
+<p><strong>Dashboard sharing:</strong></p>
+<ul>
+<li>A public dashboard link must be accessible without authentication</li>
+<li>The link can optionally be protected by a simple access password (not requiring account creation)</li>
+<li>The public view must be fully read-only — no schema or data modification is possible from a public link</li>
+<li>The owner can revoke a public link at any time (generates a new token, old link becomes invalid)</li>
+</ul>
+<h3 id="65-embed-external-impact">6.5 Embed &amp; External Impact</h3>
+<p>This section describes how Prismatica connects to the outside world through its embed system.</p>
+<p><strong>Embed script behaviour:</strong></p>
+<ul>
+<li>The embed script fetches the view data via the adapter REST endpoint at the configured refresh interval</li>
+<li>Renders the view using the same rendering engine as the main app (consistent visual output)</li>
+<li>Supports a <code>theme</code> URL parameter: <code>light</code>, <code>dark</code>, or <code>auto</code> (follows the host page&rsquo;s <code>prefers-color-scheme</code>)</li>
+<li>Supports a <code>locale</code> URL parameter for number and date formatting</li>
+<li>Must not interfere with the host page&rsquo;s CSS or JavaScript (scoped styles, Shadow DOM or iframe isolation)</li>
+<li>Must display a loading state and a graceful error state if the endpoint is unreachable</li>
+</ul>
+<p><strong>Impact on external websites:</strong></p>
+<ul>
+<li>A client embeds a Prismatica KPI tile showing live stock count on their e-commerce product page</li>
+<li>A restaurant embeds a Prismatica calendar view showing available reservation slots on their booking page</li>
+<li>A marketing team embeds a Prismatica bar chart on their internal intranet to display campaign performance</li>
+</ul>
+<p>All of the above must work from a single embed snippet, with no external dependency other than the Prismatica CDN-hosted script.</p>
+<h3 id="66-authentication-accounts">6.6 Authentication &amp; Accounts</h3>
+<p><strong>Account creation (self-registration):</strong></p>
+<p>A visitor can create an account by providing:</p>
+<ul>
+<li>First name and last name</li>
+<li>Email address (used as login identifier, must be unique)</li>
+<li>A secure password: minimum 12 characters, at least one uppercase letter, one lowercase letter, one digit, and one special character</li>
+</ul>
+<p>Upon account creation, the role <strong>&ldquo;user&rdquo;</strong> is assigned by default. A welcome email is sent automatically.</p>
+<p><strong>Login:</strong></p>
+<p>The user logs in with their email and password. A &ldquo;Forgot password&rdquo; flow must be available: the user provides their email, receives a time-limited reset link (valid for 30 minutes), and follows it to define a new password.</p>
+<p><strong>Session security:</strong></p>
+<ul>
+<li>Sessions must expire after a configurable period of inactivity (default: 24 hours)</li>
+<li>A user can view and revoke all active sessions from their profile</li>
+<li>Failed login attempts must be rate-limited (lockout after 5 failed attempts within 10 minutes)</li>
+</ul>
+<h3 id="67-user-space">6.7 User Space</h3>
+<p>From their personal space, an authenticated user can:</p>
+<ul>
+<li><strong>Projects</strong>: create, rename, archive, and delete projects. A project is the top-level container (holds collections, views, dashboards, adapters).</li>
+<li><strong>Collections</strong>: build and manage database schemas within a project (see 6.1)</li>
+<li><strong>Views</strong>: create and configure views on their data (see 6.2)</li>
+<li><strong>Dashboards</strong>: build and share dashboards (see 6.4)</li>
+<li><strong>Adapters</strong>: manage input/output connectors (see 6.3)</li>
+<li><strong>Profile</strong>: edit personal information (name, email, password, profile picture)</li>
+<li><strong>Sessions</strong>: view and revoke active sessions</li>
+<li><strong>Data deletion</strong>: request full account and data deletion (GDPR right to erasure). This action triggers a confirmation email and is irreversible after 7 days.</li>
+</ul>
+<h3 id="68-employee-space">6.8 Employee Space</h3>
+<p>An employee, after login, has access to all capabilities of a standard user, plus:</p>
+<ul>
+<li><strong>Project overview</strong>: can see all projects across all users of the platform (read-only unless granted explicit access)</li>
+<li><strong>Adapter monitoring</strong>: can see the status of all adapters platform-wide, restart failing adapters</li>
+<li><strong>Public dashboard moderation</strong>: can unpublish a public dashboard that contains inappropriate content, with a mandatory reason field. The owner is notified by email.</li>
+<li><strong>User management (read-only)</strong>: can view the list of all registered users, their account status, and their project count</li>
+<li><strong>Platform usage statistics</strong>: number of active users, collections created, rows stored, adapter executions per day — displayed as a set of KPI tiles and charts</li>
+</ul>
+<p>An employee cannot modify or cancel a user&rsquo;s data without explicit documented reason (must log contact method and reason, similar to the audit trail pattern).</p>
+<h3 id="69-administrator-space">6.9 Administrator Space</h3>
+<p>The administrator has access to all employee capabilities, plus:</p>
+<p><strong>User management (full):</strong></p>
+<ul>
+<li>Create employee accounts: provide email + temporary password. The employee receives a notification email that their account has been created, but the password is <strong>not</strong> included in the email — they must obtain it directly from the administrator.</li>
+<li>Activate and deactivate user or employee accounts (soft-disable: the account persists but cannot log in)</li>
+<li>Permanently delete user accounts (with all associated data) on explicit request</li>
+<li><strong>Note:</strong> it must not be possible to create an administrator account from within the application interface. The initial admin account must be seeded directly in the database.</li>
+</ul>
+<p><strong>Platform analytics (NoSQL-powered):</strong></p>
+<ul>
+<li>View the number of projects, collections, views, and dashboards created per user — rendered as a comparison chart</li>
+<li>View adapter execution volume and error rate over time (time-series chart)</li>
+<li>View the most-used view types across the platform (pie chart)</li>
+<li>All analytics data must be stored in and queried from a <strong>non-relational database</strong> (MongoDB or equivalent)</li>
+<li>A revenue/usage report per subscription tier must be available with filters by date range and plan</li>
+</ul>
+<p><strong>System configuration:</strong></p>
+<ul>
+<li>Configure global settings: max rows per collection per free-tier user, max adapters per project, allowed file upload types and sizes</li>
+<li>View and manage the platform&rsquo;s email templates (welcome, password reset, adapter error notification)</li>
+</ul>
+<h3 id="610-contact-page">6.10 Contact Page</h3>
+<p>Any visitor can access a contact form from the main navigation. The form collects:</p>
+<ul>
+<li>A subject / title</li>
+<li>A message body</li>
+<li>The sender&rsquo;s email address</li>
+</ul>
+<p>On submission, the message is forwarded by email to the NovaSphere support team. A confirmation message is shown to the visitor. The form must be protected against spam (honeypot field or CAPTCHA).</p>
+<hr>
+<h2 id="7-business-rules-constraints">7. Business Rules &amp; Constraints</h2>
+<h3 id="71-scalability-of-views">7.1 Scalability of Views</h3>
+<ul>
+<li>All chart and table views must be rendered in SVG or Canvas — no static image output</li>
+<li>When a collection exceeds 10,000 rows, views must apply server-side aggregation before sending data to the client. The raw rows must never be sent to the browser in bulk.</li>
+<li>When a view is resized within a dashboard, it must re-render responsively without triggering a new data fetch</li>
+<li>A view&rsquo;s configuration change must immediately trigger a data refresh and re-render</li>
+<li>Axis labels, legends, and tooltips must adapt dynamically to the available widget size (truncation + full value on hover)</li>
+</ul>
+<h3 id="72-schema-modification-rules">7.2 Schema Modification Rules</h3>
+<ul>
+<li>Adding a new field to a collection is non-destructive and always allowed</li>
+<li>Renaming a field updates all references (views, adapters, filters) automatically</li>
+<li>Deleting a field that is referenced by one or more views or adapters must be blocked until those references are removed, with a clear error listing the impacted views/adapters</li>
+<li>Changing a field&rsquo;s type is allowed only if the new type is compatible with existing data (e.g. <code>text</code> → <code>email</code> is fine if all values match email format; <code>number</code> → <code>text</code> is always allowed; <code>text</code> → <code>number</code> requires validation and is blocked if any existing value is non-numeric)</li>
+<li>Deleting a collection follows the same blocking logic: cannot be deleted if it is the source of an active view or adapter</li>
+</ul>
+<h3 id="73-adapter-rules">7.3 Adapter Rules</h3>
+<ul>
+<li>A REST endpoint adapter generates a unique, opaque URL (e.g. <code>/api/v1/adapt/a3f9b2c1...</code>) that does not expose the collection name</li>
+<li>API keys for adapters must be stored hashed and are displayed only once at creation</li>
+<li>A webhook adapter must implement retry logic: on failure (non-2xx or timeout), retry 3 times with exponential backoff (1s, 4s, 16s)</li>
+<li>An embed script adapter must respect CORS: only allow requests from the domains registered by the user during adapter configuration</li>
+</ul>
+<h3 id="74-dashboard-rules">7.4 Dashboard Rules</h3>
+<ul>
+<li>A dashboard may contain at most 24 widgets (views + text blocks) to maintain performance</li>
+<li>Layout is saved automatically with a debounce of 2 seconds after the last interaction</li>
+<li>A public dashboard link uses a token with no expiry unless explicitly revoked</li>
+<li>When a user deletes a view that is placed on a dashboard, the dashboard widget must display a graceful &ldquo;View no longer available&rdquo; placeholder rather than breaking</li>
+</ul>
+<hr>
+<h2 id="8-security-gdpr">8. Security &amp; GDPR</h2>
+<ul>
+<li>Passwords must be stored hashed using <strong>bcrypt</strong> (cost factor ≥ 12) or <strong>argon2id</strong></li>
+<li>All API routes must be protected by authentication (JWT with short-lived access token + refresh token rotation, or secure server-side sessions)</li>
+<li>All user data is scoped to the authenticated user — cross-user data access must be impossible at the query level (use row-level security or equivalent middleware guards)</li>
+<li>All user-uploaded files must be scanned for type (magic bytes, not extension only) before storage</li>
+<li>Collection data entered by users is stored in an isolated schema or namespace per user/project to prevent SQL injection and cross-tenant leakage</li>
+<li>The application must implement rate limiting on all public endpoints (authentication, contact form, public dashboard, embed endpoint)</li>
+<li>Sensitive environment variables (DB credentials, SMTP credentials, JWT secret, API keys) must never be committed to the repository. Use <code>.env</code> files with a <code>.env.example</code> template.</li>
+<li>Users must be able to export all their data as a ZIP (collections as CSV, views and dashboard configs as JSON) — GDPR right to data portability</li>
+<li>Users must be able to request full deletion of their account and all associated data — GDPR right to erasure</li>
+<li>The application must display a clear cookie/privacy notice on first visit. Session cookies must be <code>HttpOnly</code> and <code>Secure</code>.</li>
+</ul>
+<hr>
+<h2 id="9-accessibility">9. Accessibility</h2>
+<p>The application must comply with <strong>WCAG 2.1 Level AA</strong> requirements:</p>
+<ul>
+<li>All interactive elements must be keyboard-navigable (tab order, focus visible)</li>
+<li>All form fields must have explicit <code>&lt;label&gt;</code> elements or <code>aria-label</code> attributes</li>
+<li>All charts and data visualisations must have a textual alternative (either a data table toggle or an <code>aria-describedby</code> summary)</li>
+<li>Colour contrast ratio must meet 4.5:1 for normal text and 3:1 for large text</li>
+<li>Error messages must be programmatically associated with their input field (<code>aria-describedby</code>)</li>
+<li>Drag-and-drop interactions in the dashboard and schema builder must have keyboard-accessible alternatives</li>
+<li>Dynamic content updates (view refresh, dashboard save indicator) must announce changes via <code>aria-live</code> regions</li>
+</ul>
+<hr>
+<h2 id="10-technical-stack">10. Technical Stack</h2>
+<p>No technology is imposed for this project, with the exception that <strong>both a relational and a non-relational database must be used</strong>. The following is a suggested stack for reference:</p>
+<table>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Suggested Technologies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Front-end framework</strong></td>
+<td>React (Vite) or Vue 3 (Nuxt)</td>
+</tr>
+<tr>
+<td><strong>UI / Styling</strong></td>
+<td>Tailwind CSS or shadcn/ui</td>
+</tr>
+<tr>
+<td><strong>Chart rendering</strong></td>
+<td>ECharts, Recharts, or D3.js</td>
+</tr>
+<tr>
+<td><strong>Drag-and-drop (dashboard)</strong></td>
+<td>react-grid-layout or dnd-kit</td>
+</tr>
+<tr>
+<td><strong>Drag-and-drop (schema builder)</strong></td>
+<td>dnd-kit or @dnd-kit/sortable</td>
+</tr>
+<tr>
+<td><strong>Back-end</strong></td>
+<td>Node.js (Express / Fastify) or PHP (Laravel / Symfony)</td>
+</tr>
+<tr>
+<td><strong>Relational database</strong></td>
+<td>PostgreSQL (recommended), MySQL, or MariaDB</td>
+</tr>
+<tr>
+<td><strong>Non-relational database</strong></td>
+<td>MongoDB (analytics layer) or Redis</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>JWT (access + refresh token) or Passport.js sessions</td>
+</tr>
+<tr>
+<td><strong>File storage</strong></td>
+<td>Local (dev), S3-compatible (prod — AWS S3, MinIO, Cloudflare R2)</td>
+</tr>
+<tr>
+<td><strong>Email</strong></td>
+<td>NodeMailer + SMTP, Resend, or Mailgun</td>
+</tr>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>Fly.io, Railway, Render, Vercel (front) + PlanetScale / Supabase</td>
+</tr>
+</tbody>
+</table>
+<p>All technical choices must be <strong>justified in your technical documentation</strong> — explain why you chose your stack and what alternatives you considered.</p>
+<hr>
+<h2 id="11-deliverables">11. Deliverables</h2>
+<h3 id="111-required-links-to-submit">11.1 Required Links (to submit)</h3>
+<ul>
+<li>Public GitHub repository URL (or URLs if front/back are separate)</li>
+<li>Deployed application URL (functional and accessible at delivery time)</li>
+<li>Project management tool URL (Jira, Notion, Linear, Trello, etc.) — must be accessible to the jury</li>
+</ul>
+<h3 id="112-git-repository-contents">11.2 Git Repository Contents</h3>
+<p>Your repository must contain:</p>
+<p><strong><code>README.md</code></strong> — Installation guide:</p>
+<ul>
+<li>Prerequisites and local environment setup steps</li>
+<li>Environment variable reference (<code>.env.example</code> file)</li>
+<li>Database setup and seeding commands</li>
+<li>How to run tests</li>
+<li>Test credentials for each role (visitor, user, employee, admin)</li>
+</ul>
+<p><strong>Git practices:</strong></p>
+<ul>
+<li><code>main</code> branch — production-ready code only</li>
+<li><code>develop</code> branch — integration branch</li>
+<li>Feature branches: <code>feature/[feature-name]</code> branched from <code>develop</code>, merged back via pull request after testing</li>
+<li>Commit messages must follow Conventional Commits format: <code>feat:</code>, <code>fix:</code>, <code>docs:</code>, <code>refactor:</code>, <code>test:</code></li>
+</ul>
+<p><strong>Database files:</strong></p>
+<ul>
+<li>SQL schema creation file (<code>schema.sql</code> or migration files)</li>
+<li>SQL seed file with representative test data (<code>seed.sql</code>)</li>
+<li>MongoDB seed scripts (if applicable)</li>
+<li>Note: using an ORM migration tool does not substitute for having raw SQL files in the repository</li>
+</ul>
+<h3 id="113-pdf-documentation-package">11.3 PDF Documentation Package</h3>
+<p><strong>A. Graphic Charter (<code>charte-graphique.pdf</code>):</strong></p>
+<ul>
+<li>Colour palette (primary, secondary, accent, neutral, semantic colours) with hex codes</li>
+<li>Typography choices (font families, size scale, weight usage)</li>
+<li>Component library overview (buttons, inputs, cards, badges)</li>
+<li>Wireframes: 3 desktop wireframes + 3 mobile wireframes (key screens)</li>
+<li>Mockups: 3 desktop mockups + 3 mobile mockups (high-fidelity)</li>
+</ul>
+<p><strong>B. User Manual (<code>manuel-utilisateur.pdf</code>):</strong></p>
+<ul>
+<li>Overview of the application and its main workflows</li>
+<li>Step-by-step walkthroughs for each user role</li>
+<li>Test credentials for each role</li>
+<li>Known limitations and edge cases</li>
+</ul>
+<p><strong>C. Technical Documentation (<code>documentation-technique.pdf</code>):</strong></p>
+<ul>
+<li>Initial technology research and stack justification</li>
+<li>Local environment configuration guide</li>
+<li>Conceptual Data Model (MCD) or UML Class Diagram</li>
+<li>Use case diagram</li>
+<li>Sequence diagrams for at least 3 key flows (e.g. user login, view creation, adapter execution)</li>
+<li>Polymorphic architecture design explanation (how the 3-layer model is implemented)</li>
+<li>Deployment procedure (step-by-step, reproducible)</li>
+<li>Security measures implemented</li>
+</ul>
+<p><strong>D. Project Management Report (<code>gestion-projet.pdf</code>):</strong></p>
+<ul>
+<li>Methodology used (Scrum, Kanban, etc.) and justification</li>
+<li>Sprint breakdown or task decomposition</li>
+<li>Time tracking summary</li>
+<li>Retrospective: what went well, what was challenging, what you would do differently</li>
+</ul>
+<hr>
+<h2 id="annex-1-relational-database-schema-indicative-mcd">Annex 1 — Relational Database Schema (indicative MCD)</h2>
+<p>The following schema is provided as a starting point. You are free to extend, adapt, or restructure it based on your architectural decisions. All choices must be justified in your technical documentation.</p>
+<pre><code>┌──────────────┐        ┌───────────────┐       ┌──────────────────┐
+│    user      │        │    project    │       │   collection     │
+│──────────────│        │───────────────│       │──────────────────│
+│ id (PK)      │1──────n│ id (PK)       │1─────n│ id (PK)          │
+│ email        │        │ owner_id (FK) │       │ project_id (FK)  │
+│ first_name   │        │ name          │       │ name             │
+│ last_name    │        │ description   │       │ soft_delete      │
+│ password_hash│        │ created_at    │       │ audit_trail      │
+│ role_id (FK) │        │ updated_at    │       │ created_at       │
+│ active       │        └───────────────┘       └────────┬─────────┘
+│ created_at   │                                         │1
+└──────────────┘                                         │
+                                                         │n
+                                               ┌─────────┴─────────┐
+                                               │      field        │
+                                               │───────────────────│
+                                               │ id (PK)           │
+                                               │ collection_id (FK)│
+                                               │ name              │
+                                               │ label             │
+                                               │ type              │
+                                               │ validation_json   │
+                                               │ default_value     │
+                                               │ position          │
+                                               └───────────────────┘
+
+┌──────────────────┐     ┌───────────────┐     ┌───────────────────┐
+│      view        │     │   dashboard   │     │   adapter         │
+│──────────────────│     │───────────────│     │───────────────────│
+│ id (PK)          │n   n│ id (PK)       │     │ id (PK)           │
+│ project_id (FK)  │─────│ project_id(FK)│     │ view_id (FK)      │
+│ source_id (FK)   │     │ title         │     │ collection_id(FK) │
+│ name             │     │ is_public     │     │ type              │
+│ type             │     │ public_token  │     │ config_json       │
+│ config_json      │     │ layout_json   │     │ status            │
+│ filter_json      │     │ updated_at    │     │ api_key_hash      │
+│ refresh_strategy │     └───────────────┘     │ last_run_at       │
+│ visibility       │                           │ last_run_status   │
+│ created_at       │                           └───────────────────┘
+└──────────────────┘
+
+┌──────────────────┐
+│       role       │
+│──────────────────│
+│ id (PK)          │
+│ name             │  values: visitor, user, employee, admin
+└──────────────────┘
+</code></pre>
+<p><strong>Note:</strong> Collection rows (the actual user data) are stored in a dynamically generated schema per project (e.g. PostgreSQL schema per project, or a <code>collection_rows</code> EAV table, or a hybrid approach). Your technical documentation must justify how you handle row storage for dynamic schemas.</p>
+<hr>
+<h2 id="annex-2-key-use-cases">Annex 2 — Key Use Cases</h2>
+<p>The following use cases are the minimum expected in your documentation. You may add more.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Use Case</th>
+<th>Primary Actor</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UC-01</td>
+<td>Register on the platform</td>
+<td>Visitor</td>
+</tr>
+<tr>
+<td>UC-02</td>
+<td>Log in / Log out</td>
+<td>User, Employee, Admin</td>
+</tr>
+<tr>
+<td>UC-03</td>
+<td>Reset password via email link</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-04</td>
+<td>Create a project</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-05</td>
+<td>Define a collection schema (add fields, set types, add relations)</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-06</td>
+<td>Import data into a collection via CSV</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-07</td>
+<td>Create a view on a collection</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-08</td>
+<td>Configure view filters and aggregations</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-09</td>
+<td>Create a dashboard and add views as widgets</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-10</td>
+<td>Rearrange and resize dashboard widgets via drag-and-drop</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-11</td>
+<td>Apply a global filter across a dashboard</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-12</td>
+<td>Share a dashboard via a public link</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-13</td>
+<td>View a public dashboard without an account</td>
+<td>Visitor</td>
+</tr>
+<tr>
+<td>UC-14</td>
+<td>Create an embed adapter and get the embed snippet</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-15</td>
+<td>Embed a live view on an external website</td>
+<td>External User / Visitor</td>
+</tr>
+<tr>
+<td>UC-16</td>
+<td>Create a REST endpoint adapter for a collection</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-17</td>
+<td>Configure a webhook adapter for row events</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-18</td>
+<td>Moderate (unpublish) a public dashboard</td>
+<td>Employee</td>
+</tr>
+<tr>
+<td>UC-19</td>
+<td>Create an employee account</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>UC-20</td>
+<td>Deactivate a user or employee account</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>UC-21</td>
+<td>View platform analytics (NoSQL)</td>
+<td>Admin</td>
+</tr>
+<tr>
+<td>UC-22</td>
+<td>Rename a field and see all view references update</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-23</td>
+<td>Delete a field blocked by active view reference</td>
+<td>User (blocked)</td>
+</tr>
+<tr>
+<td>UC-24</td>
+<td>Request full account and data deletion (GDPR)</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-25</td>
+<td>Export all personal data as ZIP (GDPR)</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-26</td>
+<td>Submit a contact form</td>
+<td>Visitor</td>
+</tr>
+<tr>
+<td>UC-27</td>
+<td>Revoke a public dashboard link</td>
+<td>User</td>
+</tr>
+<tr>
+<td>UC-28</td>
+<td>View and revoke active login sessions</td>
+<td>User</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h2 id="annex-3-polymorphic-architecture-overview">Annex 3 — Polymorphic Architecture Overview</h2>
+<p>The following diagram illustrates the expected relationship between the three core layers and how they interact at runtime.</p>
+<pre><code>                    ┌─────────────────────────────────┐
+                    │         PRISMATICA CORE          │
+                    └─────────────┬───────────────────┘
+                                  │
+          ┌───────────────────────┼───────────────────────┐
+          ▼                       ▼                       ▼
+  ┌───────────────┐     ┌──────────────────┐    ┌──────────────────┐
+  │  DATA LAYER   │     │   VIEW LAYER     │    │  ADAPTER LAYER   │
+  │               │     │                  │    │                  │
+  │  Collection   │────▶│  BarChart View   │───▶│  Embed Script    │
+  │  Schema       │     │  Table View      │    │  REST Endpoint   │
+  │  Row Storage  │────▶│  KPI Tile View   │───▶│  Webhook         │
+  │  Relations    │     │  Calendar View   │    │  CSV Export      │
+  │  Validations  │────▶│  Kanban View     │───▶│  Form Endpoint   │
+  └───────────────┘     └──────────────────┘    └──────────────────┘
+          ▲                       ▲                       │
+          │                       │                       ▼
+          │               ┌───────────────┐    ┌──────────────────┐
+          │               │   DASHBOARD   │    │  EXTERNAL WORLD  │
+          │               │               │    │                  │
+          │               │  Grid Layout  │    │  Client Website  │
+          └───────────────│  Global Filters│   │  Mobile App      │
+                          │  Public Share │    │  3rd Party Tool  │
+                          └───────────────┘    └──────────────────┘
+</code></pre>
+<p><strong>Key architectural principle:</strong> a View must implement a single rendering interface regardless of where it is mounted (dashboard widget, embed, public URL). An Adapter must be able to wrap any View or Collection through the same connector interface. This is the polymorphic contract your back-end and front-end architectures must honour.</p>
+<hr>
+<p><em>© DevForge — Reproduction restricted. This document is intended for the jury of the professional qualification TP Développeur Web et Web Mobile.</em></p>
+</body>
+</html>
