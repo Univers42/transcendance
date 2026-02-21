@@ -33,8 +33,8 @@ Everything you need to know before writing code on this project. Architecture, c
 ## Getting Started
 
 ```bash
-git clone git@github.com:Univers42/ft_transcendence.git
-cd ft_transcendence
+git clone git@github.com:Univers42/transcendence.git || git clone https://github.com/Univers42/transcendence.git
+cd transcendence
 cp .env.example .env
 make          # first-time setup
 make dev      # start everything
