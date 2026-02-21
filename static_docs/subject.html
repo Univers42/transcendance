@@ -3,316 +3,568 @@
 <head>
 <meta charset="utf-8"/>
 <title>PRISMATICA</title>
-
-<!-- Mermaid — loaded from CDN, rendered before PDF capture -->
 <script src="https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.min.js"></script>
-
 <style>
-/* ═══════════════════════════════════════════════════════
-   PRISMATICA — PDF Styles (Puppeteer / Chrome)
-   Palette: Indigo-600 primary · Slate neutrals · Violet accents
-   ═══════════════════════════════════════════════════════ */
+/* ═══════════════════════════════════════════════════════════════════
+   PROFESSIONAL PDF STYLESHEET  ·  md-to-pdf v2
+   Palette:
+     Primary   #0f62fe  (IBM Blue)
+     Surface   #ffffff / #f4f4f4
+     Text      #161616 / #525252
+     Accent    #0353e9 dark blue
+     Warning   #f1c21b  gold
+   ═══════════════════════════════════════════════════════════════════ */
 
-/* ── Variables ──────────────────────────────────────── */
 :root {
-  --primary:     #4f46e5;
-  --primary-dark:#3730a3;
-  --violet:      #7c3aed;
-  --bg-dark:     #0f172a;
-  --bg-mid:      #1e293b;
-  --text:        #1e293b;
-  --text-muted:  #64748b;
-  --border:      #e2e8f0;
-  --bg-light:    #f8fafc;
-  --code-bg:     #ede9fe;
-  --code-color:  #5b21b6;
+  --blue:        #0f62fe;
+  --blue-dark:   #0353e9;
+  --blue-mid:    #4589ff;
+  --blue-light:  #edf4ff;
+  --gold:        #f1c21b;
+  --navy:        #071d3f;
+  --charcoal:    #161616;
+  --text:        #161616;
+  --text-2:      #393939;
+  --text-3:      #525252;
+  --text-4:      #6f6f6f;
+  --border:      #e0e0e0;
+  --border-2:    #c6c6c6;
+  --surface-1:   #f4f4f4;
+  --surface-2:   #ffffff;
+  --green:       #24a148;
+  --purple:      #8a3ffc;
+  --red:         #da1e28;
 }
 
-/* ── Base ───────────────────────────────────────────── */
-*, *::before, *::after { box-sizing: border-box; }
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { font-size: 13px; }
 body {
-  font-family: "Segoe UI", Inter, system-ui, -apple-system, sans-serif;
+  font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   color: var(--text);
-  line-height: 1.72;
-  max-width: 100%;
-  margin: 0; padding: 0;
+  line-height: 1.7;
+  background: #fff;
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
 }
 
-/* ── COVER ──────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   COVER PAGE
+   ══════════════════════════════════════════════════ */
 .cover {
-  width: 100vw;
+  width: 100%;
   min-height: 100vh;
-  background: linear-gradient(150deg, #0f172a 0%, #1e1b4b 55%, #0f172a 100%);
+  background: var(--navy);
   display: flex;
-  align-items: center;
-  padding: 0;
+  flex-direction: column;
+  position: relative;
   page-break-after: always;
   margin: 0 -18mm;
+  padding: 0;
+  overflow: hidden;
 }
-.cover-inner {
-  padding: 32mm 28mm;
-  width: 100%;
+
+/* Diagonal accent band */
+.cover::before {
+  content: '';
+  position: absolute;
+  bottom: -80px;
+  right: -80px;
+  width: 380px;
+  height: 380px;
+  background: var(--blue);
+  opacity: 0.18;
+  border-radius: 50%;
 }
-.cover-badge {
-  display: inline-block;
-  background: var(--primary);
-  color: #fff;
-  font-size: 8px;
+.cover::after {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: 40px;
+  width: 260px;
+  height: 260px;
+  background: var(--blue-mid);
+  opacity: 0.12;
+  border-radius: 50%;
+}
+
+.cover-stripe {
+  height: 5px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--blue-mid) 60%, var(--gold) 100%);
+  flex-shrink: 0;
+}
+
+.cover-content {
+  flex: 1;
+  padding: 48px 44px 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+}
+
+.cover-eyebrow {
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
-  padding: 5px 16px;
-  border-radius: 20px;
-  margin-bottom: 24px;
+  color: var(--gold);
+  margin-bottom: 20px;
 }
+
 .cover-title {
-  font-size: 38px;
+  font-size: 36px;
   font-weight: 800;
-  color: #f8fafc;
   line-height: 1.1;
-  margin: 0 0 16px 0;
+  color: #ffffff;
+  margin-bottom: 16px;
   border: none;
   padding: 0;
 }
-.cover-title .accent { color: #a5b4fc; }
-.cover-sub {
+
+.cover-accent { color: var(--blue-mid); }
+
+.cover-subtitle {
   font-size: 13px;
-  color: #94a3b8;
-  max-width: 420px;
-  line-height: 1.6;
+  color: #8d8d8d;
+  line-height: 1.55;
+  max-width: 380px;
   font-style: italic;
-  margin: 0 0 32px 0;
+  margin-bottom: 36px;
 }
-.cover-line {
-  width: 52px;
+
+.cover-rule {
+  width: 40px;
   height: 3px;
-  background: var(--primary);
-  border-radius: 2px;
+  background: var(--blue);
   margin-bottom: 28px;
 }
+
 .cover-meta {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-.cover-row {
-  display: flex;
-  gap: 14px;
-  align-items: baseline;
-}
-.cover-row span {
-  min-width: 80px;
-  font-size: 9px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #475569;
-}
-.cover-row strong {
-  font-size: 11px;
-  font-weight: 600;
-  color: #e2e8f0;
+  gap: 10px;
 }
 
-/* ── TOC ────────────────────────────────────────────── */
+.meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 0;
+}
+
+.meta-label {
+  font-size: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: #6f6f6f;
+  width: 80px;
+  flex-shrink: 0;
+}
+
+.meta-val {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #c6c6c6;
+}
+
+.cover-footer {
+  padding: 14px 44px;
+  border-top: 1px solid rgba(255,255,255,0.07);
+  position: relative;
+  z-index: 1;
+}
+
+.cover-footer-text {
+  font-size: 8px;
+  color: #525252;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+/* ══════════════════════════════════════════════════
+   TABLE OF CONTENTS
+   ══════════════════════════════════════════════════ */
 .toc {
   page-break-after: always;
-  padding-top: 10px;
+  padding: 6px 0 20px;
 }
+
 .toc-title {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--bg-dark);
-  border-bottom: 2px solid var(--primary) !important;
-  border-left: none !important;
-  padding: 0 0 8px 0 !important;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--charcoal);
+  padding: 0 0 12px 0 !important;
+  margin: 0 0 4px 0 !important;
+  border: none !important;
+  border-bottom: 3px solid var(--blue) !important;
   background: transparent !important;
-  margin-bottom: 16px;
+  letter-spacing: -0.01em;
 }
+
 .toc-list {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 8px 0 0;
+  counter-reset: toc-h2;
 }
-.toc-list li {
-  padding: 5px 0;
-  border-bottom: 1px dotted var(--border);
-  line-height: 1.5;
+
+.toc-list > li {
+  counter-increment: toc-h2;
+  padding: 0;
 }
-.toc-list li a {
+
+.toc-h2 {
+  display: block;
+  padding: 8px 0 4px;
+  border-bottom: 1px solid var(--border);
+}
+
+.toc-h2 > a {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
   text-decoration: none;
   font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  transition: color 0.1s;
 }
-.toc-h2 { font-weight: 600; }
-.toc-h2 a { color: var(--text); }
-.toc-h3 { padding-left: 18px; }
-.toc-h3 a { color: var(--text-muted); font-size: 11px; }
 
-/* ── HEADINGS ───────────────────────────────────────── */
+.toc-h2 > a::before {
+  content: counter(toc-h2, decimal-leading-zero);
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--blue);
+  min-width: 22px;
+  letter-spacing: 0.03em;
+}
+
+.toc-h2 > a::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px dotted var(--border-2);
+  margin: 0 6px;
+  position: relative;
+  top: -2px;
+}
+
+.toc-sub {
+  list-style: none;
+  padding: 2px 0 6px 32px;
+  margin: 0;
+  counter-reset: toc-h3;
+}
+
+.toc-h3 {
+  counter-increment: toc-h3;
+  padding: 3px 0;
+}
+
+.toc-h3 > a {
+  font-size: 10.5px;
+  font-weight: 400;
+  color: var(--text-3);
+  text-decoration: none;
+}
+
+/* ══════════════════════════════════════════════════
+   TYPOGRAPHY  — Headings
+   ══════════════════════════════════════════════════ */
 h1 {
   font-size: 22px;
   font-weight: 800;
-  color: var(--bg-dark);
-  border-bottom: 2px solid var(--primary);
-  padding-bottom: 8px;
-  margin: 42px 0 16px;
+  color: var(--charcoal);
+  line-height: 1.2;
+  margin: 48px 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--blue);
+  letter-spacing: -0.02em;
   page-break-after: avoid;
 }
+
 h2 {
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   color: var(--text);
-  background: var(--bg-light);
-  border-left: 4px solid var(--primary);
-  padding: 10px 14px;
-  margin: 34px 0 12px;
+  margin: 36px 0 12px;
+  padding: 11px 14px 11px 16px;
+  background: var(--surface-1);
+  border-left: 4px solid var(--blue);
   border-radius: 0 4px 4px 0;
+  line-height: 1.3;
   page-break-after: avoid;
 }
+
 h3 {
-  font-size: 13px;
-  font-weight: 600;
-  color: #334155;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-2);
+  margin: 28px 0 10px;
+  padding-bottom: 6px;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 5px;
-  margin: 26px 0 10px;
+  letter-spacing: 0.01em;
   page-break-after: avoid;
 }
+
 h4 {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary);
-  margin: 18px 0 8px;
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--blue-dark);
+  margin: 20px 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
   page-break-after: avoid;
 }
+
+h4::before {
+  content: '◆';
+  font-size: 7px;
+  color: var(--blue);
+}
+
 h5 {
   font-size: 10px;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--text-4);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 14px 0 6px;
+  letter-spacing: 0.1em;
+  margin: 16px 0 6px;
+  page-break-after: avoid;
 }
 
-/* ── PARAGRAPHS ─────────────────────────────────────── */
-p { margin: 0 0 10px; }
-strong { color: var(--bg-dark); }
+h6 {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-4);
+  margin: 12px 0 4px;
+}
 
-/* ── BLOCKQUOTE ─────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   PROSE
+   ══════════════════════════════════════════════════ */
+p {
+  margin: 0 0 10px;
+  color: var(--text-2);
+}
+
+strong { color: var(--charcoal); font-weight: 700; }
+em     { color: var(--text-3); font-style: italic; }
+a      { color: var(--blue-dark); text-decoration: none; border-bottom: 1px solid var(--blue-mid); }
+
+/* ══════════════════════════════════════════════════
+   BLOCKQUOTES
+   ══════════════════════════════════════════════════ */
 blockquote {
-  border-left: 3px solid #818cf8;
-  background: #eef2ff;
-  margin: 14px 0;
-  padding: 10px 18px;
+  position: relative;
+  margin: 16px 0;
+  padding: 12px 18px 12px 20px;
+  background: var(--blue-light);
+  border-left: 3px solid var(--blue);
   border-radius: 0 6px 6px 0;
-  color: #312e81;
+  color: var(--navy);
   font-size: 12px;
+  page-break-inside: avoid;
 }
-blockquote p { margin: 2px 0; }
 
-/* ── TABLES ─────────────────────────────────────────── */
+blockquote p { margin: 2px 0; color: inherit; }
+
+blockquote::before {
+  content: '“';
+  position: absolute;
+  top: 2px;
+  right: 12px;
+  font-size: 42px;
+  color: var(--blue-mid);
+  opacity: 0.25;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+/* ══════════════════════════════════════════════════
+   TABLES
+   ══════════════════════════════════════════════════ */
+.table-wrap {
+  overflow: hidden;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin: 18px 0 22px;
+  page-break-inside: avoid;
+}
+
 table {
   width: 100%;
   border-collapse: collapse;
-  margin: 16px 0 20px;
   font-size: 11px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
 }
+
+thead tr {
+  background: var(--charcoal);
+}
+
 thead th {
-  background: var(--bg-dark);
-  color: #f1f5f9;
-  padding: 9px 12px;
+  padding: 10px 13px;
+  font-size: 9.5px;
   font-weight: 700;
-  font-size: 10px;
-  letter-spacing: 0.03em;
-  border-bottom: 2px solid var(--primary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #f4f4f4;
   text-align: left;
+  border-right: 1px solid rgba(255,255,255,0.06);
 }
+
+thead th:last-child { border-right: none; }
+
+tbody tr { border-bottom: 1px solid var(--border); }
+tbody tr:last-child { border-bottom: none; }
+tbody tr:nth-child(even) { background: var(--surface-1); }
+
 tbody td {
-  padding: 7px 12px;
-  border-bottom: 1px solid var(--border);
+  padding: 8px 13px;
+  color: var(--text-2);
   vertical-align: top;
   line-height: 1.5;
-  color: #334155;
+  border-right: 1px solid var(--border);
 }
-tbody tr:nth-child(even) { background: var(--bg-light); }
-tbody td:first-child { font-weight: 600; color: var(--text); }
 
-/* ── CODE ───────────────────────────────────────────── */
+tbody td:last-child { border-right: none; }
+tbody td:first-child { font-weight: 600; color: var(--charcoal); }
+
+/* ══════════════════════════════════════════════════
+   CODE
+   ══════════════════════════════════════════════════ */
 code {
-  font-family: "Fira Code", "Cascadia Code", "Consolas", monospace;
-  font-size: 0.86em;
-  background: var(--code-bg);
-  color: var(--code-color);
-  padding: 1px 5px;
+  font-family: "Cascadia Code", "Fira Code", "Consolas", "Monaco", monospace;
+  font-size: 0.85em;
+  background: #ede9fe;
+  color: #5b21b6;
+  padding: 2px 6px;
   border-radius: 3px;
+  border: 1px solid #ddd6fe;
+  white-space: nowrap;
 }
+
 .code-block {
-  background: var(--bg-dark);
-  color: #e2e8f0;
-  padding: 14px 16px;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 16px 18px;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 10.5px;
   line-height: 1.65;
-  margin: 10px 0 14px;
+  margin: 12px 0 16px;
   overflow-x: auto;
   page-break-inside: avoid;
   white-space: pre-wrap;
   word-break: break-all;
+  border: 1px solid #313244;
+  position: relative;
 }
+
+.code-block::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--purple) 100%);
+  border-radius: 8px 8px 0 0;
+}
+
 .code-block code {
   background: none;
+  border: none;
   padding: 0;
   color: inherit;
   font-size: inherit;
+  white-space: inherit;
 }
 
-/* ── MERMAID ────────────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   MERMAID DIAGRAMS
+   ══════════════════════════════════════════════════ */
 .mermaid-wrap {
-  background: var(--bg-light);
+  background: #fafbff;
   border: 1px solid var(--border);
   border-radius: 10px;
-  padding: 16px;
-  margin: 16px 0;
+  padding: 20px;
+  margin: 16px 0 20px;
   text-align: center;
   page-break-inside: avoid;
+  position: relative;
 }
+
+.mermaid-wrap::before {
+  content: 'Diagram';
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--border-2);
+}
+
 pre.mermaid {
   margin: 0;
   padding: 0;
   border: none;
   background: transparent;
-  text-align: center;
 }
+
 pre.mermaid svg {
   max-width: 100%;
   height: auto;
 }
 
-/* ── LISTS ──────────────────────────────────────────── */
-ul, ol { padding-left: 24px; margin: 8px 0 12px; }
-li { margin-bottom: 4px; line-height: 1.65; }
-li::marker { color: var(--primary); font-weight: 700; }
+/* ══════════════════════════════════════════════════
+   LISTS
+   ══════════════════════════════════════════════════ */
+ul, ol {
+  padding-left: 22px;
+  margin: 8px 0 12px;
+  color: var(--text-2);
+}
 
-/* ── HR ─────────────────────────────────────────────── */
+li { margin-bottom: 5px; line-height: 1.65; }
+
+ul li::marker { color: var(--blue); }
+ol li::marker { color: var(--blue); font-weight: 700; font-size: 0.9em; }
+
+li > p { margin: 2px 0; }
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul { margin: 4px 0 4px; }
+
+/* ══════════════════════════════════════════════════
+   HR
+   ══════════════════════════════════════════════════ */
 hr {
   border: none;
   height: 1px;
-  background: linear-gradient(to right, var(--primary), transparent);
-  margin: 24px 0;
+  background: linear-gradient(90deg, var(--blue) 0%, var(--border) 60%, transparent 100%);
+  margin: 28px 0;
 }
 
-/* ── IMAGES ─────────────────────────────────────────── */
-img { max-width: 100%; border-radius: 6px; }
+/* ══════════════════════════════════════════════════
+   IMAGES
+   ══════════════════════════════════════════════════ */
+img {
+  max-width: 100%;
+  border-radius: 6px;
+  display: block;
+  margin: 12px auto;
+}
 
-/* ── PRINT HELPERS ──────────────────────────────────── */
+/* ══════════════════════════════════════════════════
+   PRINT — page break rules
+   ══════════════════════════════════════════════════ */
 @media print {
-  h1, h2, h3, h4 { page-break-after: avoid; }
-  pre, blockquote, table { page-break-inside: avoid; }
+  h1, h2, h3, h4, h5 { page-break-after: avoid; }
+  .code-block, blockquote, .mermaid-wrap { page-break-inside: avoid; }
+  .table-wrap { page-break-inside: auto; }
   tr { page-break-inside: avoid; }
 }
 </style>
@@ -321,28 +573,31 @@ img { max-width: 100%; border-radius: 6px; }
 
 
 <div class="cover">
-  <div class="cover-inner">
-    <div class="cover-badge">Project Brief</div>
+  <div class="cover-stripe"></div>
+  <div class="cover-content">
+    <div class="cover-eyebrow">Technical Document</div>
     <h1 class="cover-title">PRISMATICA</h1>
-    <p class="cover-sub">Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</p>
-    <div class="cover-line"></div>
+    <p class="cover-subtitle">Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</p>
+    <div class="cover-rule"></div>
     <div class="cover-meta">
-      
-      <div class="cover-row"><span>Date</span><strong>21 February 2026</strong></div>
-      <div class="cover-row"><span>Type</span><strong>Educational — Not for redistribution</strong></div>
+      <div class="meta-row"><span class="meta-label">Date</span><span class="meta-val">21 February 2026</span></div>
+    <div class="meta-row"><span class="meta-label">Type</span><span class="meta-val">Documentation</span></div>
     </div>
+  </div>
+  <div class="cover-footer">
+    <span class="cover-footer-text">Confidential · For internal use only</span>
   </div>
 </div>
 
 
 
-<h1>PRISMATICA</h1>
-<h3>Professional Polymorphic Data Platform — Project Brief</h3>
+<h1 id="prismatica">PRISMATICA</h1>
+<h3 id="professional-polymorphic-data-platform-project-brief">Professional Polymorphic Data Platform — Project Brief</h3>
 <blockquote>
 <p><em>Like a prism refracts light into its components, Prismatica breaks raw data into structured views, dashboards, and live adapters — tailored to every professional workflow.</em></p>
 </blockquote>
 <hr>
-<h2>Table of Contents</h2>
+<h2 id="table-of-contents">Table of Contents</h2>
 <ol>
 <li><a href="#1-project-overview">Project Overview</a></li>
 <li><a href="#2-competencies-assessed">Competencies Assessed</a></li>
@@ -372,7 +627,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li><a href="#annex-3--polymorphic-architecture-overview">Annex 3 — Polymorphic Architecture Overview</a></li>
 </ol>
 <hr>
-<h2>1. Project Overview</h2>
+<h2 id="1-project-overview">1. Project Overview</h2>
 <table>
 <thead>
 <tr>
@@ -402,7 +657,7 @@ img { max-width: 100%; border-radius: 6px; }
 </tr>
 </tbody></table>
 <hr>
-<h2>2. Competencies Assessed</h2>
+<h2 id="2-competencies-assessed">2. Competencies Assessed</h2>
 <p>All competencies of the <strong>Web &amp; Web Mobile Developer</strong> professional qualification are evaluated through this project.</p>
 <p><strong>Activity Type 1 — Front-end development of a secure web application:</strong></p>
 <ul>
@@ -419,7 +674,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Document and deploy the full application to a production environment</li>
 </ul>
 <hr>
-<h2>3. Company Context</h2>
+<h2 id="3-company-context">3. Company Context</h2>
 <p><strong>NovaSphere</strong> is a consulting firm of seven developers and designers. They work with clients ranging from logistics companies, marketing agencies, to independent restaurant chains — all of them sharing the same pain point: their data lives in spreadsheets, disconnected tools, or proprietary software with no visual interface they actually own.</p>
 <p>NovaSphere&#39;s team has been manually building custom dashboards for each client for years. It is no longer sustainable. They have decided to invest in building <strong>Prismatica</strong> — an internal product that any professional can use to:</p>
 <ul>
@@ -430,20 +685,20 @@ img { max-width: 100%; border-radius: 6px; }
 </ul>
 <p>You have been hired by <strong>DevForge</strong>, a development agency contracted by NovaSphere, and you are now assigned to this project.</p>
 <hr>
-<h2>4. Project Description</h2>
+<h2 id="4-project-description">4. Project Description</h2>
 <p>Your project manager has gathered requirements from NovaSphere&#39;s team and translates them for you as follows.</p>
 <p>The goal of Prismatica is not just to <em>display</em> data — it is to let a professional user <strong>model their data, structure it, query it visually, and surface it anywhere they need</strong>, without writing a single line of SQL or code. The key differentiator from existing tools (Airtable, Notion, Metabase, Grafana) is the <strong>polymorphic adapter system</strong>: a single data model can simultaneously power a dashboard widget, a live feed on a client&#39;s website, a filtered export, and a REST endpoint — all derived from the same underlying schema and kept in sync.</p>
 <hr>
-<h2>5. Core Concept — Polymorphic Data Architecture</h2>
+<h2 id="5-core-concept-polymorphic-data-architecture">5. Core Concept — Polymorphic Data Architecture</h2>
 <p>This is the philosophical and technical foundation of the entire project. Before reading the functional requirements, your team must understand this model.</p>
-<h3>5.1 The Three Layers</h3>
+<h3 id="51-the-three-layers">5.1 The Three Layers</h3>
 <pre class="code-block"><code class="language-">┌─────────────────────────────────────────────────────────────────────┐
 │  LAYER 1 — DATA MODEL (Schema)                                      │
 │  The user defines their own database: tables, columns, types,       │
 │  relations. Prismatica stores this in a secure, managed schema      │
 │  on the platform's servers.                                         │
 │                                                                     │
-│  Example: A restaurant owner creates a "Reservations" table        │
+│  Example: A restaurant owner creates a &quot;Reservations&quot; table        │
 │  with fields: date, name, party_size, status, special_requests     │
 └────────────────────────┬────────────────────────────────────────────┘
                          │
@@ -454,8 +709,8 @@ img { max-width: 100%; border-radius: 6px; }
 │  a different representation: a bar chart, a calendar, a KPI tile,  │
 │  a filterable table, a map. Views are reusable and composable.     │
 │                                                                     │
-│  Same "Reservations" data → Timeline view + KPI "total tonight"    │
-│  + Bar chart "bookings per day" + Table with inline edit            │
+│  Same &quot;Reservations&quot; data → Timeline view + KPI &quot;total tonight&quot;    │
+│  + Bar chart &quot;bookings per day&quot; + Table with inline edit            │
 └────────────────────────┬────────────────────────────────────────────┘
                          │
                          ▼
@@ -466,16 +721,17 @@ img { max-width: 100%; border-radius: 6px; }
 │  a CSV export, a live feed, or a read/write sync with an           │
 │  external API.                                                      │
 │                                                                     │
-│  Same "Reservations" data →                                        │
+│  Same &quot;Reservations&quot; data →                                        │
 │    • Embed on restaurant website (live availability widget)         │
 │    • REST endpoint GET /api/reservations (for mobile app)          │
 │    • Webhook to notify staff when new booking arrives              │
 │    • CSV export every Monday at 8am                                │
-└─────────────────────────────────────────────────────────────────────┘</code></pre><h3>5.2 Why &quot;Polymorphic&quot;?</h3>
+└─────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="52-why-polymorphic">5.2 Why "Polymorphic"?</h3>
 <p>The same underlying data model produces <strong>multiple forms</strong> depending on context: a view is not tied to one output. This is the polymorphic contract: any view can be mounted in a dashboard, embedded externally, or exposed as an adapter endpoint — without duplicating data or logic. Your architecture must reflect this: views and adapters must be loosely coupled to the data model through a clean interface layer (think strategy pattern or plugin architecture on the back end).</p>
 <hr>
-<h2>6. Functional Requirements</h2>
-<h3>6.1 Database Builder</h3>
+<h2 id="6-functional-requirements">6. Functional Requirements</h2>
+<h3 id="61-database-builder">6.1 Database Builder</h3>
 <p>This is the entry point for any new project in Prismatica. A user creates a <strong>Project</strong>, and inside a project they define one or more <strong>Collections</strong> (the equivalent of database tables).</p>
 <p><strong>A Collection has the following characteristics:</strong></p>
 <ul>
@@ -507,7 +763,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Filtering, sorting, and searching rows directly in the collection editor</li>
 <li>Row-level actions: edit, duplicate, delete, view history (if audit trail enabled)</li>
 </ul>
-<h3>6.2 View System (Polymorphic Views)</h3>
+<h3 id="62-view-system-polymorphic-views">6.2 View System (Polymorphic Views)</h3>
 <p>A <strong>View</strong> is a named, configurable representation of data from one or more Collections. Views are the central object of the system — they are the unit that gets placed on dashboards and exposed through adapters.</p>
 <p><strong>Available view types (minimum required):</strong></p>
 <table>
@@ -567,7 +823,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Colour theme: predefined palettes or custom hex values per series</li>
 </ul>
 <p><strong>A view must be re-renderable without reloading the page when its data source updates.</strong></p>
-<h3>6.3 Adapter Layer</h3>
+<h3 id="63-adapter-layer">6.3 Adapter Layer</h3>
 <p>Adapters are the connectors between Prismatica&#39;s internal data and the outside world. Each adapter is linked to a view or a collection and defines how data flows in or out.</p>
 <p><strong>Supported adapter types:</strong></p>
 <p><strong>Outbound adapters (Prismatica → Outside):</strong></p>
@@ -591,7 +847,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Allow regenerating API keys without deleting the adapter configuration</li>
 <li>Show a live log of the last 50 adapter executions</li>
 </ul>
-<h3>6.4 Dashboard Builder</h3>
+<h3 id="64-dashboard-builder">6.4 Dashboard Builder</h3>
 <p>A <strong>Dashboard</strong> is a named canvas that organises multiple Views into a coherent interface.</p>
 <p><strong>A Dashboard has:</strong></p>
 <ul>
@@ -619,7 +875,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>The public view must be fully read-only — no schema or data modification is possible from a public link</li>
 <li>The owner can revoke a public link at any time (generates a new token, old link becomes invalid)</li>
 </ul>
-<h3>6.5 Embed &amp; External Impact</h3>
+<h3 id="65-embed-external-impact">6.5 Embed & External Impact</h3>
 <p>This section describes how Prismatica connects to the outside world through its embed system.</p>
 <p><strong>Embed script behaviour:</strong></p>
 <ul>
@@ -637,7 +893,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>A marketing team embeds a Prismatica bar chart on their internal intranet to display campaign performance</li>
 </ul>
 <p>All of the above must work from a single embed snippet, with no external dependency other than the Prismatica CDN-hosted script.</p>
-<h3>6.6 Authentication &amp; Accounts</h3>
+<h3 id="66-authentication-accounts">6.6 Authentication & Accounts</h3>
 <p><strong>Account creation (self-registration):</strong></p>
 <p>A visitor can create an account by providing:</p>
 <ul>
@@ -654,7 +910,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>A user can view and revoke all active sessions from their profile</li>
 <li>Failed login attempts must be rate-limited (lockout after 5 failed attempts within 10 minutes)</li>
 </ul>
-<h3>6.7 User Space</h3>
+<h3 id="67-user-space">6.7 User Space</h3>
 <p>From their personal space, an authenticated user can:</p>
 <ul>
 <li><strong>Projects</strong>: create, rename, archive, and delete projects. A project is the top-level container (holds collections, views, dashboards, adapters).</li>
@@ -666,7 +922,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li><strong>Sessions</strong>: view and revoke active sessions</li>
 <li><strong>Data deletion</strong>: request full account and data deletion (GDPR right to erasure). This action triggers a confirmation email and is irreversible after 7 days.</li>
 </ul>
-<h3>6.8 Employee Space</h3>
+<h3 id="68-employee-space">6.8 Employee Space</h3>
 <p>An employee, after login, has access to all capabilities of a standard user, plus:</p>
 <ul>
 <li><strong>Project overview</strong>: can see all projects across all users of the platform (read-only unless granted explicit access)</li>
@@ -676,7 +932,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li><strong>Platform usage statistics</strong>: number of active users, collections created, rows stored, adapter executions per day — displayed as a set of KPI tiles and charts</li>
 </ul>
 <p>An employee cannot modify or cancel a user&#39;s data without explicit documented reason (must log contact method and reason, similar to the audit trail pattern).</p>
-<h3>6.9 Administrator Space</h3>
+<h3 id="69-administrator-space">6.9 Administrator Space</h3>
 <p>The administrator has access to all employee capabilities, plus:</p>
 <p><strong>User management (full):</strong></p>
 <ul>
@@ -698,7 +954,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Configure global settings: max rows per collection per free-tier user, max adapters per project, allowed file upload types and sizes</li>
 <li>View and manage the platform&#39;s email templates (welcome, password reset, adapter error notification)</li>
 </ul>
-<h3>6.10 Contact Page</h3>
+<h3 id="610-contact-page">6.10 Contact Page</h3>
 <p>Any visitor can access a contact form from the main navigation. The form collects:</p>
 <ul>
 <li>A subject / title</li>
@@ -707,8 +963,8 @@ img { max-width: 100%; border-radius: 6px; }
 </ul>
 <p>On submission, the message is forwarded by email to the NovaSphere support team. A confirmation message is shown to the visitor. The form must be protected against spam (honeypot field or CAPTCHA).</p>
 <hr>
-<h2>7. Business Rules &amp; Constraints</h2>
-<h3>7.1 Scalability of Views</h3>
+<h2 id="7-business-rules-constraints">7. Business Rules & Constraints</h2>
+<h3 id="71-scalability-of-views">7.1 Scalability of Views</h3>
 <ul>
 <li>All chart and table views must be rendered in SVG or Canvas — no static image output</li>
 <li>When a collection exceeds 10,000 rows, views must apply server-side aggregation before sending data to the client. The raw rows must never be sent to the browser in bulk.</li>
@@ -716,7 +972,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>A view&#39;s configuration change must immediately trigger a data refresh and re-render</li>
 <li>Axis labels, legends, and tooltips must adapt dynamically to the available widget size (truncation + full value on hover)</li>
 </ul>
-<h3>7.2 Schema Modification Rules</h3>
+<h3 id="72-schema-modification-rules">7.2 Schema Modification Rules</h3>
 <ul>
 <li>Adding a new field to a collection is non-destructive and always allowed</li>
 <li>Renaming a field updates all references (views, adapters, filters) automatically</li>
@@ -724,14 +980,14 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Changing a field&#39;s type is allowed only if the new type is compatible with existing data (e.g. <code>text</code> → <code>email</code> is fine if all values match email format; <code>number</code> → <code>text</code> is always allowed; <code>text</code> → <code>number</code> requires validation and is blocked if any existing value is non-numeric)</li>
 <li>Deleting a collection follows the same blocking logic: cannot be deleted if it is the source of an active view or adapter</li>
 </ul>
-<h3>7.3 Adapter Rules</h3>
+<h3 id="73-adapter-rules">7.3 Adapter Rules</h3>
 <ul>
 <li>A REST endpoint adapter generates a unique, opaque URL (e.g. <code>/api/v1/adapt/a3f9b2c1...</code>) that does not expose the collection name</li>
 <li>API keys for adapters must be stored hashed and are displayed only once at creation</li>
 <li>A webhook adapter must implement retry logic: on failure (non-2xx or timeout), retry 3 times with exponential backoff (1s, 4s, 16s)</li>
 <li>An embed script adapter must respect CORS: only allow requests from the domains registered by the user during adapter configuration</li>
 </ul>
-<h3>7.4 Dashboard Rules</h3>
+<h3 id="74-dashboard-rules">7.4 Dashboard Rules</h3>
 <ul>
 <li>A dashboard may contain at most 24 widgets (views + text blocks) to maintain performance</li>
 <li>Layout is saved automatically with a debounce of 2 seconds after the last interaction</li>
@@ -739,7 +995,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>When a user deletes a view that is placed on a dashboard, the dashboard widget must display a graceful &quot;View no longer available&quot; placeholder rather than breaking</li>
 </ul>
 <hr>
-<h2>8. Security &amp; GDPR</h2>
+<h2 id="8-security-gdpr">8. Security & GDPR</h2>
 <ul>
 <li>Passwords must be stored hashed using <strong>bcrypt</strong> (cost factor ≥ 12) or <strong>argon2id</strong></li>
 <li>All API routes must be protected by authentication (JWT with short-lived access token + refresh token rotation, or secure server-side sessions)</li>
@@ -753,7 +1009,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>The application must display a clear cookie/privacy notice on first visit. Session cookies must be <code>HttpOnly</code> and <code>Secure</code>.</li>
 </ul>
 <hr>
-<h2>9. Accessibility</h2>
+<h2 id="9-accessibility">9. Accessibility</h2>
 <p>The application must comply with <strong>WCAG 2.1 Level AA</strong> requirements:</p>
 <ul>
 <li>All interactive elements must be keyboard-navigable (tab order, focus visible)</li>
@@ -765,7 +1021,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Dynamic content updates (view refresh, dashboard save indicator) must announce changes via <code>aria-live</code> regions</li>
 </ul>
 <hr>
-<h2>10. Technical Stack</h2>
+<h2 id="10-technical-stack">10. Technical Stack</h2>
 <p>No technology is imposed for this project, with the exception that <strong>both a relational and a non-relational database must be used</strong>. The following is a suggested stack for reference:</p>
 <table>
 <thead>
@@ -825,14 +1081,14 @@ img { max-width: 100%; border-radius: 6px; }
 </tbody></table>
 <p>All technical choices must be <strong>justified in your technical documentation</strong> — explain why you chose your stack and what alternatives you considered.</p>
 <hr>
-<h2>11. Deliverables</h2>
-<h3>11.1 Required Links (to submit)</h3>
+<h2 id="11-deliverables">11. Deliverables</h2>
+<h3 id="111-required-links-to-submit">11.1 Required Links (to submit)</h3>
 <ul>
 <li>Public GitHub repository URL (or URLs if front/back are separate)</li>
 <li>Deployed application URL (functional and accessible at delivery time)</li>
 <li>Project management tool URL (Jira, Notion, Linear, Trello, etc.) — must be accessible to the jury</li>
 </ul>
-<h3>11.2 Git Repository Contents</h3>
+<h3 id="112-git-repository-contents">11.2 Git Repository Contents</h3>
 <p>Your repository must contain:</p>
 <p><strong><code>README.md</code></strong> — Installation guide:</p>
 <ul>
@@ -856,7 +1112,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>MongoDB seed scripts (if applicable)</li>
 <li>Note: using an ORM migration tool does not substitute for having raw SQL files in the repository</li>
 </ul>
-<h3>11.3 PDF Documentation Package</h3>
+<h3 id="113-pdf-documentation-package">11.3 PDF Documentation Package</h3>
 <p><strong>A. Graphic Charter (<code>charte-graphique.pdf</code>):</strong></p>
 <ul>
 <li>Colour palette (primary, secondary, accent, neutral, semantic colours) with hex codes</li>
@@ -891,7 +1147,7 @@ img { max-width: 100%; border-radius: 6px; }
 <li>Retrospective: what went well, what was challenging, what you would do differently</li>
 </ul>
 <hr>
-<h2>Annex 1 — Relational Database Schema (indicative MCD)</h2>
+<h2 id="annex-1-relational-database-schema-indicative-mcd">Annex 1 — Relational Database Schema (indicative MCD)</h2>
 <p>The following schema is provided as a starting point. You are free to extend, adapt, or restructure it based on your architectural decisions. All choices must be justified in your technical documentation.</p>
 <pre class="code-block"><code class="language-">┌──────────────┐        ┌───────────────┐       ┌──────────────────┐
 │    user      │        │    project    │       │   collection     │
@@ -939,9 +1195,10 @@ img { max-width: 100%; border-radius: 6px; }
 │──────────────────│
 │ id (PK)          │
 │ name             │  values: visitor, user, employee, admin
-└──────────────────┘</code></pre><p><strong>Note:</strong> Collection rows (the actual user data) are stored in a dynamically generated schema per project (e.g. PostgreSQL schema per project, or a <code>collection_rows</code> EAV table, or a hybrid approach). Your technical documentation must justify how you handle row storage for dynamic schemas.</p>
+└──────────────────┘</code></pre>
+<p><strong>Note:</strong> Collection rows (the actual user data) are stored in a dynamically generated schema per project (e.g. PostgreSQL schema per project, or a <code>collection_rows</code> EAV table, or a hybrid approach). Your technical documentation must justify how you handle row storage for dynamic schemas.</p>
 <hr>
-<h2>Annex 2 — Key Use Cases</h2>
+<h2 id="annex-2-key-use-cases">Annex 2 — Key Use Cases</h2>
 <p>The following use cases are the minimum expected in your documentation. You may add more.</p>
 <table>
 <thead>
@@ -1093,7 +1350,7 @@ img { max-width: 100%; border-radius: 6px; }
 </tr>
 </tbody></table>
 <hr>
-<h2>Annex 3 — Polymorphic Architecture Overview</h2>
+<h2 id="annex-3-polymorphic-architecture-overview">Annex 3 — Polymorphic Architecture Overview</h2>
 <p>The following diagram illustrates the expected relationship between the three core layers and how they interact at runtime.</p>
 <pre class="code-block"><code class="language-">                    ┌─────────────────────────────────┐
                     │         PRISMATICA CORE          │
@@ -1118,38 +1375,54 @@ img { max-width: 100%; border-radius: 6px; }
           │               │  Grid Layout  │    │  Client Website  │
           └───────────────│  Global Filters│   │  Mobile App      │
                           │  Public Share │    │  3rd Party Tool  │
-                          └───────────────┘    └──────────────────┘</code></pre><p><strong>Key architectural principle:</strong> a View must implement a single rendering interface regardless of where it is mounted (dashboard widget, embed, public URL). An Adapter must be able to wrap any View or Collection through the same connector interface. This is the polymorphic contract your back-end and front-end architectures must honour.</p>
+                          └───────────────┘    └──────────────────┘</code></pre>
+<p><strong>Key architectural principle:</strong> a View must implement a single rendering interface regardless of where it is mounted (dashboard widget, embed, public URL). An Adapter must be able to wrap any View or Collection through the same connector interface. This is the polymorphic contract your back-end and front-end architectures must honour.</p>
 <hr>
 <p><em>© DevForge — Reproduction restricted. This document is intended for the jury of the professional qualification TP Développeur Web et Web Mobile.</em></p>
 
 
 <script>
-  mermaid.initialize({
-    startOnLoad: true,
-    theme: 'base',
-    themeVariables: {
-      primaryColor:        '#eef2ff',
-      primaryBorderColor:  '#4f46e5',
-      primaryTextColor:    '#1e293b',
-      lineColor:           '#4f46e5',
-      secondaryColor:      '#f5f3ff',
-      tertiaryColor:       '#f8fafc',
-      fontFamily:          '"Segoe UI", Inter, system-ui, sans-serif',
-      fontSize:            '13px',
-      nodeBorder:          '#4f46e5',
-      clusterBkg:          '#f8fafc',
-      clusterBorder:       '#c7d2fe',
-      titleColor:          '#0f172a',
-      edgeLabelBackground: '#f8fafc',
-      activeTaskBkgColor:  '#4f46e5',
-      activeTaskBorderColor: '#3730a3',
-    },
-    flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
-    sequence:  { useMaxWidth: true, wrap: true, mirrorActors: false },
-    er:        { useMaxWidth: true },
-    gitGraph:  { useMaxWidth: true },
-    pie:       { useMaxWidth: true },
-  });
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor:          '#edf4ff',
+    primaryBorderColor:    '#0f62fe',
+    primaryTextColor:      '#161616',
+    lineColor:             '#0f62fe',
+    secondaryColor:        '#f4f4f4',
+    tertiaryColor:         '#fafbff',
+    fontFamily:            '"Segoe UI","Helvetica Neue",Arial,sans-serif',
+    fontSize:              '12px',
+    nodeBorder:            '#0f62fe',
+    clusterBkg:            '#f4f4f4',
+    clusterBorder:         '#a8c7ff',
+    titleColor:            '#071d3f',
+    edgeLabelBackground:   '#ffffff',
+    activeTaskBkgColor:    '#0f62fe',
+    activeTaskBorderColor: '#0353e9',
+    critBkgColor:          '#da1e28',
+    critBorderColor:       '#a2191f',
+    doneTaskBkgColor:      '#24a148',
+    taskTextColor:         '#ffffff',
+    sectionBkgColor:       '#edf4ff',
+    altSectionBkgColor:    '#f4f4f4',
+  },
+  flowchart:  { useMaxWidth: true, htmlLabels: true, curve: 'basis' },
+  sequence:   { useMaxWidth: true, wrap: true, mirrorActors: false, boxMargin: 8 },
+  er:         { useMaxWidth: true },
+  gitGraph:   { useMaxWidth: true },
+  pie:        { useMaxWidth: true },
+  gantt:      { useMaxWidth: true, barHeight: 20, barGap: 4 },
+});
+
+// Wrap tables in a scrollable div for better overflow handling
+document.querySelectorAll('table').forEach(t => {
+  const wrap = document.createElement('div');
+  wrap.className = 'table-wrap';
+  t.parentNode.insertBefore(wrap, t);
+  wrap.appendChild(t);
+});
 </script>
 </body>
 </html>
