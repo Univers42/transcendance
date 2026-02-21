@@ -33,8 +33,8 @@ Everything you need to know before writing code on this project. Architecture, c
 ## Getting Started
 
 ```bash
-git clone git@github.com:Univers42/ft_transcendence.git
-cd ft_transcendence
+git clone git@github.com:Univers42/transcendence.git || git clone https://github.com/Univers42/transcendence.git
+cd transcendence
 cp .env.example .env
 make          # first-time setup
 make dev      # start everything
@@ -735,6 +735,10 @@ feat(api): add endpoint.          # trailing period
 WIP save progress                 # missing type(scope), forbidden word
 feat(core): new feature           # lowercase start
 ```
+
+**:warning: How to prevent bypassing this rule :warning:**
+
+Before creating a commit message, execute `make` to ensure that the commit messages checker works as expected.
 
 ---
 

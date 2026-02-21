@@ -21,13 +21,21 @@ ft_transcendence · 42 Common Core · 2026
 
 ## Team
 
-| Login | Full Name | Role | GitHub | Primary focus |
-|-------|-----------|------|--------|--------------|
-| [login1] | [Full Name] | Product Owner + Developer | [@login1](https://github.com/login1) | Auth, OAuth 2.0 |
-| [login2] | [Full Name] | Project Manager + Developer | [@login2](https://github.com/login2) | Game engine, WebSockets |
-| [login3] | [Full Name] | Tech Lead + Developer | [@login3](https://github.com/login3) | Backend architecture, CI |
-| [login4] | [Full Name] | Developer | [@login4](https://github.com/login4) | Frontend, SCSS design system |
-| [login5] | [Full Name] | Developer | [@login5](https://github.com/login5) | Database, Prisma, Docker |
+| Login | Full Name | Primary Role | Secondary Role | GitHub | Primary focus |
+|-------|-----------|--------------|----------------|--------|---------------|
+| [dlesieur](https://profile.intra.42.fr/users/dlesieur) | Dylan Lesieur | ALL | ALL | [@LESdylan](https://github.com/LESdylan) | Auth, OAuth 2.0 |
+| [danfern3](https://profile.intra.42.fr/users/danfern3) | Daniel Fernández | PO | PM | [@danielfdez17](https://github.com/danielfdez17) | Game engine, WebSockets |
+| [serjimen](https://profile.intra.42.fr/users/serjimen) | Sergio Jiménez | PM | TL | [@DJSurgeon](https://github.com/DJSurgeon) | Backend architecture, CI |
+| [alcacere](https://profile.intra.42.fr/users/alcacere) | Alex Cáceres | TL | PM | [@alcacere](https://github.com/alcacere) | Frontend, SCSS design system |
+| [vjan-nie](https://profile.intra.42.fr/users/vjan-nie) | Vadim Jan Nieto | TL | ALL | [@vjan-nie](https://github.com/vjan-nie) | Database, Prisma, Docker |
+
+:information_source: Notes about roles
+- **PO** stands for *Product Owner*
+- **PM** stands for *Project Manager*
+- **TL** stands for *Technical Lead*
+- **ALL** means that the person has all roles
+
+:warning: We all have the role of *Developer* even though it is not mentioned :warning:
 
 ---
 

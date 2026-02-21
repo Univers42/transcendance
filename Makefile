@@ -225,7 +225,7 @@ configure-hooks:  ## 🪝 Activate git hooks (auto-runs on make / make dev)
 
 .PHONY: all bootstrap banner
 
-all: update banner preflight configure-hooks bootstrap dev  ## 🚀 Full setup (default — Docker only)
+all: update configure-hooks banner preflight bootstrap dev  ## 🚀 Full setup (default — Docker only)
 	
 
 update:
