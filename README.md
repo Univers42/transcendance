@@ -1,6 +1,6 @@
 # ft_transcendence
 
-*Created as part of the 42 school Common Core curriculum by [login1], [login2], [login3], [login4] and [login5] — Univers42, 2026.*
+*Created as part of the 42 school Common Core curriculum by dlesieur, danfern3, serjimen, alcacere and vjan-nie — Univers42, 2026.*
 
 ft_transcendence is the capstone project of the 42 Common Core. One full-stack web application built from scratch by a team of five: backend, frontend, real-time communication, authentication, database design, containerization, and CI — all in one. The theme is free; ours is **[TBD — fill when decided]**.
 
