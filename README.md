@@ -22,8 +22,8 @@ ft_transcendence is the capstone project of the 42 Common Core. One full-stack w
 The only dependency is Docker.
 
 ```bash
-git clone git@github.com:Univers42/transcendance.git
-cd transcendance
+git clone git@github.com:Univers42/transcendence.git || git clone https://github.com/Univers42/transcendence.git
+cd transcendence
 cp .env.example .env
 make
 ```
