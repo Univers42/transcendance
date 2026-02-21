@@ -741,3 +741,12 @@ help:  ## ❓ Show this help message
 	@echo ""
 	@echo -e "  $(DIM)First time? Run: make doctor$(NC)"
 	@echo ""
+
+# ============================================
+#  📄 Static docs PDF conversion
+# ============================================
+
+.PHONY: convert_subject_pdf
+convert_subject_pdf:  ## Convert static_docs/subject.md → static_docs/subject.pdf using md-to-pdf
+	@echo "Converting static_docs/subject.md → static_docs/subject.pdf"
+	@bash vendor/scripts/md-to-pdf/convert.sh static_docs/subject.md static_docs/subject.pdf
