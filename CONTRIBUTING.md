@@ -736,7 +736,7 @@ WIP save progress                 # missing type(scope), forbidden word
 feat(core): new feature           # lowercase start
 ```
 
-**:important: How to prevent bypassing this rule :important:**
+**:warning: How to prevent bypassing this rule :warning:**
 
 Before creating a commit message, execute `make` to ensure that the commit messages checker works as expected.
 
