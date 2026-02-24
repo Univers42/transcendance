@@ -41,3 +41,5 @@ Once both Node and npm are installed in the VM, to solve the problem "Cannot fin
 
 ### :warning: README :warning:
 As we are using Performant Node Package Manager (pnpm), every time you install a dependency, both `package.json`, `package-lock.json`, `and pnpm-lock.yaml` files will be modified. These files contain every dependency needed by the application. So it is important to install every dependencies before starting to code.
+
+When executing `pnpm i`, every package will be installed locally in the VM and will remove only visual errors to avoid getting mad while coding.
