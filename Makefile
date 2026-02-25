@@ -83,7 +83,7 @@ endef
 # ── Step decorator ───────────────────────────────────
 # Usage: $(call step,emoji,message)
 define step
-	@echo -e "  $(1)  $(2)"
+	echo -e "  $(1)  $(2)"
 endef
 
 # ============================================
@@ -367,7 +367,7 @@ install-shared:
 #   make gen-css           → compile SASS to CSS once
 #   make gen-css WATCH=1   → watch mode (auto-recompile)
 gen-css:  ## 🎨 Compile SASS → CSS (WATCH=1 for watch mode)
-	@if [ -n "$${WATCH:-}" ]; then \
+	@if [ -n "${WATCH:-}" ]; then \
 		$(call step,$(BLUE)ℹ,Starting SASS watcher...);\
 		docker exec -it $(CONTAINER) sh -c "cd $(FRONTEND) && pnpm exec sass --watch src/styles:src/styles"; \
 	else \
