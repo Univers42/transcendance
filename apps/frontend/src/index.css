@@ -51,6 +51,14 @@
   --corporative-colors-dark4: #1E293B;
   --corporative-colors-dark5: #0F172A;
 
+  --corporative-background-white1: #E3E3E3;
+  --corporative-background-white2: #FFFFFF;
+  --corporative-background-white3: #F1F5F9;
+  --corporative-background-white4: #F8FAFC;
+  --corporative-background-gray1: #334155;
+  --corporative-background-gray2: #1E293B;
+  --corporative-background-gray3: #1E293B;
+  --corporative-background-gray4: #0F172A;
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
