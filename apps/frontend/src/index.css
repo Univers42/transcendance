@@ -29,6 +29,29 @@
   --border: rgba(255, 255, 255, 0.06);
   --radius: 12px;
 
+  --corporative-colors-white1: #E3E3E3;
+  --corporative-colors-white2: #F1F5F9;
+  --corporative-colors-white3: #E2E8F0;
+  --corporative-colors-white4: #CBD5E1;
+  --corporative-colors-white5: #F1F5F9;
+  --corporative-colors-white6: #F8FAFC;
+  --corporative-colors-gray1: #94A3B8;
+  --corporative-colors-gray2: #64748B;
+  --corporative-colors-gray3: #475569;
+  --corporative-colors-gray4: #334155;
+  --corporative-colors-gray5: #334155;
+  --corporative-colors-gray6: #475569;
+  --corporative-colors-gray7: #64748B;
+  --corporative-colors-gray8: #94A3B8;
+  --corporative-colors-gray9: #CBD5E1;
+  --corporative-colors-gray10: #E2E8F0;
+  --corporative-colors-dark1: #1E293B;
+  --corporative-colors-dark2: #0F172A;
+  --corporative-colors-dark3: #1E293B;
+  --corporative-colors-dark4: #1E293B;
+  --corporative-colors-dark5: #0F172A;
+
+
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
