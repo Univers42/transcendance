@@ -80,6 +80,12 @@
   --corporative-border-orange1: #FCA5A5;
   --corporative-border-cyan1: #60A5FA;
 
+  --corporative-accent-white1: #E3E3E3;
+  --corporative-accent-blue1: #3B82F6;
+  --corporative-accent-blue2: #3B82F6;
+  --corporative-accent-blue3: #2563EB;
+  --corporative-accent-cyan1: #60A5FA;
+
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
