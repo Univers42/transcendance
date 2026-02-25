@@ -86,6 +86,12 @@
   --corporative-accent-blue3: #2563EB;
   --corporative-accent-cyan1: #60A5FA;
 
+  --corporative-success-disable-white1: #E3E3E3;
+  --corporative-success-disable-green1: #059669;
+  --corporative-success-disable-gray1: #475569;
+  --corporative-success-disable-green2: #34D399;
+  --corporative-success-disable-gray2: #CBD5E1;
+
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
