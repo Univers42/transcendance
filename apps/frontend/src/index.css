@@ -29,6 +29,98 @@
   --border: rgba(255, 255, 255, 0.06);
   --radius: 12px;
 
+  --corporative-colors-white1: #E3E3E3;
+  --corporative-colors-white2: #F1F5F9;
+  --corporative-colors-white3: #E2E8F0;
+  --corporative-colors-white4: #CBD5E1;
+  --corporative-colors-white5: #F1F5F9;
+  --corporative-colors-white6: #F8FAFC;
+  --corporative-colors-gray1: #94A3B8;
+  --corporative-colors-gray2: #64748B;
+  --corporative-colors-gray3: #475569;
+  --corporative-colors-gray4: #334155;
+  --corporative-colors-gray5: #334155;
+  --corporative-colors-gray6: #475569;
+  --corporative-colors-gray7: #64748B;
+  --corporative-colors-gray8: #94A3B8;
+  --corporative-colors-gray9: #CBD5E1;
+  --corporative-colors-gray10: #E2E8F0;
+  --corporative-colors-dark1: #1E293B;
+  --corporative-colors-dark2: #0F172A;
+  --corporative-colors-dark3: #1E293B;
+  --corporative-colors-dark4: #1E293B;
+  --corporative-colors-dark5: #0F172A;
+
+  --corporative-background-white1: #E3E3E3;
+  --corporative-background-white2: #FFFFFF;
+  --corporative-background-white3: #F1F5F9;
+  --corporative-background-white4: #F8FAFC;
+  --corporative-background-gray1: #334155;
+  --corporative-background-gray2: #1E293B;
+  --corporative-background-gray3: #1E293B;
+  --corporative-background-gray4: #0F172A;
+
+  --corporative-text-white1: #E3E3E3;
+  --corporative-text-white2: #FFFFFF;
+  --corporative-text-white3: #F8FAFC;
+  --corporative-text-gray1: #94A3B8;
+  --corporative-text-gray2: #64748B;
+  --corporative-text-gray3: #475569;
+  --corporative-text-dark1: #0F172A;
+  --corporative-text-dark2: #0F172A;
+
+  --corporative-border-white1: #E3E3E3;
+  --corporative-border-white2: #E2E8F0;
+  --corporative-border-white3: #E3E3E3;
+  --corporative-border-gray1: #475569;
+  --corporative-border-gray2: #334155;
+  --corporative-border-gray3: #CBD5E1;
+  --corporative-border-blue1: #3B82F6;
+  --corporative-border-red1: #7F1D1D;
+  --corporative-border-orange1: #FCA5A5;
+  --corporative-border-cyan1: #60A5FA;
+
+  --corporative-accent-white1: #E3E3E3;
+  --corporative-accent-blue1: #3B82F6;
+  --corporative-accent-blue2: #3B82F6;
+  --corporative-accent-blue3: #2563EB;
+  --corporative-accent-cyan1: #60A5FA;
+
+  --corporative-success-disable-white1: #E3E3E3;
+  --corporative-success-disable-green1: #059669;
+  --corporative-success-disable-gray1: #475569;
+  --corporative-success-disable-green2: #34D399;
+  --corporative-success-disable-gray2: #CBD5E1;
+
+  --corporative-data-colors-white: #E3E3E3;
+  --corporative-data-colors-red: #DC2626;
+  --corporative-data-colors-purple: #7C3AED;
+  --corporative-data-colors-blue: #0284C7;
+  --corporative-data-colors-orange: #D97706;
+  --corporative-data-colors-green: #059669;
+  --corporative-data-colors-pink: #F87171;
+  --corporative-data-colors-violet: #A78BFA;
+  --corporative-data-colors-cyan: #38BDF8;
+  --corporative-data-colors-yellow: #FBBF24;
+  --corporative-data-colors-emerald: #34D399;
+
+  --corporative-graph-colors-white: #E3E3E3;
+  --corporative-graph-colors-blue: #2563EB;
+  --corporative-graph-colors-orange: #EA580C;
+  --corporative-graph-colors-purple: #4F46E5;
+  --corporative-graph-colors-cyan: #0891B2;
+  --corporative-graph-colors-green: #059669;
+  --corporative-graph-colors-red: #DB2777;
+  --corporative-graph-colors-violet: #7C3AED;
+  --corporative-graph-colors-light-blue: #60A5FA;
+  --corporative-graph-colors-amber: #FB923C;
+  --corporative-graph-colors-indigo: #818CF8;
+  --corporative-graph-colors-sky: #22D3EE;
+  --corporative-graph-colors-emerald: #34D399;
+  --corporative-graph-colors-rose: #F472B6;
+  --corporative-graph-colors-fuchsia: #A78BFA;
+
+
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
