@@ -69,6 +69,17 @@
   --corporative-text-dark1: #0F172A;
   --corporative-text-dark2: #0F172A;
 
+  --corporative-border-white1: #E3E3E3;
+  --corporative-border-white2: #E2E8F0;
+  --corporative-border-white3: #E3E3E3;
+  --corporative-border-gray1: #475569;
+  --corporative-border-gray2: #334155;
+  --corporative-border-gray3: #CBD5E1;
+  --corporative-border-blue1: #3B82F6;
+  --corporative-border-red1: #7F1D1D;
+  --corporative-border-orange1: #FCA5A5;
+  --corporative-border-cyan1: #60A5FA;
+
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
