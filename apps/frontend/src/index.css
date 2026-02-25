@@ -104,6 +104,22 @@
   --corporative-data-colors-yellow: #FBBF24;
   --corporative-data-colors-emerald: #34D399;
 
+  --corporative-graph-colors-white: #E3E3E3;
+  --corporative-graph-colors-blue: #2563EB;
+  --corporative-graph-colors-orange: #EA580C;
+  --corporative-graph-colors-purple: #4F46E5;
+  --corporative-graph-colors-cyan: #0891B2;
+  --corporative-graph-colors-green: #059669;
+  --corporative-graph-colors-red: #DB2777;
+  --corporative-graph-colors-violet: #7C3AED;
+  --corporative-graph-colors-light-blue: #60A5FA;
+  --corporative-graph-colors-amber: #FB923C;
+  --corporative-graph-colors-indigo: #818CF8;
+  --corporative-graph-colors-sky: #22D3EE;
+  --corporative-graph-colors-emerald: #34D399;
+  --corporative-graph-colors-rose: #F472B6;
+  --corporative-graph-colors-fuchsia: #A78BFA;
+
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
