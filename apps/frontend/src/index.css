@@ -60,6 +60,16 @@
   --corporative-background-gray3: #1E293B;
   --corporative-background-gray4: #0F172A;
 
+  --corporative-text-white1: #E3E3E3;
+  --corporative-text-white2: #FFFFFF;
+  --corporative-text-white3: #F8FAFC;
+  --corporative-text-gray1: #94A3B8;
+  --corporative-text-gray2: #64748B;
+  --corporative-text-gray3: #475569;
+  --corporative-text-dark1: #0F172A;
+  --corporative-text-dark2: #0F172A;
+
+
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
   color: var(--text-primary);
