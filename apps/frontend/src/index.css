@@ -92,6 +92,18 @@
   --corporative-success-disable-green2: #34D399;
   --corporative-success-disable-gray2: #CBD5E1;
 
+  --corporative-data-colors-white: #E3E3E3;
+  --corporative-data-colors-red: #DC2626;
+  --corporative-data-colors-purple: #7C3AED;
+  --corporative-data-colors-blue: #0284C7;
+  --corporative-data-colors-orange: #D97706;
+  --corporative-data-colors-green: #059669;
+  --corporative-data-colors-pink: #F87171;
+  --corporative-data-colors-violet: #A78BFA;
+  --corporative-data-colors-cyan: #38BDF8;
+  --corporative-data-colors-yellow: #FBBF24;
+  --corporative-data-colors-emerald: #34D399;
+
 
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   line-height: 1.6;
