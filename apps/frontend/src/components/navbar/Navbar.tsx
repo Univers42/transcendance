@@ -86,7 +86,7 @@ export function Navbar({
               </div>
 
               {/* CTA solo escritorio */}
-              
+              <a
                 href="#login"
                 className="hidden lg:inline-flex items-center px-4 py-2 rounded-lg"
                 style={{
@@ -141,7 +141,7 @@ export function Navbar({
             toggle={() => setDarkMode(v => !v)}
           />
 
-          
+          <a
             href="#login"
             onClick={() => setMenuOpen(false)}
             className="flex items-center justify-center mx-1 mt-1 mb-2 px-4 py-3 rounded-xl"
