@@ -1,0 +1,93 @@
+// ============================================
+// PRISMATICA — Header Layout
+// ============================================
+
+@use '../abstracts' as *;
+
+.header {
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+  height: 4rem;     // 64px
+  background: $bg-primary;
+  border-bottom: 1px solid $border-default;
+  
+  @include theme('dark') {
+    background: $dark-bg-primary;
+    border-color: $dark-border-default;
+  }
+  
+  &__container {
+    @include container;
+    @include flex-between;
+    height: 100%;
+  }
+  
+  &__brand {
+    display: flex;
+    align-items: center;
+    gap: $space-3;
+  }
+  
+  &__logo {
+    height: 2rem;
+    width: auto;
+  }
+  
+  &__title {
+    font-family: $font-family-ui;
+    font-size: $text-lg;
+    font-weight: $weight-semibold;
+    color: $text-primary;
+    
+    @include theme('dark') {
+      color: $dark-text-primary;
+    }
+  }
+  
+  &__nav {
+    display: none;
+    
+    @include lg-up {
+      display: flex;
+      align-items: center;
+      gap: $space-1;
+    }
+  }
+  
+  &__nav-link {
+    padding: $space-2 $space-3;
+    font-family: $font-family-ui;
+    font-size: $text-sm;
+    font-weight: $weight-medium;
+    color: $text-secondary;
+    text-decoration: none;
+    border-radius: $radius-md;
+    transition: $transition-colors;
+    
+    @include theme('dark') {
+      color: $dark-text-secondary;
+    }
+    
+    &:hover,
+    &--active {
+      color: $text-primary;
+      background: $bg-hover;
+      
+      @include theme('dark') {
+        color: $dark-text-primary;
+        background: $dark-bg-hover;
+      }
+    }
+    
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+  
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+}
