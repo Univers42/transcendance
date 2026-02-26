@@ -227,7 +227,12 @@ export class ConnectionCredentials {
   })
   rotation_policy!: RotationPolicy;
 
-  /** History of credential rotations (keep last N entries) */
+  /**
+   * History of credential rotations.
+   * Capped at the 20 most recent entries to prevent unbounded growth.
+   * The application layer should use $push + $slice: -20 on updates:
+   *   { $push: { rotation_history: { $each: [entry], $slice: -20 } } }
+   */
   @Prop({ type: [Object], default: [] })
   rotation_history!: RotationEntry[];
 

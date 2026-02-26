@@ -869,7 +869,7 @@ graph TB
 ---
 title: Tables per Schema File
 ---
-pie title 55 Tables Across 9 Schema Files
+pie title 64 Tables Across 11 Schema Files
     "schema.user.sql (11)" : 11
     "schema.organization.sql (6)" : 6
     "schema.collection.sql (5)" : 5
@@ -879,6 +879,8 @@ pie title 55 Tables Across 9 Schema Files
     "schema.system.sql (5)" : 5
     "schema.billing.sql (9)" : 9
     "schema.connectivity.sql (4)" : 4
+    "schema.abac.sql (7)" : 7
+    "schema.contact.sql (2)" : 2
 ```
 
 ---

@@ -42,6 +42,7 @@ const collections = [
   "connection_credentials",
   "abac_rule_conditions",
   "abac_user_attributes",
+  "platform_analytics",
 ];
 
 const existing = db.getCollectionNames();
@@ -151,6 +152,14 @@ idx("abac_user_attributes", { user_id: 1 }, { name: "idx_abac_ua_user" });
 idx("abac_user_attributes", { organization_id: 1 }, { name: "idx_abac_ua_org" });
 idx("abac_user_attributes", { organization_id: 1, "attributes.department": 1 }, { name: "idx_abac_ua_department", partialFilterExpression: { "attributes.department": { $exists: true } } });
 idx("abac_user_attributes", { organization_id: 1, "attributes.clearance_level": 1 }, { name: "idx_abac_ua_clearance", partialFilterExpression: { "attributes.clearance_level": { $exists: true } } });
+
+// ── platform_analytics ──
+idx("platform_analytics", { event_type: 1, timestamp: -1 }, { name: "idx_analytics_type_time" });
+idx("platform_analytics", { organization_id: 1, event_type: 1, timestamp: -1 }, { name: "idx_analytics_org_type_time" });
+idx("platform_analytics", { actor_id: 1, timestamp: -1 }, { name: "idx_analytics_actor_time", partialFilterExpression: { actor_id: { $exists: true } } });
+idx("platform_analytics", { workspace_id: 1, event_type: 1, timestamp: -1 }, { name: "idx_analytics_workspace_type_time", partialFilterExpression: { workspace_id: { $exists: true } } });
+idx("platform_analytics", { expires_at: 1 }, { name: "idx_analytics_ttl", expireAfterSeconds: 0 });
+idx("platform_analytics", { timestamp: -1 }, { name: "idx_analytics_timestamp" });
 
 print("  " + idxCount + " indexes ensured.");
 print("");

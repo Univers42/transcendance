@@ -209,3 +209,11 @@ export {
   type UserAttributes,
   type AttributeChangeEntry,
 } from './abac_user_attributes';
+
+// ── Platform Analytics (admin dashboard time-series events) ────────────────
+export {
+  PlatformAnalytics,
+  PlatformAnalyticsDocument,
+  PlatformAnalyticsSchema,
+  type AnalyticsEventType,
+} from './platform_analytics';

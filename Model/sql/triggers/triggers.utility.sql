@@ -129,3 +129,10 @@ CREATE TRIGGER trg_database_connections_set_updated_at
 
 CREATE TRIGGER trg_sync_channels_set_updated_at
     BEFORE UPDATE ON sync_channels FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+-- schema.contact.sql
+CREATE TRIGGER trg_contact_submissions_set_updated_at
+    BEFORE UPDATE ON contact_submissions FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();
+
+CREATE TRIGGER trg_email_templates_set_updated_at
+    BEFORE UPDATE ON email_templates FOR EACH ROW EXECUTE FUNCTION fn_set_updated_at();

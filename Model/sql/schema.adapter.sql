@@ -19,9 +19,14 @@
 --      d. Writes/updates MongoDB collection_records
 --      e. Logs execution result in adapter_executions
 --
--- SUPPORTED SOURCES:
+-- SUPPORTED SOURCES (pull data in):
 --   rest_api, graphql, postgresql, mysql, mongodb, csv, excel,
 --   google_sheets, s3, webhook, custom
+--
+-- OUTPUT ADAPTERS (push data out / expose externally):
+--   embed_script     — embeddable JS widget for external sites
+--   form_endpoint    — public form submission endpoint (collects data into a collection)
+--   scheduled_export — periodic data export (CSV/JSON) to S3/email/webhook
 --
 -- EXECUTION ORDER: Run AFTER schema.collection.sql (depends on collections).
 -- ============================================================================
@@ -59,8 +64,11 @@ CREATE TABLE adapters (
     name                VARCHAR(255)    NOT NULL,
     adapter_type        VARCHAR(50)     NOT NULL
                         CHECK (adapter_type IN (
+                            -- Source adapters (pull data in)
                             'rest_api','graphql','postgresql','mysql','mongodb',
                             'csv','excel','google_sheets','s3','webhook',
+                            -- Output adapters (push data out / expose externally)
+                            'embed_script','form_endpoint','scheduled_export',
                             'custom'
                         )),
     connection_config   JSONB           NOT NULL DEFAULT '{}',  -- encrypted at app level

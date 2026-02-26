@@ -57,6 +57,7 @@ SCHEMA_FILES=(
     "schema.adapter.sql"
     "schema.system.sql"
     "schema.abac.sql"
+    "schema.contact.sql"
 )
 
 # Trigger files in dependency order

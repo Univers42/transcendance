@@ -61,6 +61,11 @@
 --   • record_count is DENORMALIZED for performance (count from MongoDB is expensive).
 --     Updated by application triggers. This is a conscious 5NF trade-off documented here.
 --     The canonical count is always: db.collection_records.countDocuments({collection_id: X})
+--   • SOFT-DELETE: is_archived + deleted_at + deleted_by enable safe deletion.
+--     When a collection is "deleted", set is_archived=TRUE, deleted_at=now(),
+--     deleted_by=current_user. All queries should filter WHERE deleted_at IS NULL.
+--     Permanently purge only via scheduled cleanup after retention period (30 days).
+--     This prevents cascading loss of MongoDB records on accidental deletion.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 CREATE TABLE collections (
@@ -73,6 +78,12 @@ CREATE TABLE collections (
     color           VARCHAR(7),
     is_system       BOOLEAN         NOT NULL DEFAULT FALSE,     -- system collections are protected
     record_count    INT             NOT NULL DEFAULT 0,         -- denormalized; see NOTES above
+
+    -- Soft-delete / Archive (prevents accidental data loss on CASCADE)
+    is_archived     BOOLEAN         NOT NULL DEFAULT FALSE,
+    deleted_at      TIMESTAMPTZ,
+    deleted_by      UUID            REFERENCES users(id) ON DELETE SET NULL,
+
     created_by      UUID            NOT NULL REFERENCES users(id),
     updated_by      UUID            REFERENCES users(id) ON DELETE SET NULL,
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT now(),
@@ -83,6 +94,14 @@ CREATE TABLE collections (
 
 COMMENT ON TABLE collections IS
     'Schema definitions for tenant-created data tables. Actual records are in MongoDB collection_records.';
+
+-- Active collections (excludes soft-deleted) — used by all default queries
+CREATE INDEX idx_collections_active ON collections (workspace_id, name)
+    WHERE deleted_at IS NULL;
+
+-- Soft-deleted collections — for admin "trash" view and cleanup jobs
+CREATE INDEX idx_collections_deleted ON collections (deleted_at)
+    WHERE deleted_at IS NOT NULL;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- FIELDS (Column Definitions)

@@ -126,14 +126,20 @@ CollectionRecordSchema.index(
   },
 );
 
-// Full-text search across data values
-CollectionRecordSchema.index(
-  { 'data.$**': 'text' },
-  { name: 'idx_collection_records_text', default_language: 'english' },
-);
-
-// Wildcard index for flexible querying on any data field
-CollectionRecordSchema.index(
-  { 'data.$**': 1 },
-  { name: 'idx_collection_records_data_wildcard' },
-);
+// ─────────────────────────────────────────────────────────────────────────────
+// NOTE: No wildcard index on `data.$**` by design.
+//
+// Wildcard indexes (both text and ascending) on polymorphic `data` objects
+// are prohibitively expensive in production:
+//   • Indexes every nested key+value in every document → massive storage
+//   • Slows every write (insert/update must update wildcard index entries)
+//   • Rarely matches query planner expectations for targeted lookups
+//
+// Instead, use TARGETED indexes created dynamically from the SQL
+// `collection_indices` table. When a user defines a field-level index in
+// the UI, the backend creates a specific MongoDB index like:
+//   db.collection_records.createIndex({ 'data.email': 1 }, { sparse: true })
+//
+// Full-text search should use a dedicated search engine (e.g., Meilisearch)
+// or Atlas Search, not a $** text index on the data sub-document.
+// ─────────────────────────────────────────────────────────────────────────────

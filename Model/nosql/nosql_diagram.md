@@ -50,6 +50,12 @@ graph TB
         CC["connection_credentials\n─────────────────────\nEncrypted vault\nPasswords, SSH keys, certs"]
     end
 
+    subgraph ANALYTICS["📈 Analytics & ABAC"]
+        PA["platform_analytics\n─────────────────\nAdmin dashboard events\nTime-series + TTL"]
+        ARC["abac_rule_conditions\n───────────────────\nNested condition trees\nBoolean logic engine"]
+        AUA["abac_user_attributes\n───────────────────\nFlexible user attributes\nDepartment, clearance, etc."]
+    end
+
     CR:::business
     DL:::display
     VC:::display
@@ -61,6 +67,9 @@ graph TB
     AL:::operational
     SS:::connectivity
     CC:::connectivity
+    PA:::operational
+    ARC:::settings
+    AUA:::settings
 ```
 
 ---
@@ -99,6 +108,7 @@ flowchart LR
         AL["audit_log"]:::mongo
         SS["sync_state"]:::mongo
         CC["connection_credentials"]:::mongo
+        PA["platform_analytics"]:::mongo
     end
 
     S_COLL -- "collection_id\nvalidates schema" --> CR
@@ -119,6 +129,9 @@ flowchart LR
     CR -- "changes logged in" --> AL
     SS -- "syncs into" --> CR
     CC -- "decrypts for" --> SS
+
+    CR -- "events feed" --> PA
+    AL -- "events feed" --> PA
 ```
 
 ---
