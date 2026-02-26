@@ -1,13 +1,6 @@
 // ============================================
-// Transcendence — Reset / Base Styles
+// PRISMATICA — CSS Reset
 // ============================================
-// Global reset and base styles using the graphical chart.
-// ============================================
-
-@use '../abstracts' as *;
-
-// ── External Fonts ─────────────────────────────────
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 *,
 *::before,
@@ -17,31 +10,58 @@
   padding: 0;
 }
 
-:root {
-  // Export CSS custom properties for JS theming
-  @include export-css-variables;
-
-  font-family: $font-family-sans;
-  line-height: $line-height-normal;
-  color: $text-primary;
-  background: $bg-primary;
-  @include font-smooth;
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 body {
-  min-height: 100vh;
-  background:
-    radial-gradient(ellipse at 20% 0%, rgba($accent, 0.1) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba($color-info, 0.07) 0%, transparent 50%),
-    $bg-primary;
+  font-family: $font-family-ui;
+  font-size: $text-base;
+  line-height: $leading-relaxed;
+  color: $text-primary;
+  background: $bg-primary;
+  
+  @include theme('dark') {
+    color: $dark-text-primary;
+    background: $dark-bg-primary;
+  }
 }
 
-a {
-  color: $accent-light;
-  text-decoration: none;
-  transition: color $transition-base;
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
 
-  &:hover {
-    color: $accent-muted;
-  }
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}
+
+// Focus visible polyfill
+:focus:not(:focus-visible) {
+  outline: none;
 }

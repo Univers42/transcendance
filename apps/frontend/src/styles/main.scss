@@ -1,29 +1,42 @@
 // ============================================
-// Transcendence — Main SCSS Entry Point
-// ============================================
-// 🎨 IMPORT ORDER MATTERS!
-//
-// 1. Base (graphical-chart, reset) — Foundation
-// 2. Layout (app, footer) — Page structure
-// 3. Components (hero, cards) — UI elements
-// 4. Utilities (animations) — Helpers
-//
-// The graphical-chart is auto-imported via Vite's
-// additionalData config, so all variables are available.
+// PRISMATICA — Main Stylesheet
 // ============================================
 
-// ── Base Styles ────────────────────────────────────
-@use 'base/graphical-chart';  // Design system tokens
-@use 'base/reset';            // Global reset
+// 1. Abstracts (tokens + mixins)
+@use 'abstracts' as *;
 
-// ── Layout ─────────────────────────────────────────
-@use 'layout/app';
-@use 'layout/footer';
+// 2. Base styles
+@use 'base/reset';
+@use 'base/typography';
 
-// ── Components ─────────────────────────────────────
-@use 'components/hero';
-@use 'components/cards';
-@use 'components/quickstart';
+// 4. Layouts
+@use 'layouts';
 
-// ── Utilities ──────────────────────────────────────
-@use 'utilities/animations';
+// 5. Components
+@use 'components';
+
+// 3. CSS Custom Properties for theming
+:root {
+  @include theme-variables('light');
+}
+
+[data-theme="dark"] {
+  @include theme-variables('dark');
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-variables('dark');
+  }
+}
+
+// 6. Utilities (opcional)
+.sr-only {
+  @include visually-hidden;
+}
+
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.hidden { display: none; }
