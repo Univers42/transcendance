@@ -1,106 +1,226 @@
 // ============================================
-// Transcendence — Card Components
+// PRISMATICA — Card Component
 // ============================================
-// Uses variables from graphical-chart.scss
+// Variants: default, elevated, interactive, data
+// Sections: header, body, footer
 // ============================================
 
 @use '../abstracts' as *;
 
-.section-title {
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  margin-bottom: $spacing-5;
-  color: $text-primary;
-}
-
-.services {
-  margin-top: $spacing-8;
-}
-
-.card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
-  gap: $spacing-4;
-
-  @include sm {
-    grid-template-columns: 1fr;
-  }
-}
-
 .card {
+  @include card-static;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  
+  // Sections
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-4 $space-6;
+    border-bottom: 1px solid $border-divider;
+    gap: $space-4;
+    
+    @include theme('dark') {
+      border-color: $dark-border-divider;
+    }
+  }
+  
+  &__title {
+    font-family: $font-family-ui;
+    font-size: $text-lg;        // 20px
+    font-weight: $weight-semibold;
+    line-height: $leading-tight;
+    color: $text-primary;
+    margin: 0;
+    
+    @include theme('dark') {
+      color: $dark-text-primary;
+    }
+  }
+  
+  &__subtitle {
+    font-family: $font-family-ui;
+    font-size: $text-sm;        // 13px
+    font-weight: $weight-normal;
+    color: $text-secondary;
+    margin-top: $space-1;
+    
+    @include theme('dark') {
+      color: $dark-text-secondary;
+    }
+  }
+  
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    margin-left: auto;
+  }
+  
+  &__body {
+    flex: 1;
+    padding: $space-6;
+    
+    &--no-padding {
+      padding: 0;
+    }
+  }
+  
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $space-3;
+    padding: $space-4 $space-6;
+    border-top: 1px solid $border-divider;
+    background: $bg-secondary;
+    border-radius: 0 0 $radius-lg $radius-lg;
+    
+    @include theme('dark') {
+      border-color: $dark-border-divider;
+      background: $dark-bg-secondary;
+    }
+  }
+  
+  // Data display section (for KPIs)
+  &__metric {
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+  
+  &__value {
+    @include data-text('xl');
+    color: $text-primary;
+    
+    @include theme('dark') {
+      color: $dark-text-primary;
+    }
+    
+    &--positive {
+      color: $data-success;
+      
+      @include theme('dark') {
+        color: $dark-data-success;
+      }
+    }
+    
+    &--negative {
+      color: $data-error;
+      
+      @include theme('dark') {
+        color: $dark-data-error;
+      }
+    }
+  }
+  
+  &__label {
+    font-family: $font-family-ui;
+    font-size: $text-sm;
+    font-weight: $weight-medium;
+    color: $text-secondary;
+    text-transform: uppercase;
+    letter-spacing: $tracking-wider;
+    
+    @include theme('dark') {
+      color: $dark-text-secondary;
+    }
+  }
+  
+  &__trend {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-1;
+    font-family: $font-family-data;
+    font-size: $data-sm;
+    font-weight: $weight-medium;
+    
+    &--up {
+      color: $data-success;
+      
+      @include theme('dark') {
+        color: $dark-data-success;
+      }
+    }
+    
+    &--down {
+      color: $data-error;
+      
+      @include theme('dark') {
+        color: $dark-data-error;
+      }
+    }
+  }
+}
+
+// ════════════════════════════════════════════
+// VARIANTS
+// ════════════════════════════════════════════
+
+// Elevated with shadow
+.card--elevated {
+  @include card-elevated;
+}
+
+// Interactive (clickable)
+.card--interactive {
   @include card;
-  padding: $spacing-5 $spacing-6;
-  text-decoration: none;
-  color: inherit;
-  display: block;
-  cursor: default;
-
-  &.active {
-    border-color: $border-accent;
-    background: linear-gradient(135deg, $bg-card 0%, rgba($accent, 0.06) 100%);
-  }
-}
-
-a.card {
   cursor: pointer;
-
-  &:hover {
-    text-decoration: none;
+  
+  &:focus-visible {
+    @include focus-ring;
+  }
+  
+  @include theme('dark') {
+    @include card-dark;
+    
+    &:focus-visible {
+      @include focus-ring-dark;
+    }
   }
 }
 
-.card-header {
-  @include flex-between;
-  margin-bottom: $spacing-3;
-}
-
-.card-icon {
-  font-size: $font-size-xl;
-}
-
-.card h3 {
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  margin-bottom: $spacing-1;
-}
-
-.card-url {
-  font-size: $font-size-sm;
-  color: $text-muted;
-  font-family: $font-family-mono;
-  margin-bottom: $spacing-2;
-}
-
-.card-desc {
-  font-size: $font-size-sm;
-  color: $text-secondary;
-}
-
-// ── Status Dots ────────────────────────────────────
-.dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  border-radius: $radius-full;
-  flex-shrink: 0;
-
-  &.ok {
-    background: $color-success;
-    box-shadow: 0 0 8px rgba($color-success, 0.5);
+// Data card (KPI style)
+.card--data {
+  @include card-static;
+  border-left: 4px solid $accent;
+  
+  @include theme('dark') {
+    border-left-color: $dark-accent;
   }
-
-  &.error {
-    background: $color-error;
-    box-shadow: 0 0 8px rgba($color-error, 0.5);
+  
+  &.card--success {
+    border-left-color: $data-success;
+    
+    @include theme('dark') {
+      border-left-color: $dark-data-success;
+    }
   }
-
-  &.loading {
-    background: $color-warning;
-    animation: blink 1.2s ease-in-out infinite;
+  
+  &.card--warning {
+    border-left-color: $data-warning;
+    
+    @include theme('dark') {
+      border-left-color: $dark-data-warning;
+    }
   }
+  
+  &.card--error {
+    border-left-color: $data-error;
+    
+    @include theme('dark') {
+      border-left-color: $dark-data-error;
+    }
+  }
+}
 
-  &.neutral {
-    background: $color-neutral;
-    box-shadow: 0 0 6px rgba($color-neutral, 0.4);
+// Compact padding
+.card--compact {
+  .card__header,
+  .card__body,
+  .card__footer {
+    padding: $space-4;
   }
 }
