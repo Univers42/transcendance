@@ -17,34 +17,57 @@ import { Document, Types } from 'mongoose';
 // ── Interfaces ──────────────────────────────────────────────────────────────
 
 export type TriggerType =
-  | 'record_created' | 'record_updated' | 'record_deleted'
-  | 'field_changed' | 'schedule' | 'webhook_received'
-  | 'form_submitted' | 'manual';
+  | 'record_created'
+  | 'record_updated'
+  | 'record_deleted'
+  | 'field_changed'
+  | 'schedule'
+  | 'webhook_received'
+  | 'form_submitted'
+  | 'manual';
 
 export type StepType =
-  | 'filter' | 'transform' | 'create_record' | 'update_record'
-  | 'delete_record' | 'send_email' | 'send_webhook'
-  | 'send_notification' | 'delay' | 'condition'
-  | 'loop' | 'assign' | 'custom_function';
+  | 'filter'
+  | 'transform'
+  | 'create_record'
+  | 'update_record'
+  | 'delete_record'
+  | 'send_email'
+  | 'send_webhook'
+  | 'send_notification'
+  | 'delay'
+  | 'condition'
+  | 'loop'
+  | 'assign'
+  | 'custom_function';
 
 export type ErrorStrategy = 'stop' | 'skip' | 'retry';
 
 export type WorkflowStatus =
-  | 'pending' | 'running' | 'completed' | 'failed' | 'cancelled' | 'paused';
+  | 'pending'
+  | 'running'
+  | 'completed'
+  | 'failed'
+  | 'cancelled'
+  | 'paused';
 
 export type StepStatus =
-  | 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+  | 'pending'
+  | 'running'
+  | 'completed'
+  | 'failed'
+  | 'skipped';
 
 export interface WorkflowTrigger {
   type: TriggerType;
   collection_id?: string;
-  field_slug?: string;       // for field_changed triggers
-  schedule?: string;         // cron expression
+  field_slug?: string; // for field_changed triggers
+  schedule?: string; // cron expression
   conditions?: Record<string, unknown>; // same format as view filters
 }
 
 export interface WorkflowStep {
-  step_id: string;           // UUID
+  step_id: string; // UUID
   type: StepType;
   config: Record<string, unknown>; // step-specific configuration
   on_error?: ErrorStrategy;
@@ -69,7 +92,7 @@ export interface TriggerData {
   collection_id?: string;
   changed_fields?: Record<string, unknown>;
   previous_values?: Record<string, unknown>;
-  triggered_by?: string;     // UUID of user or "system"
+  triggered_by?: string; // UUID of user or "system"
 }
 
 // ── WorkflowDefinition Schema ───────────────────────────────────────────────

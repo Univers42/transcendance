@@ -48,8 +48,8 @@ export interface SecuritySettings {
   session_timeout_minutes?: number;
   max_sessions_per_user?: number;
   password_policy?: PasswordPolicy;
-  allowed_ip_ranges?: string[];          // CIDR notation
-  allowed_oauth_providers?: string[];    // ["google", "42", "github"]
+  allowed_ip_ranges?: string[]; // CIDR notation
+  allowed_oauth_providers?: string[]; // ["google", "42", "github"]
   sso_config?: SSOConfig;
 }
 
@@ -58,7 +58,7 @@ export interface DashboardDefaults {
   row_height?: number;
   gap?: number;
   compact_type?: 'vertical' | 'horizontal' | 'none';
-  default_refresh_interval?: number;     // seconds
+  default_refresh_interval?: number; // seconds
   allow_personal_layouts?: boolean;
   allow_widget_export?: boolean;
 }
@@ -72,7 +72,7 @@ export interface ViewDefaults {
 
 export interface DataRetention {
   audit_log_retention_days?: number;
-  query_cache_default_ttl?: number;      // seconds
+  query_cache_default_ttl?: number; // seconds
   soft_delete_retention_days?: number;
   version_history_limit?: number;
   backup_frequency?: 'daily' | 'weekly' | 'monthly';
@@ -89,7 +89,7 @@ export interface NotificationDefaults {
 export interface ImportExportSettings {
   max_import_rows?: number;
   max_file_size_mb?: number;
-  allowed_import_formats?: string[];     // ["csv", "xlsx", "json"]
+  allowed_import_formats?: string[]; // ["csv", "xlsx", "json"]
   allowed_export_formats?: string[];
 }
 

@@ -32,13 +32,13 @@ import { HydratedDocument } from 'mongoose';
 
 /** Credential type determines which fields are populated */
 export type CredentialType =
-  | 'password'         // username + password
-  | 'connection_uri'   // full connection string (encrypted)
-  | 'ssh_key'          // SSH private key for tunnel
-  | 'ssl_certificate'  // client SSL cert + key
-  | 'api_token'        // API token / bearer token
-  | 'oauth2'           // OAuth2 client credentials
-  | 'iam_role';        // AWS IAM / GCP service account
+  | 'password' // username + password
+  | 'connection_uri' // full connection string (encrypted)
+  | 'ssh_key' // SSH private key for tunnel
+  | 'ssl_certificate' // client SSL cert + key
+  | 'api_token' // API token / bearer token
+  | 'oauth2' // OAuth2 client credentials
+  | 'iam_role'; // AWS IAM / GCP service account
 
 /** Credential status */
 export type CredentialStatus = 'active' | 'rotating' | 'expired' | 'revoked';
@@ -186,7 +186,15 @@ export class ConnectionCredentials {
   /** Type of credential stored */
   @Prop({
     required: true,
-    enum: ['password', 'connection_uri', 'ssh_key', 'ssl_certificate', 'api_token', 'oauth2', 'iam_role'],
+    enum: [
+      'password',
+      'connection_uri',
+      'ssh_key',
+      'ssl_certificate',
+      'api_token',
+      'oauth2',
+      'iam_role',
+    ],
   })
   credential_type!: CredentialType;
 
@@ -201,7 +209,11 @@ export class ConnectionCredentials {
   // ── Lifecycle ───────────────────────────────────────────────────────────
 
   /** Current credential status */
-  @Prop({ required: true, enum: ['active', 'rotating', 'expired', 'revoked'], default: 'active' })
+  @Prop({
+    required: true,
+    enum: ['active', 'rotating', 'expired', 'revoked'],
+    default: 'active',
+  })
   status!: CredentialStatus;
 
   /** When these credentials expire (null = no expiry) */
@@ -209,7 +221,10 @@ export class ConnectionCredentials {
   expires_at?: Date;
 
   /** Auto-rotation configuration */
-  @Prop({ type: Object, default: { enabled: false, interval_days: 90, strategy: 'notify' } })
+  @Prop({
+    type: Object,
+    default: { enabled: false, interval_days: 90, strategy: 'notify' },
+  })
   rotation_policy!: RotationPolicy;
 
   /** History of credential rotations (keep last N entries) */
@@ -243,13 +258,19 @@ export class ConnectionCredentials {
   last_tested_at?: Date;
 }
 
-export type ConnectionCredentialsDocument = HydratedDocument<ConnectionCredentials>;
-export const ConnectionCredentialsSchema = SchemaFactory.createForClass(ConnectionCredentials);
+export type ConnectionCredentialsDocument =
+  HydratedDocument<ConnectionCredentials>;
+export const ConnectionCredentialsSchema = SchemaFactory.createForClass(
+  ConnectionCredentials,
+);
 
 // ── Indexes ──────────────────────────────────────────────────────────────────
 ConnectionCredentialsSchema.index({ connection_id: 1 }, { unique: true });
 ConnectionCredentialsSchema.index({ organization_id: 1, status: 1 });
 ConnectionCredentialsSchema.index(
   { expires_at: 1 },
-  { expireAfterSeconds: 0, partialFilterExpression: { expires_at: { $exists: true } } },
+  {
+    expireAfterSeconds: 0,
+    partialFilterExpression: { expires_at: { $exists: true } },
+  },
 );

@@ -210,7 +210,4 @@ DashboardLayoutSchema.index(
 );
 
 // Organization-level queries
-DashboardLayoutSchema.index(
-  { organization_id: 1 },
-  { name: 'idx_layout_org' },
-);
+DashboardLayoutSchema.index({ organization_id: 1 }, { name: 'idx_layout_org' });

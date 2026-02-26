@@ -170,10 +170,7 @@ AbacUserAttributeSchema.index(
 );
 
 // Find all attribute sets for a user (across orgs)
-AbacUserAttributeSchema.index(
-  { user_id: 1 },
-  { name: 'idx_abac_ua_user' },
-);
+AbacUserAttributeSchema.index({ user_id: 1 }, { name: 'idx_abac_ua_user' });
 
 // Org-scoped listing (admin: "show me all user attributes in this org")
 AbacUserAttributeSchema.index(

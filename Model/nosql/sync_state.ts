@@ -27,13 +27,23 @@ import { HydratedDocument, Types } from 'mongoose';
 // ── Types ───────────────────────────────────────────────────────────────────
 
 /** Supported CDC engine types */
-export type CdcEngine = 'pg_logical' | 'mongo_change_stream' | 'mysql_binlog' | 'polling';
+export type CdcEngine =
+  | 'pg_logical'
+  | 'mongo_change_stream'
+  | 'mysql_binlog'
+  | 'polling';
 
 /** Sync health status */
 export type SyncHealth = 'healthy' | 'lagging' | 'stalled' | 'error' | 'paused';
 
 /** Conflict resolution status */
-export type ConflictStatus = 'pending' | 'resolved_source' | 'resolved_platform' | 'resolved_merge' | 'resolved_manual' | 'discarded';
+export type ConflictStatus =
+  | 'pending'
+  | 'resolved_source'
+  | 'resolved_platform'
+  | 'resolved_merge'
+  | 'resolved_manual'
+  | 'discarded';
 
 /** Direction of the change that caused the conflict */
 export type ConflictDirection = 'inbound' | 'outbound';
@@ -157,7 +167,10 @@ export class SyncState {
   // ── CDC Engine & Cursor ─────────────────────────────────────────────────
 
   /** Which CDC engine is being used */
-  @Prop({ required: true, enum: ['pg_logical', 'mongo_change_stream', 'mysql_binlog', 'polling'] })
+  @Prop({
+    required: true,
+    enum: ['pg_logical', 'mongo_change_stream', 'mysql_binlog', 'polling'],
+  })
   cdc_engine!: CdcEngine;
 
   /** Current inbound cursor position (remote → platform) */
@@ -171,7 +184,11 @@ export class SyncState {
   // ── Replication Health ──────────────────────────────────────────────────
 
   /** Overall sync health */
-  @Prop({ required: true, enum: ['healthy', 'lagging', 'stalled', 'error', 'paused'], default: 'healthy' })
+  @Prop({
+    required: true,
+    enum: ['healthy', 'lagging', 'stalled', 'error', 'paused'],
+    default: 'healthy',
+  })
   health!: SyncHealth;
 
   /** Current replication lag in milliseconds */
@@ -250,4 +267,7 @@ export const SyncStateSchema = SchemaFactory.createForClass(SyncState);
 SyncStateSchema.index({ channel_id: 1 }, { unique: true });
 SyncStateSchema.index({ organization_id: 1, health: 1 });
 SyncStateSchema.index({ connection_id: 1 });
-SyncStateSchema.index({ pending_conflicts: -1 }, { partialFilterExpression: { pending_conflicts: { $gt: 0 } } });
+SyncStateSchema.index(
+  { pending_conflicts: -1 },
+  { partialFilterExpression: { pending_conflicts: { $gt: 0 } } },
+);

@@ -17,9 +17,19 @@ export type FontSize = 'small' | 'medium' | 'large';
 export type UIDensity = 'compact' | 'comfortable' | 'spacious';
 export type TimeFormat = '12h' | '24h';
 export type FirstDayOfWeek = 'sunday' | 'monday' | 'saturday';
-export type DigestFrequency = 'realtime' | 'hourly' | 'daily' | 'weekly' | 'none';
+export type DigestFrequency =
+  | 'realtime'
+  | 'hourly'
+  | 'daily'
+  | 'weekly'
+  | 'none';
 export type PinnableType = 'workspace' | 'collection' | 'dashboard' | 'view';
-export type RecentType = 'dashboard' | 'collection' | 'view' | 'workspace' | 'record';
+export type RecentType =
+  | 'dashboard'
+  | 'collection'
+  | 'view'
+  | 'workspace'
+  | 'record';
 
 export interface NumberFormat {
   decimal_separator?: string;
@@ -29,13 +39,14 @@ export interface NumberFormat {
 
 export interface QuietHours {
   enabled: boolean;
-  start: string;   // HH:mm
-  end: string;     // HH:mm
+  start: string; // HH:mm
+  end: string; // HH:mm
   timezone?: string;
 }
 
 export interface NotificationChannels {
-  [type: string]: {  // e.g., "mention", "comment", "share"
+  [type: string]: {
+    // e.g., "mention", "comment", "share"
     email?: boolean;
     push?: boolean;
     in_app?: boolean;
@@ -82,7 +93,7 @@ export interface FavoriteItem {
 export interface OnboardingState {
   completed?: boolean;
   completed_at?: Date;
-  dismissed_tips?: string[];    // tip/tutorial IDs
+  dismissed_tips?: string[]; // tip/tutorial IDs
   current_step?: string;
 }
 
@@ -94,13 +105,15 @@ export interface OnboardingState {
   versionKey: false,
 })
 export class UserPreferences {
-
   @Prop({ required: true, unique: true })
   user_id: string; // UUID FK → SQL users.id
 
   // ── Appearance ──────────────────────────────────────────────────────────
 
-  @Prop({ enum: ['light', 'dark', 'system', 'high_contrast'], default: 'system' })
+  @Prop({
+    enum: ['light', 'dark', 'system', 'high_contrast'],
+    default: 'system',
+  })
   theme: Theme;
 
   @Prop()
@@ -109,7 +122,10 @@ export class UserPreferences {
   @Prop({ enum: ['small', 'medium', 'large'], default: 'medium' })
   font_size: FontSize;
 
-  @Prop({ enum: ['compact', 'comfortable', 'spacious'], default: 'comfortable' })
+  @Prop({
+    enum: ['compact', 'comfortable', 'spacious'],
+    default: 'comfortable',
+  })
   density: UIDensity;
 
   // ── Locale ──────────────────────────────────────────────────────────────

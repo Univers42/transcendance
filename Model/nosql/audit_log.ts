@@ -22,15 +22,15 @@ export type ActorType = 'user' | 'system' | 'api_key' | 'workflow';
 
 export interface AuditChanges {
   before?: Record<string, unknown>; // previous state (changed fields only)
-  after?: Record<string, unknown>;  // new state (changed fields only)
-  diff?: string[];                  // changed field paths: ["data.status", "data.assignee"]
+  after?: Record<string, unknown>; // new state (changed fields only)
+  diff?: string[]; // changed field paths: ["data.status", "data.assignee"]
 }
 
 // ── Schema ──────────────────────────────────────────────────────────────────
 
 @Schema({
   collection: 'audit_log',
-  timestamps: false,  // we use our own `timestamp` field
+  timestamps: false, // we use our own `timestamp` field
   versionKey: false,
 })
 export class AuditLog {

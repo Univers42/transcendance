@@ -21,18 +21,31 @@ export type FilterLogic = 'and' | 'or';
 export type RowHeight = 'compact' | 'default' | 'tall';
 
 export type FilterOperator =
-  | 'eq' | 'neq' | 'gt' | 'gte' | 'lt' | 'lte'
-  | 'contains' | 'not_contains' | 'starts_with' | 'ends_with'
-  | 'is_empty' | 'is_not_empty'
-  | 'in' | 'not_in'
-  | 'between' | 'not_between'
-  | 'is_before' | 'is_after' | 'is_within';
+  | 'eq'
+  | 'neq'
+  | 'gt'
+  | 'gte'
+  | 'lt'
+  | 'lte'
+  | 'contains'
+  | 'not_contains'
+  | 'starts_with'
+  | 'ends_with'
+  | 'is_empty'
+  | 'is_not_empty'
+  | 'in'
+  | 'not_in'
+  | 'between'
+  | 'not_between'
+  | 'is_before'
+  | 'is_after'
+  | 'is_within';
 
 export interface VisibleField {
   field_id: string;
   field_slug: string;
-  width?: number;      // column width in pixels
-  is_frozen?: boolean;  // pinned/frozen column
+  width?: number; // column width in pixels
+  is_frozen?: boolean; // pinned/frozen column
 }
 
 export interface SortRule {
@@ -61,8 +74,16 @@ export interface GroupByRule {
 // ── View-type specific configs ──────────────────────────────────────────────
 
 export type ChartType =
-  | 'bar' | 'line' | 'area' | 'pie' | 'donut'
-  | 'scatter' | 'bubble' | 'radar' | 'treemap' | 'heatmap';
+  | 'bar'
+  | 'line'
+  | 'area'
+  | 'pie'
+  | 'donut'
+  | 'scatter'
+  | 'bubble'
+  | 'radar'
+  | 'treemap'
+  | 'heatmap';
 
 export type AggregationFn = 'sum' | 'avg' | 'count' | 'min' | 'max' | 'median';
 
@@ -74,9 +95,9 @@ export interface ChartYAxis {
 }
 
 export interface KanbanConfig {
-  stack_field: string;          // field slug used as kanban columns
-  card_fields?: string[];       // field slugs shown on cards
-  card_cover_field?: string;    // image field for card cover
+  stack_field: string; // field slug used as kanban columns
+  card_fields?: string[]; // field slugs shown on cards
+  card_cover_field?: string; // image field for card cover
   hide_empty_stacks?: boolean;
 }
 
@@ -89,7 +110,7 @@ export interface CalendarConfig {
 }
 
 export interface GalleryConfig {
-  cover_field?: string;         // image field for card cover
+  cover_field?: string; // image field for card cover
   title_field: string;
   subtitle_field?: string;
   card_size?: 'small' | 'medium' | 'large';

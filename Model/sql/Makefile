@@ -26,6 +26,8 @@
 # ── Configuration ────────────────────────────────────────────────────────────
 
 DATABASE_URL ?= postgresql://postgres:postgres@localhost:5432/transcendence
+MONGODB_URL  ?= mongodb://localhost:27017
+MONGODB_DB   ?= transcendence
 ROWS         ?= 5
 MANAGER      := manager
 SEEDS        := seeds
@@ -38,14 +40,15 @@ SHELL := /bin/bash
 
 .PHONY: all help reset schema triggers indexes views seeds seed-static \
         seed-auto seed verify introspect query clean status \
-        fresh debug setup permissions
+        fresh debug setup permissions \
+        mongo-setup mongo-seed mongo-reset mongo-verify mongo-fresh
 
 # ── Default target ───────────────────────────────────────────────────────────
 
-all: setup reset schema seed-static seed-auto verify  ## Full pipeline: reset → schema → seed → verify
+all: setup reset schema seed-static seed-auto verify mongo-reset mongo-setup mongo-seed mongo-verify  ## Full pipeline: SQL + MongoDB reset → schema → seed → verify
 	@echo ""
 	@echo "════════════════════════════════════════════════════════════════"
-	@echo "  ✓ COMPLETE — Database is fully seeded and verified."
+	@echo "  ✓ COMPLETE — Both databases are fully seeded and verified."
 	@echo "════════════════════════════════════════════════════════════════"
 
 # ── Help ─────────────────────────────────────────────────────────────────────
@@ -97,8 +100,18 @@ help:  ## Show this help
 	@echo "║                                                               ║"
 	@echo "║  CONFIGURATION                                                ║"
 	@echo "║  ─────────────                                                ║"
-	@echo "║  DATABASE_URL=...    Override database connection             ║"
+	@echo "║  DATABASE_URL=...    Override PostgreSQL connection           ║"
+	@echo "║  MONGODB_URL=...     Override MongoDB connection              ║"
+	@echo "║  MONGODB_DB=...      Override MongoDB database name           ║"
 	@echo "║  ROWS=N             Rows per table for auto-seed (default: 5) ║"
+	@echo "║                                                               ║"
+	@echo "║  MONGODB                                                      ║"
+	@echo "║  ───────                                                      ║"
+	@echo "║  make mongo-setup    Create collections + indexes             ║"
+	@echo "║  make mongo-seed     Seed MongoDB with demo data              ║"
+	@echo "║  make mongo-reset    Drop MongoDB database                    ║"
+	@echo "║  make mongo-verify   Verify MongoDB integrity                 ║"
+	@echo "║  make mongo-fresh    Full MongoDB pipeline (reset+setup+seed) ║"
 	@echo "║                                                               ║"
 	@echo "╚════════════════════════════════════════════════════════════════╝"
 	@echo ""
@@ -185,3 +198,21 @@ debug: introspect verify  ## Debug: introspect + verify
 
 permissions: setup  ## Show all permissions in the database
 	@psql "$(DATABASE_URL)" -c "SELECT name, resource_type, action FROM permissions ORDER BY resource_type, action;"
+
+# ── MongoDB Targets ──────────────────────────────────────────────────────────
+
+mongo-setup: setup  ## Create MongoDB collections and indexes
+	@$(MANAGER)/mongo_setup.sh "$(MONGODB_URL)" "$(MONGODB_DB)"
+
+mongo-seed: setup  ## Seed MongoDB with demo data
+	@$(MANAGER)/mongo_seed.sh "$(MONGODB_URL)" "$(MONGODB_DB)"
+
+mongo-reset: setup  ## Drop the MongoDB database
+	@$(MANAGER)/mongo_reset.sh "$(MONGODB_URL)" "$(MONGODB_DB)"
+
+mongo-verify: setup  ## Verify MongoDB collections and data integrity
+	@$(MANAGER)/mongo_verify.sh "$(MONGODB_URL)" "$(MONGODB_DB)"
+
+mongo-fresh: mongo-reset mongo-setup mongo-seed mongo-verify  ## Full MongoDB pipeline: reset → setup → seed → verify
+	@echo ""
+	@echo "✓ MongoDB is fully reset, seeded, and verified."
