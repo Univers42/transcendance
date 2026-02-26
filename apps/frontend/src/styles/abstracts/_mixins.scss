@@ -1,76 +1,51 @@
 // ============================================
-// Transcendence — SASS Mixins
+// PRISMATICA — SASS Mixins
 // ============================================
-// Reusable patterns built on top of the graphical chart.
-// All mixins use variables from graphical-chart.scss
+// Reusable patterns built on top of graphical-chart
 // ============================================
 
-@use '../base/graphical-chart' as *;
+@use 'graphical-chart' as *;
 
 // ════════════════════════════════════════════
 // 📱 RESPONSIVE BREAKPOINTS
 // ════════════════════════════════════════════
 
-// Max-width (mobile-first: styles apply BELOW breakpoint)
-@mixin xs {
-  @media (max-width: $breakpoint-xs) {
-    @content;
-  }
-}
-
-@mixin sm {
-  @media (max-width: $breakpoint-sm) {
-    @content;
-  }
-}
-
-@mixin md {
-  @media (max-width: $breakpoint-md) {
-    @content;
-  }
-}
-
-@mixin lg {
-  @media (max-width: $breakpoint-lg) {
-    @content;
-  }
-}
-
-@mixin xl {
-  @media (max-width: $breakpoint-xl) {
-    @content;
-  }
-}
-
-// Min-width (styles apply ABOVE breakpoint)
+// Mobile-first: styles apply ABOVE breakpoint
 @mixin xs-up {
-  @media (min-width: $breakpoint-xs) {
-    @content;
-  }
+  @media (min-width: $breakpoint-xs) { @content; }
 }
 
 @mixin sm-up {
-  @media (min-width: $breakpoint-sm) {
-    @content;
-  }
+  @media (min-width: $breakpoint-sm) { @content; }
 }
 
 @mixin md-up {
-  @media (min-width: $breakpoint-md) {
-    @content;
-  }
+  @media (min-width: $breakpoint-md) { @content; }
 }
 
 @mixin lg-up {
-  @media (min-width: $breakpoint-lg) {
-    @content;
-  }
+  @media (min-width: $breakpoint-lg) { @content; }
 }
 
 @mixin xl-up {
-  @media (min-width: $breakpoint-xl) {
-    @content;
-  }
+  @media (min-width: $breakpoint-xl) { @content; }
+}
+
+@mixin xxl-up {
+  @media (min-width: $breakpoint-2xl) { @content; }
+}
+
+// Max-width: styles apply BELOW breakpoint (excepciones)
+@mixin xs-only {
+  @media (max-width: #{$breakpoint-xs - 1px}) { @content; }
+}
+
+@mixin sm-only {
+  @media (max-width: #{$breakpoint-sm - 1px}) { @content; }
+}
+
+@mixin md-only {
+  @media (max-width: #{$breakpoint-md - 1px}) { @content; }
 }
 
 // ════════════════════════════════════════════
@@ -81,7 +56,7 @@
   background: $bg-card;
   border: 1px solid $border-color;
   border-radius: $radius-lg;
-  transition: all $transition-slow;
+  transition: $transition-colors, transform $duration-slow $ease-out, box-shadow $duration-slow $ease-out;
 
   @if $hoverable {
     &:hover {
@@ -93,9 +68,32 @@
   }
 }
 
+@mixin card-static {
+  @include card($hoverable: false);
+}
+
 @mixin card-elevated {
   @include card;
   box-shadow: $shadow-md;
+  
+  &:hover {
+    box-shadow: $shadow-xl;
+  }
+}
+
+// Dark theme variant
+@mixin card-dark($hoverable: true) {
+  background: $dark-bg-card;
+  border: 1px solid $dark-border-color;
+  border-radius: $radius-lg;
+  transition: $transition-colors;
+
+  @if $hoverable {
+    &:hover {
+      background: $dark-bg-card-hover;
+      border-color: $dark-border-accent;
+    }
+  }
 }
 
 // ════════════════════════════════════════════
@@ -113,10 +111,14 @@
   box-shadow: 0 0 20px rgba($color, $intensity);
 }
 
+@mixin glow-dark($color: $dark-accent, $intensity: 0.4) {
+  box-shadow: 0 0 20px rgba($color, $intensity);
+}
+
 @mixin status-dot($color) {
   display: inline-block;
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;  // 10px
+  height: 0.625rem;
   border-radius: $radius-full;
   background: $color;
   box-shadow: 0 0 8px rgba($color, 0.5);
@@ -147,20 +149,30 @@
   width: 100%;
   max-width: $max-width;
   margin-inline: auto;
-  padding-inline: $spacing-4;
+  padding-inline: $space-4;
 
-  @include md {
-    padding-inline: $spacing-6;
+  @include md-up {
+    padding-inline: $space-6;
   }
 }
 
 // ════════════════════════════════════════════
-// 🎯 INTERACTIVE STATES
+// 🎯 INTERACTIVE STATES (WCAG 2.2)
 // ════════════════════════════════════════════
 
 @mixin focus-ring($color: $accent) {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba($color, 0.3);
+  outline: 2px solid $color;
+  outline-offset: 2px;
+  
+  @media (prefers-reduced-motion: no-preference) {
+    transition: outline-offset $duration-fast $ease-out;
+  }
+}
+
+@mixin focus-ring-dark($color: $dark-accent) {
+  outline: 2px solid $color;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba($color, 0.2);
 }
 
 @mixin button-reset {
@@ -168,9 +180,19 @@
   background: none;
   border: none;
   padding: 0;
+  margin: 0;
   cursor: pointer;
   font: inherit;
   color: inherit;
+  text-align: inherit;
+  
+  &:focus {
+    outline: none;
+  }
+  
+  &:focus-visible {
+    @include focus-ring;
+  }
 }
 
 // ════════════════════════════════════════════
@@ -193,6 +215,36 @@
 @mixin font-smooth {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+// Data text styles
+@mixin data-text($size: 'md') {
+  font-family: $font-family-data;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: $tracking-normal;
+  
+  @if $size == 'xl' {
+    font-size: $data-xl;
+    font-weight: $weight-semibold;
+    line-height: $leading-tight;
+  } @else if $size == 'lg' {
+    font-size: $data-lg;
+    font-weight: $weight-medium;
+    line-height: $leading-snug;
+  } @else if $size == 'md' {
+    font-size: $data-md;
+    font-weight: $weight-normal;
+    line-height: $leading-snug;
+  } @else if $size == 'sm' {
+    font-size: $data-sm;
+    font-weight: $weight-normal;
+    line-height: $leading-snug;
+  } @else if $size == 'xs' {
+    font-size: $data-xs;
+    font-weight: $weight-normal;
+    line-height: $leading-snug;
+    letter-spacing: $tracking-wide;
+  }
 }
 
 // ════════════════════════════════════════════
@@ -232,8 +284,42 @@
   border: 0;
 }
 
+@mixin sr-only {
+  @include visually-hidden;
+}
+
 @mixin reduced-motion {
   @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
+
+// High contrast mode support
+@mixin high-contrast {
+  @media (prefers-contrast: high) {
+    @content;
+  }
+}
+
+// ════════════════════════════════════════════
+// 🌗 THEME HELPERS
+// ════════════════════════════════════════════
+
+@mixin light-theme {
+  @media (prefers-color-scheme: light) {
+    @content;
+  }
+}
+
+@mixin dark-theme {
+  @media (prefers-color-scheme: dark) {
+    @content;
+  }
+}
+
+// Apply styles only when data-theme attribute is set
+@mixin theme($mode) {
+  [data-theme="#{$mode}"] & {
     @content;
   }
 }

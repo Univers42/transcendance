@@ -1,29 +1,47 @@
 // ============================================
-// Transcendence — Main SCSS Entry Point
-// ============================================
-// 🎨 IMPORT ORDER MATTERS!
-//
-// 1. Base (graphical-chart, reset) — Foundation
-// 2. Layout (app, footer) — Page structure
-// 3. Components (hero, cards) — UI elements
-// 4. Utilities (animations) — Helpers
-//
-// The graphical-chart is auto-imported via Vite's
-// additionalData config, so all variables are available.
+// PRISMATICA — Main Stylesheet
 // ============================================
 
-// ── Base Styles ────────────────────────────────────
-@use 'base/graphical-chart';  // Design system tokens
-@use 'base/reset';            // Global reset
+// Ya NO necesitas importar abstracts o graphical-chart aquí arriba, 
+// porque no vas a escribir CSS directamente en el main.scss.
+// Cada archivo de abajo ya importa lo que necesita.
 
-// ── Layout ─────────────────────────────────────────
-@use 'layout/app';
-@use 'layout/footer';
+// 1. BASE
+@use 'base/reset';
+@use 'base/typography';
 
-// ── Components ─────────────────────────────────────
-@use 'components/hero';
+// 2. COMPONENTES
+@use 'components/button';
 @use 'components/cards';
+@use 'components/input';
+@use 'components/table';
+@use 'components/badge';
+@use 'components/theme-toggle';
+@use 'components/hero';
 @use 'components/quickstart';
 
-// ── Utilities ──────────────────────────────────────
+// 3. LAYOUTS
+@use 'layout/container';
+@use 'layout/header';
+@use 'layout/footer';
+@use 'layout/app';
+
+// 4. UTILIDADES
 @use 'utilities/animations';
+
+// 5. CSS CUSTOM PROPERTIES PARA THEMING
+@use 'abstracts' as *; // Lo importamos aquí SOLO para usar el mixin de abajo
+
+:root {
+  @include theme-variables('light');
+}
+
+[data-theme="dark"] {
+  @include theme-variables('dark');
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-variables('dark');
+  }
+}

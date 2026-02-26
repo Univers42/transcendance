@@ -1,12 +1,24 @@
 // ============================================
-// Transcendence — App Layout
-// ============================================
-// Uses variables from graphical-chart.scss
+// PRISMATICA — App Layout
 // ============================================
 
 @use '../abstracts' as *;
 
 .app {
-  @include container($container-lg);
-  padding-bottom: $spacing-16;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__header {
+    flex-shrink: 0;
+  }
+
+  &__main {
+    flex: 1;
+    padding: $space-6 0;
+  }
+
+  &__footer {
+    flex-shrink: 0;
+  }
 }

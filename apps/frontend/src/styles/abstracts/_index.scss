@@ -1,14 +1,11 @@
 // ============================================
-// Transcendence — Abstracts Index
+// PRISMATICA — Abstracts Index
 // ============================================
-// Re-exports graphical chart + mixins for easy importing
-//
-// Usage in any SCSS file:
+// Re-exports graphical chart + mixins
+// Usage: @use 'abstracts' as *;
 // ============================================
 
-// The graphical chart is the SINGLE SOURCE OF TRUTH
-// All variables come from here
-@forward '../base/graphical-chart';
+@forward 'graphical-chart';
 
-// Mixins extend the graphical chart with reusable patterns
+// Mixins extend the tokens with reusable patterns
 @forward 'mixins';

@@ -1,86 +1,47 @@
 // ============================================
-// Transcendence — Hero Component
-// ============================================
-// Uses variables from graphical-chart.scss
+// PRISMATICA — Hero Component
 // ============================================
 
 @use '../abstracts' as *;
 
 .hero {
-  text-align: center;
-  padding: $spacing-24 $spacing-4 $spacing-12;
   position: relative;
+  padding: $space-12 0;
+  background: $bg-secondary;
+  overflow: hidden;
 
-  @include sm {
-    padding: $spacing-16 $spacing-4 $spacing-8;
+  &__container {
+    @include container;
   }
-}
 
-.hero-glow {
-  position: absolute;
-  top: -120px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 600px;
-  height: 600px;
-  background: radial-gradient(circle, $accent-glow 0%, transparent 70%);
-  pointer-events: none;
-  z-index: $z-base;
-}
-
-.title {
-  position: relative;
-  z-index: 1;
-  font-size: $font-size-5xl;
-  font-weight: $font-weight-extrabold;
-  letter-spacing: $letter-spacing-tight;
-  @include gradient-text(linear-gradient(135deg, #ffffff 0%, $accent-light 50%, $color-info-light 100%));
-
-  @include sm {
-    font-size: $font-size-3xl;
+  &__content {
+    max-width: 48rem;
   }
-}
 
-.title-icon {
-  display: inline-block;
-  margin-right: 0.25em;
-  -webkit-text-fill-color: initial;
-  background: none;
-  animation: pulse 2.5s ease-in-out infinite;
-}
+  &__title {
+    font-family: $font-family-ui;
+    font-size: $text-3xl;
+    font-weight: $weight-bold;
+    line-height: $leading-tight;
+    color: $text-primary;
+    margin-bottom: $space-6;
 
-.subtitle {
-  position: relative;
-  z-index: 1;
-  margin-top: $spacing-3;
-  font-size: $font-size-md;
-  color: $text-secondary;
-  font-weight: $font-weight-normal;
-  letter-spacing: $letter-spacing-wide;
-}
+    @include md-up {
+      font-size: 3.5rem;
+    }
+  }
 
-.badge-row {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  gap: $spacing-2;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-top: $spacing-6;
-}
+  &__subtitle {
+    font-family: $font-family-ui;
+    font-size: $text-lg;
+    color: $text-secondary;
+    line-height: $leading-relaxed;
+    margin-bottom: $space-8;
+  }
 
-.badge {
-  padding: $spacing-1 $spacing-3;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: $accent-light;
-  border: 1px solid rgba($accent, 0.25);
-  border-radius: $radius-full;
-  background: rgba($accent, 0.08);
-  transition: all $transition-base;
-
-  &:hover {
-    background: rgba($accent, 0.15);
-    border-color: rgba($accent, 0.4);
+  &__actions {
+    display: flex;
+    gap: $space-4;
+    flex-wrap: wrap;
   }
 }

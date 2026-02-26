@@ -1,0 +1,96 @@
+// ============================================
+// PRISMATICA — Base Typography
+// ============================================
+
+@use '../abstracts' as *;
+
+// Headings
+h1, .h1 {
+  font-family: $font-family-ui;
+  font-size: $text-2xl;       // 32px
+  font-weight: $weight-semibold;
+  line-height: $leading-tight;
+  letter-spacing: $tracking-tight;
+  color: $text-primary;
+  
+  @include theme('dark') {
+    color: $dark-text-primary;
+  }
+}
+
+h2, .h2 {
+  font-family: $font-family-ui;
+  font-size: $text-xl;        // 24px
+  font-weight: $weight-semibold;
+  line-height: $leading-snug;
+  color: $text-primary;
+  
+  @include theme('dark') {
+    color: $dark-text-primary;
+  }
+}
+
+h3, .h3 {
+  font-family: $font-family-ui;
+  font-size: $text-lg;        // 20px
+  font-weight: $weight-medium;
+  line-height: $leading-normal;
+  color: $text-primary;
+  
+  @include theme('dark') {
+    color: $dark-text-primary;
+  }
+}
+
+h4, .h4 {
+  font-family: $font-family-ui;
+  font-size: $text-md;        // 16px
+  font-weight: $weight-semibold;
+  line-height: $leading-normal;
+  color: $text-primary;
+  
+  @include theme('dark') {
+    color: $dark-text-primary;
+  }
+}
+
+// Body text
+p {
+  margin-bottom: $space-4;
+  color: $text-secondary;
+  
+  @include theme('dark') {
+    color: $dark-text-secondary;
+  }
+}
+
+// Links
+a {
+  color: $accent;
+  text-decoration: underline;
+  text-underline-offset: 0.125rem;
+  transition: $transition-colors;
+  
+  @include theme('dark') {
+    color: $dark-accent;
+  }
+  
+  &:hover {
+    color: $accent-hover;
+    
+    @include theme('dark') {
+      color: $dark-accent-hover;
+    }
+  }
+  
+  &:focus-visible {
+    @include focus-ring;
+  }
+}
+
+// Data text utilities
+.data-xl { @include data-text('xl'); }
+.data-lg { @include data-text('lg'); }
+.data-md { @include data-text('md'); }
+.data-sm { @include data-text('sm'); }
+.data-xs { @include data-text('xs'); }
