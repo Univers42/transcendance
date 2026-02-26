@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useEffect, useState } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,7 +25,7 @@ interface HealthData {
 
 function StatusDot({ ok }: { ok: boolean | null }) {
   if (ok === null) return <span className="dot loading" />;
-  return <span className={`dot ${ok ? 'ok' : 'error'}`} />;
+  return <span className={`dot ${ok ? "ok" : "error"}`} />;
 }
 
 function formatUptime(seconds: number): string {
@@ -45,9 +45,9 @@ function WelcomePage() {
 
   useEffect(() => {
     const check = () =>
-      fetch('/api/health')
+      fetch("/api/health")
         .then((r) => {
-          if (!r.ok) throw new Error('Backend unreachable');
+          if (!r.ok) throw new Error("Backend unreachable");
           return r.json();
         })
         .then((d: HealthData) => {
@@ -114,8 +114,8 @@ function WelcomePage() {
               {backendOk && health
                 ? `Up ${formatUptime(health.uptime)} · ${health.environment}`
                 : backendOk === false
-                  ? 'Offline — run make dev'
-                  : 'Checking…'}
+                  ? "Offline — run make dev"
+                  : "Checking…"}
             </p>
           </div>
 
