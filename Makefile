@@ -26,7 +26,6 @@ else
 export DOCKER_BUILDKIT := 0
 export COMPOSE_DOCKER_CLI_BUILD := 0
 endif
-
 .PHONY: help
 .DEFAULT_GOAL := all
 
