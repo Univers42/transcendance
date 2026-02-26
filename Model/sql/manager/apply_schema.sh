@@ -15,18 +15,20 @@
 #   7. schema.connectivity.sql  (connections, sync channels)
 #   8. schema.adapter.sql       (adapters, mappings, executions)
 #   9. schema.system.sql        (webhooks, notifications, policies, files)
-#  10. triggers.utility.sql     (shared trigger functions)
-#  11. triggers.user.sql        (user/auth triggers)
-#  12. triggers.organization.sql
-#  13. triggers.billing.sql
-#  14. triggers.collection.sql
-#  15. triggers.dashboard.sql
-#  16. triggers.resource.sql
-#  17. triggers.connectivity.sql
-#  18. triggers.adapter.sql
-#  19. triggers.system.sql
-#  20. optimization.sql         (indexes)
-#  21. views.sql                (SQL views)
+#  10. schema.abac.sql          (enhanced ABAC engine: rules, groups, policies)
+#  11. triggers.utility.sql     (shared trigger functions)
+#  12. triggers.user.sql        (user/auth triggers)
+#  13. triggers.organization.sql
+#  14. triggers.billing.sql
+#  15. triggers.collection.sql
+#  16. triggers.dashboard.sql
+#  17. triggers.resource.sql
+#  18. triggers.connectivity.sql
+#  19. triggers.adapter.sql
+#  20. triggers.system.sql
+#  21. triggers.abac.sql        (ABAC engine triggers)
+#  22. optimization.sql         (indexes)
+#  23. views.sql                (SQL views)
 #
 # Usage: ./manager/apply_schema.sh [DATABASE_URL]
 # ============================================================================
@@ -54,6 +56,7 @@ SCHEMA_FILES=(
     "schema.connectivity.sql"
     "schema.adapter.sql"
     "schema.system.sql"
+    "schema.abac.sql"
 )
 
 # Trigger files in dependency order
@@ -68,6 +71,7 @@ TRIGGER_FILES=(
     "triggers/triggers.connectivity.sql"
     "triggers/triggers.adapter.sql"
     "triggers/triggers.system.sql"
+    "triggers/triggers.abac.sql"
 )
 
 # Post-schema files

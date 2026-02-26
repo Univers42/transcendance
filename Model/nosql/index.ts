@@ -23,6 +23,8 @@
 //         { name: AuditLog.name,         schema: AuditLogSchema },
 //         { name: SyncState.name,        schema: SyncStateSchema },
 //         { name: ConnectionCredentials.name, schema: ConnectionCredentialsSchema },
+//         { name: AbacRuleCondition.name,    schema: AbacRuleConditionSchema },
+//         { name: AbacUserAttribute.name,    schema: AbacUserAttributeSchema },
 //       ]),
 //     ],
 //   })
@@ -184,3 +186,26 @@ export {
   type RotationEntry,
   type RotationPolicy,
 } from './connection_credentials';
+
+// ── ABAC Rule Conditions (nested condition trees for rules) ────────────────
+export {
+  AbacRuleCondition,
+  AbacRuleConditionDocument,
+  AbacRuleConditionSchema,
+  type ConditionOperator,
+  type ConditionLogic,
+  type LeafCondition,
+  type BranchCondition,
+  type ConditionNode,
+  isBranchCondition,
+  isLeafCondition,
+} from './abac_rule_conditions';
+
+// ── ABAC User Attributes (per-user flexible attribute store) ───────────────
+export {
+  AbacUserAttribute,
+  AbacUserAttributeDocument,
+  AbacUserAttributeSchema,
+  type UserAttributes,
+  type AttributeChangeEntry,
+} from './abac_user_attributes';
