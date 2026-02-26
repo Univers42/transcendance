@@ -288,7 +288,7 @@ CREATE TABLE invoices (
     organization_id     UUID            NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
     invoice_number      VARCHAR(50)     NOT NULL,
     status              VARCHAR(20)     NOT NULL DEFAULT 'draft'
-                        CHECK (status IN ('draft','pending','paid','past_due','void','refunded')),
+                        CHECK (status IN ('draft','pending','paid','past_due','void','refunded', 'rejected')),
     subtotal_amount     INT             NOT NULL DEFAULT 0,     -- cents
     discount_amount     INT             NOT NULL DEFAULT 0,     -- cents
     tax_amount          INT             NOT NULL DEFAULT 0,     -- cents
