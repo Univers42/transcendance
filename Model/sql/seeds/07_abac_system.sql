@@ -40,7 +40,7 @@ VALUES
 
     ('aa000000-0000-0000-0000-000000000002', NULL,
      'user.clearance_level', 'Clearance Level', 'Numeric security clearance (0=none, 5=top)',
-     'subject', 'number', TRUE, FALSE, '"0"',
+     'subject', 'number', TRUE, FALSE, '0',
      'a0000000-0000-0000-0000-000000000001'),
 
     ('aa000000-0000-0000-0000-000000000003', NULL,
@@ -65,13 +65,13 @@ VALUES
 
     ('aa000000-0000-0000-0000-000000000007', NULL,
      'user.account_age_days', 'Account Age (days)', 'Days since user account was created',
-     'subject', 'number', TRUE, FALSE, '"0"',
+     'subject', 'number', TRUE, FALSE, '0',
      'a0000000-0000-0000-0000-000000000001'),
 
     -- ── Resource attributes ──
     ('aa000000-0000-0000-0000-000000000010', NULL,
      'resource.sensitivity', 'Sensitivity Level', 'Numeric sensitivity rating (0=public, 5=top-secret)',
-     'resource', 'number', TRUE, FALSE, '"0"',
+     'resource', 'number', TRUE, FALSE, '0',
      'a0000000-0000-0000-0000-000000000001'),
 
     ('aa000000-0000-0000-0000-000000000011', NULL,

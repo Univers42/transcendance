@@ -12,8 +12,8 @@
 --   • 06_demo_org.sql    (demo organization for org-level template)
 --
 -- UUID SCHEME:
---   Email templates:        et000000-0000-0000-0000-0000000000XX
---   Contact submissions:    cs000000-0000-0000-0000-0000000000XX
+--   Email templates:        e1000000-0000-0000-0000-0000000000XX
+--   Contact submissions:    c5000000-0000-0000-0000-0000000000XX
 -- ============================================================================
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -26,7 +26,7 @@ INSERT INTO email_templates (id, organization_id, slug, name, description, subje
 VALUES
     -- ── Auth templates ──────────────────────────────────────────────────────
     (
-        'et000000-0000-0000-0000-000000000001',
+        'e1000000-0000-0000-0000-000000000001',
         NULL,
         'welcome_email',
         'Welcome Email',
@@ -38,7 +38,7 @@ VALUES
         'auth'
     ),
     (
-        'et000000-0000-0000-0000-000000000002',
+        'e1000000-0000-0000-0000-000000000002',
         NULL,
         'password_reset',
         'Password Reset',
@@ -50,7 +50,7 @@ VALUES
         'auth'
     ),
     (
-        'et000000-0000-0000-0000-000000000003',
+        'e1000000-0000-0000-0000-000000000003',
         NULL,
         'email_verification',
         'Email Verification',
@@ -64,7 +64,7 @@ VALUES
 
     -- ── Notification templates ──────────────────────────────────────────────
     (
-        'et000000-0000-0000-0000-000000000004',
+        'e1000000-0000-0000-0000-000000000004',
         NULL,
         'invite_member',
         'Member Invitation',
@@ -76,7 +76,7 @@ VALUES
         'notification'
     ),
     (
-        'et000000-0000-0000-0000-000000000005',
+        'e1000000-0000-0000-0000-000000000005',
         NULL,
         'adapter_error_notification',
         'Adapter Error Notification',
@@ -88,7 +88,7 @@ VALUES
         'notification'
     ),
     (
-        'et000000-0000-0000-0000-000000000006',
+        'e1000000-0000-0000-0000-000000000006',
         NULL,
         'account_deactivated',
         'Account Deactivated',
@@ -102,7 +102,7 @@ VALUES
 
     -- ── Billing templates ───────────────────────────────────────────────────
     (
-        'et000000-0000-0000-0000-000000000007',
+        'e1000000-0000-0000-0000-000000000007',
         NULL,
         'subscription_renewal',
         'Subscription Renewal Reminder',
@@ -114,7 +114,7 @@ VALUES
         'billing'
     ),
     (
-        'et000000-0000-0000-0000-000000000008',
+        'e1000000-0000-0000-0000-000000000008',
         NULL,
         'invoice_generated',
         'Invoice Generated',
@@ -128,7 +128,7 @@ VALUES
 
     -- ── System templates ────────────────────────────────────────────────────
     (
-        'et000000-0000-0000-0000-000000000009',
+        'e1000000-0000-0000-0000-000000000009',
         NULL,
         'data_export_ready',
         'Data Export Ready',
@@ -140,7 +140,7 @@ VALUES
         'system'
     ),
     (
-        'et000000-0000-0000-0000-000000000010',
+        'e1000000-0000-0000-0000-000000000010',
         NULL,
         'contact_form_confirmation',
         'Contact Form Confirmation',
@@ -164,17 +164,17 @@ ON CONFLICT DO NOTHING;
 
 INSERT INTO email_templates (id, organization_id, slug, name, description, subject_template, body_html, body_text, available_variables, category, updated_by)
 VALUES (
-    'et000000-0000-0000-0000-000000000011',
-    'a0000000-0000-0000-0000-000000000001', -- DataVault Corp
+    'e1000000-0000-0000-0000-000000000011',
+    'd0000000-0000-0000-0000-000000000001', -- Acme Corp
     'welcome_email',
-    'Welcome Email (DataVault Custom)',
-    'Custom welcome for DataVault Corp members.',
-    'Welcome to DataVault, {{user.display_name}}! 🚀',
-    '<div style="background:#1a1a2e;color:#e0e0e0;padding:40px;font-family:sans-serif;"><h1 style="color:#00d9ff;">Welcome to DataVault!</h1><p>Hi {{user.display_name}},</p><p>Your DataVault account is ready. Start by creating your first workspace and connecting your data sources.</p><p><a href="{{dashboard_url}}" style="background:#00d9ff;color:#1a1a2e;padding:12px 24px;border-radius:6px;text-decoration:none;">Enter DataVault</a></p></div>',
-    'Welcome to DataVault, {{user.display_name}}! Start at {{dashboard_url}}',
+    'Welcome Email (Acme Custom)',
+    'Custom welcome for Acme Corp members.',
+    'Welcome to Acme, {{user.display_name}}! 🚀',
+    '<div style="background:#1a1a2e;color:#e0e0e0;padding:40px;font-family:sans-serif;"><h1 style="color:#00d9ff;">Welcome to Acme!</h1><p>Hi {{user.display_name}},</p><p>Your Acme account is ready. Start by creating your first workspace and connecting your data sources.</p><p><a href="{{dashboard_url}}" style="background:#00d9ff;color:#1a1a2e;padding:12px 24px;border-radius:6px;text-decoration:none;">Enter Acme</a></p></div>',
+    'Welcome to Acme, {{user.display_name}}! Start at {{dashboard_url}}',
     ARRAY['user.display_name', 'user.email', 'platform_name', 'dashboard_url'],
     'auth',
-    'b0000000-0000-0000-0000-000000000001' -- alice (admin)
+    'b0000000-0000-0000-0000-000000000001' -- Alice Smith (employee admin)
 )
 ON CONFLICT DO NOTHING;
 
@@ -186,7 +186,7 @@ ON CONFLICT DO NOTHING;
 INSERT INTO contact_submissions (id, sender_email, sender_name, subject, message, submitted_ip, user_agent, status)
 VALUES
     (
-        'cs000000-0000-0000-0000-000000000001',
+        'c5000000-0000-0000-0000-000000000001',
         'curious@example.com',
         'Curious Visitor',
         'Pricing for enterprise plan',
@@ -196,7 +196,7 @@ VALUES
         'new'
     ),
     (
-        'cs000000-0000-0000-0000-000000000002',
+        'c5000000-0000-0000-0000-000000000002',
         'dev@techstartup.io',
         'Jordan Lee',
         'API rate limits question',
@@ -206,7 +206,7 @@ VALUES
         'in_progress'
     ),
     (
-        'cs000000-0000-0000-0000-000000000003',
+        'c5000000-0000-0000-0000-000000000003',
         'spam@bot.fake',
         'Buy Cheap Watches',
         'Amazing Deal!!!',
