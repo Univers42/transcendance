@@ -13,7 +13,7 @@ export function LanguageSelector({ language, setLanguage, languages }: Props) {
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef   = useRef<HTMLDivElement>(null);
 
-  const current = languages.find((l) => l.code === language) ?? languages[0];
+  const current = languages.find((l) => l.code === language) ?? languages[0]!;
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
