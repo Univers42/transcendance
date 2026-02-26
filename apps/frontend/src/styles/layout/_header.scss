@@ -11,7 +11,8 @@
   height: 4rem;     // 64px
   background: $bg-primary;
   border-bottom: 1px solid $border-default;
-  
+  width: 100%;
+
   @include theme('dark') {
     background: $dark-bg-primary;
     border-color: $dark-border-default;
@@ -90,4 +91,29 @@
     align-items: center;
     gap: $space-2;
   }
+}
+
+.header__cta {
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: inline-flex;
+  }
+}
+
+// Hamburguesa: visible en móvil, oculta desde 1024px
+.header__hamburger {
+  display: flex;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+// Nav link versión móvil: ocupa todo el ancho con padding generoso
+.header__nav-link--mobile {
+  display: flex;
+  width: 100%;
+  padding: .75rem 1rem;
+  border-radius: .5rem;
 }

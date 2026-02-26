@@ -16,9 +16,7 @@ export function Navbar({
 }: NavbarProps) {
 
   const [menuOpen, setMenuOpen] = useState(false);
-  // No hace falta <boolean>, TypeScript infiere desde false
 
-  // Cierra el menú móvil si se redimensiona a escritorio
   useEffect(() => {
     function onResize(): void {
       if (window.innerWidth >= 1024) setMenuOpen(false);
@@ -27,130 +25,95 @@ export function Navbar({
     return () => window.removeEventListener('resize', onResize);
   }, []);
 
-  const navbarBg = darkMode
-    ? 'rgba(15, 23, 42, 0.92)'
-    : 'rgba(255, 255, 255, 0.92)';
-
   return (
-    <header className="fixed top-0 left-0 right-0 z-50">
+    <header
+      className="header"
+      style={{ position: 'fixed', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}
+    >
 
-      {/* Barra principal */}
-      <div
-        className="border-b transition-colors duration-300"
-        style={{
-          backgroundColor: navbarBg,
-          borderColor: 'var(--border-default)',
-          backdropFilter: 'blur(14px)',
-          WebkitBackdropFilter: 'blur(14px)',
-        }}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6">
-          <div className="flex items-center justify-between h-16">
+      {/* ── Barra principal ─────────────────────── */}
+      <div className="header__container">
 
-            {/* Logo */}
-            <a href="/" className="flex items-center gap-2.5 shrink-0 select-none">
-              <div
-                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ backgroundColor: 'var(--accent-default)' }}
-              >
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-                  <ellipse cx="9" cy="4" rx="6" ry="2.25" stroke="white" strokeWidth="1.4" />
-                  <path d="M3 4v10c0 1.24 2.69 2.25 6 2.25s6-1.01 6-2.25V4" stroke="white" strokeWidth="1.4" />
-                  <path d="M3 9c0 1.24 2.69 2.25 6 2.25S15 10.24 15 9" stroke="white" strokeWidth="1.4" />
-                </svg>
-              </div>
-              <span style={{ color: 'var(--text-primary)', fontSize: '17px', fontWeight: 600 }}>
-                Datrix
-              </span>
-            </a>
+        {/* Logo */}
+        <a href="/" className="header__brand" style={{ textDecoration: 'none' }}>
+          <span
+            style={{
+              width: '2rem', height: '2rem', borderRadius: '.5rem', flexShrink: 0,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              background: 'var(--prisma-accent)',
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <ellipse cx="9" cy="4" rx="6" ry="2.25" stroke="white" strokeWidth="1.4" />
+              <path d="M3 4v10c0 1.24 2.69 2.25 6 2.25s6-1.01 6-2.25V4" stroke="white" strokeWidth="1.4" />
+              <path d="M3 9c0 1.24 2.69 2.25 6 2.25S15 10.24 15 9" stroke="white" strokeWidth="1.4" />
+            </svg>
+          </span>
+          <span className="header__title">Prismatica</span>
+        </a>
 
-            {/* Links escritorio */}
-            <nav className="hidden lg:flex items-center gap-0.5">
-              <NavLinks links={links} variant="desktop" />
-            </nav>
+        {/* Links escritorio — .header__nav ya oculta bajo 1024px */}
+        <nav className="header__nav">
+          <NavLinks links={links} variant="desktop" />
+        </nav>
 
-            {/* Controles derecha */}
-            <div className="flex items-center gap-1.5">
-              <LanguageSelector
-                language={language}
-                setLanguage={setLanguage}
-                languages={languages}
-              />
+        {/* Controles derecha */}
+        <div className="header__actions">
 
-              {/* Dark mode solo escritorio */}
-              <div className="hidden lg:block">
-                <ThemeToggle
-                  darkMode={darkMode}
-                  toggle={() => setDarkMode(v => !v)}
-                />
-              </div>
+          <LanguageSelector
+            language={language}
+            setLanguage={setLanguage}
+            languages={languages}
+          />
 
-              {/* CTA solo escritorio */}
-              <a
-                href="#login"
-                className="hidden lg:inline-flex items-center px-4 py-2 rounded-lg"
-                style={{
-                  backgroundColor: 'var(--accent-default)',
-                  color: '#FFFFFF',
-                  fontSize: '14px',
-                  fontWeight: 500,
-                }}
-              >
-                Iniciar sesión
-              </a>
-
-              {/* Hamburguesa solo móvil */}
-              <button
-                onClick={() => setMenuOpen(v => !v)}
-                className="lg:hidden flex items-center justify-center w-9 h-9 rounded-lg"
-                style={{ color: 'var(--text-secondary)' }}
-                aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-                aria-expanded={menuOpen}
-              >
-                {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-              </button>
-            </div>
-
+          {/* Dark mode — .theme-toggle ya oculta bajo 768px */}
+          <div className="theme-toggle">
+            <ThemeToggle darkMode={darkMode} toggle={() => setDarkMode(v => !v)} />
           </div>
+
+          {/* CTA escritorio — oculto en móvil, visible en lg */}
+          <a href="#login" className="btn btn--primary btn--sm header__cta">
+            Iniciar sesión
+          </a>
+
+          {/* Hamburguesa — visible en móvil, oculta en lg */}
+          <button
+            onClick={() => setMenuOpen(v => !v)}
+            className="btn btn--ghost btn--icon btn--sm header__hamburger"
+            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X className="btn__icon" /> : <Menu className="btn__icon" />}
+          </button>
+
         </div>
       </div>
 
-      {/* Menú móvil */}
+      {/* ── Menú móvil ──────────────────────────── */}
       <div
-        className="lg:hidden overflow-hidden border-b transition-all duration-300 ease-in-out"
         style={{
-          maxHeight: menuOpen ? '420px' : '0px',
+          overflow: 'hidden',
+          maxHeight: menuOpen ? '480px' : '0px',
           opacity: menuOpen ? 1 : 0,
-          backgroundColor: darkMode ? 'rgba(15,23,42,0.98)' : 'rgba(255,255,255,0.98)',
-          borderColor: menuOpen ? 'var(--border-default)' : 'transparent',
+          transition: 'max-height 300ms ease-in-out, opacity 200ms ease-in-out',
+          borderBottom: menuOpen ? '1px solid var(--prisma-border)' : 'none',
+          background: 'var(--prisma-bg-primary)',
           backdropFilter: 'blur(14px)',
         }}
       >
-        <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-0.5">
+        <div className="container" style={{ paddingTop: '.75rem', paddingBottom: '.75rem', display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
 
-          <NavLinks
-            links={links}
-            variant="mobile"
-            onClick={() => setMenuOpen(false)}
-          />
+          <NavLinks links={links} variant="mobile" onClick={() => setMenuOpen(false)} />
 
-          <div className="mx-4 my-1.5 h-px" style={{ backgroundColor: 'var(--border-default)' }} />
+          <hr style={{ border: 'none', borderTop: '1px solid var(--prisma-border)', margin: '.5rem 0' }} />
 
-          <ThemeToggle
-            darkMode={darkMode}
-            toggle={() => setDarkMode(v => !v)}
-          />
+          <ThemeToggle darkMode={darkMode} toggle={() => setDarkMode(v => !v)} />
 
           <a
             href="#login"
             onClick={() => setMenuOpen(false)}
-            className="flex items-center justify-center mx-1 mt-1 mb-2 px-4 py-3 rounded-xl"
-            style={{
-              backgroundColor: 'var(--accent-default)',
-              color: '#FFFFFF',
-              fontSize: '14px',
-              fontWeight: 500,
-            }}
+            className="btn btn--primary btn--block"
+            style={{ marginTop: '.25rem', marginBottom: '.5rem' }}
           >
             Iniciar sesión
           </a>
