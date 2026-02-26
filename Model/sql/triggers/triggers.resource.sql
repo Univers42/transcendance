@@ -21,7 +21,7 @@
 -- version row is inserted. This avoids race conditions where two concurrent
 -- inserts might pick the same version_number at the application level.
 --
--- Uses SELECT ... FOR UPDATE to serialize versioning per resource.
+-- Uses an advisory lock keyed on the resource UUID to serialize versioning.
 --
 -- FIRES: BEFORE INSERT ON resource_versions (row-level)
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -34,12 +34,16 @@ SET search_path = public
 AS $$
 DECLARE
     v_max INT;
+    v_lock_key BIGINT;
 BEGIN
+    -- Advisory lock keyed on resource UUID hash for concurrency safety
+    v_lock_key := ('x' || left(replace(NEW.resource_id::text, '-', ''), 15))::bit(60)::bigint;
+    PERFORM pg_advisory_xact_lock(v_lock_key);
+
     SELECT COALESCE(MAX(version_number), 0)
       INTO v_max
       FROM resource_versions
-     WHERE resource_id = NEW.resource_id
-       FOR UPDATE;
+     WHERE resource_id = NEW.resource_id;
 
     NEW.version_number := v_max + 1;
     RETURN NEW;

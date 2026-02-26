@@ -107,6 +107,26 @@ BEGIN
 
     -- ── UUID columns ──
     IF p_udt_name = 'uuid' THEN
+        -- Polymorphic grantee_id / context_id: resolve to a real user UUID
+        -- (the seeding loop handles this more precisely, but fallback here)
+        IF p_column_name IN ('grantee_id', 'context_id') THEN
+            IF p_is_nullable THEN
+                RETURN 'NULL';
+            END IF;
+            -- Fallback: generate a random UUID
+            RETURN '''' || gen_random_uuid()::TEXT || '''';
+        END IF;
+        -- resource_id on the resources table is NOT the PK — it's a ref UUID
+        IF p_column_name = 'resource_id' AND p_table_name = 'resources' THEN
+            RETURN '''' || gen_random_uuid()::TEXT || '''';
+        END IF;
+        -- updated_by / assigned_by etc. that aren't FKs
+        IF p_column_name LIKE '%_by' THEN
+            IF p_is_nullable THEN
+                RETURN 'NULL';
+            END IF;
+            RETURN '''' || gen_random_uuid()::TEXT || '''';
+        END IF;
         RETURN NULL; -- handled by DEFAULT or FK resolver
     END IF;
 
@@ -141,23 +161,11 @@ BEGIN
         END IF;
         IF p_column_name IN ('expires_at', 'terminated_at', 'cancelled_at', 'paid_at',
                               'token_expires_at', 'trial_ends_at', 'ends_at') THEN
-            IF p_is_nullable THEN
-                RETURN CASE WHEN v_idx % 3 = 0
-                    THEN '''' || (now() + (interval '1 day' * (30 + v_idx * 7)))::TEXT || ''''
-                    ELSE 'NULL'
-                END;
-            END IF;
             RETURN '''' || (now() + (interval '1 day' * (30 + v_idx * 7)))::TEXT || '''';
         END IF;
         IF p_column_name IN ('last_login_at', 'last_seen_at', 'last_used_at',
                               'last_health_check', 'last_triggered_at', 'last_sync_at',
                               'last_activity_at', 'schema_cached_at') THEN
-            IF p_is_nullable THEN
-                RETURN CASE WHEN v_idx % 2 = 0
-                    THEN '''' || (now() - (interval '1 hour' * v_idx))::TEXT || ''''
-                    ELSE 'NULL'
-                END;
-            END IF;
             RETURN '''' || (now() - (interval '1 hour' * v_idx))::TEXT || '''';
         END IF;
         IF p_column_name = 'provisioned_at' THEN
@@ -188,10 +196,9 @@ BEGIN
         IF p_column_name = 'trial_days' THEN RETURN (ARRAY[0, 7, 14, 30])[1 + (v_idx % 4)]::TEXT; END IF;
         IF p_column_name IN ('discount_value') THEN RETURN (ARRAY[10, 20, 25, 50])[1 + (v_idx % 4)]::TEXT; END IF;
         IF p_column_name = 'duration_months' THEN
-            IF p_is_nullable THEN RETURN CASE WHEN v_idx % 2 = 0 THEN (v_idx % 12 + 1)::TEXT ELSE 'NULL' END; END IF;
             RETURN (v_idx % 12 + 1)::TEXT;
         END IF;
-        IF p_column_name IN ('max_redemptions') THEN RETURN CASE WHEN v_idx % 2 = 0 THEN (100 + v_idx * 50)::TEXT ELSE 'NULL' END; END IF;
+        IF p_column_name IN ('max_redemptions') THEN RETURN (100 + v_idx * 50)::TEXT; END IF;
         IF p_column_name = 'current_redemptions' THEN RETURN (v_idx * 3)::TEXT; END IF;
         IF p_column_name IN ('subtotal_amount', 'amount') THEN RETURN (4900 + v_idx * 1000)::TEXT; END IF;
         IF p_column_name = 'discount_amount' THEN RETURN (v_idx * 100)::TEXT; END IF;
@@ -203,12 +210,12 @@ BEGIN
         IF p_column_name IN ('duration_ms', 'latency_ms') THEN RETURN (150 + v_idx * 37)::TEXT; END IF;
         IF p_column_name = 'version_number' THEN RETURN (v_idx + 1)::TEXT; END IF;
         IF p_column_name = 'use_count' THEN RETURN (v_idx * 2)::TEXT; END IF;
-        IF p_column_name = 'max_uses' THEN RETURN CASE WHEN v_idx % 2 = 0 THEN (50 + v_idx * 10)::TEXT ELSE 'NULL' END; END IF;
+        IF p_column_name = 'max_uses' THEN RETURN (50 + v_idx * 10)::TEXT; END IF;
         IF p_column_name = 'priority' THEN RETURN (v_idx * 10)::TEXT; END IF;
         IF p_column_name = 'limit_value' THEN RETURN (ARRAY[5, 10, 50, 100, 500])[1 + (v_idx % 5)]::TEXT; END IF;
         IF p_column_name = 'retry_count' THEN RETURN '3'; END IF;
         IF p_column_name = 'retry_delay_ms' THEN RETURN '1000'; END IF;
-        IF p_column_name = 'refresh_interval' THEN RETURN CASE WHEN v_idx % 2 = 0 THEN '60' ELSE 'NULL' END; END IF;
+        IF p_column_name = 'refresh_interval' THEN RETURN '60'; END IF;
         IF p_column_name IN ('pool_min') THEN RETURN '2'; END IF;
         IF p_column_name IN ('pool_max') THEN RETURN '10'; END IF;
         IF p_column_name = 'connection_timeout' THEN RETURN '30000'; END IF;
@@ -307,13 +314,8 @@ BEGIN
             RETURN '''' || lower(p_table_name) || '-' || v_words[(v_ci % 30) + 1] || '-' || v_idx || '''';
         END IF;
 
-        -- Description/text
+        -- Description/text — always fill with meaningful content
         IF p_column_name = 'description' THEN
-            IF p_is_nullable THEN
-                RETURN CASE WHEN v_idx % 3 = 0 THEN 'NULL'
-                    ELSE '''' || 'Description for ' || p_table_name || ' #' || v_idx || '. Auto-generated mock data.'''
-                END;
-            END IF;
             RETURN '''' || 'Description for ' || p_table_name || ' #' || v_idx || '. Auto-generated mock data.''';
         END IF;
 
@@ -333,25 +335,23 @@ BEGIN
             RETURN '''' || 'https://example.com/' || p_column_name || '/' || v_idx || '''';
         END IF;
 
-        -- Hash columns (never real secrets)
+        -- Hash columns (never real secrets) — always fill
         IF p_column_name LIKE '%_hash' OR p_column_name = 'password_hash' THEN
-            IF p_is_nullable THEN RETURN 'NULL'; END IF;
-            RETURN '''' || 'mock_hash_' || md5(p_table_name || v_idx::TEXT) || '''';
+            RETURN '''' || '$2b$10$mock_hash_' || md5(p_table_name || v_idx::TEXT) || '''';
         END IF;
 
-        -- Token columns
+        -- Token columns — always fill
         IF p_column_name LIKE '%token%' THEN
             IF p_column_name = 'share_token' THEN
                 RETURN '''' || 'share_' || md5(v_idx::TEXT || p_table_name)::TEXT || '''';
             END IF;
-            IF p_is_nullable THEN RETURN 'NULL'; END IF;
             RETURN '''' || 'tok_' || md5(v_idx::TEXT || p_table_name)::TEXT || '''';
         END IF;
 
-        -- Secret/encrypted columns
+        -- Secret/encrypted columns — fill with mock encrypted values
         IF p_column_name LIKE '%secret%' OR p_column_name LIKE '%access_token%'
            OR p_column_name LIKE '%refresh_token%' THEN
-            RETURN 'NULL';
+            RETURN '''' || 'enc_mock_' || md5(p_column_name || v_idx::TEXT) || '''';
         END IF;
 
         -- Phone
@@ -385,9 +385,8 @@ BEGIN
             RETURN '''' || 'provider_' || v_idx || '_' || md5(v_idx::TEXT) || '''';
         END IF;
 
-        -- External IDs
+        -- External IDs — always fill
         IF p_column_name LIKE 'external_%' THEN
-            IF p_is_nullable THEN RETURN CASE WHEN v_idx % 2 = 0 THEN '''' || 'ext_' || p_column_name || '_' || v_idx || '''' ELSE 'NULL' END; END IF;
             RETURN '''' || 'ext_' || p_column_name || '_' || v_idx || '''';
         END IF;
 
@@ -411,14 +410,8 @@ BEGIN
             RETURN '''' || 'Notification: ' || v_words[(v_ci % 30) + 1] || ' event #' || v_idx || '''';
         END IF;
 
-        -- Message / content / notes
+        -- Message / content / notes — always fill for quality data
         IF p_column_name IN ('message', 'content', 'notes', 'change_summary') THEN
-            IF p_is_nullable THEN
-                RETURN CASE WHEN v_idx % 2 = 0
-                    THEN '''' || 'Auto-generated ' || p_column_name || ' for ' || p_table_name || ' row ' || v_idx || '.'  || ''''
-                    ELSE 'NULL'
-                END;
-            END IF;
             RETURN '''' || 'Auto-generated ' || p_column_name || ' for ' || p_table_name || ' row ' || v_idx || '.''';
         END IF;
 
@@ -467,15 +460,14 @@ BEGIN
             RETURN '''' || (ARRAY['user.department','resource.sensitivity','env.ip_range','user.role','resource.visibility','env.time_of_day'])[1 + (v_idx % 6)] || '''';
         END IF;
 
-        -- Failure reason
+        -- Failure reason — always fill
         IF p_column_name = 'failure_reason' OR p_column_name = 'last_error' THEN
-            IF p_is_nullable THEN RETURN 'NULL'; END IF;
-            RETURN '''Mock error: simulated failure''';
+            RETURN '''' || 'Mock error: simulated failure for row ' || v_idx || '''';
         END IF;
 
-        -- Last status
+        -- Last status — always fill
         IF p_column_name = 'last_status' THEN
-            RETURN CASE WHEN p_is_nullable THEN 'NULL' ELSE '''healthy''' END;
+            RETURN '''healthy''';
         END IF;
 
         -- Feature key
@@ -502,15 +494,18 @@ BEGIN
             RETURN '''' || (ARRAY['mention','share','comment','sync_complete','system','invite'])[1 + (v_idx % 6)] || '''';
         END IF;
 
-        -- Generic nullable text
-        IF p_is_nullable AND p_column_name NOT IN ('name', 'slug', 'email', 'username') THEN
-            RETURN CASE WHEN v_idx % 4 = 0 THEN 'NULL'
-                ELSE '''' || p_column_name || '_mock_' || v_idx || ''''
-            END;
+        -- Sync / connection status columns (VARCHAR(20) safe)
+        IF p_column_name IN ('last_sync_status', 'last_status', 'health_status', 'sync_status', 'connection_status') THEN
+            RETURN '''' || (ARRAY['success','failed','running','idle','pending','error'])[1 + (v_idx % 6)] || '''';
         END IF;
 
-        -- Fallback text
-        RETURN '''' || p_column_name || '_' || v_idx || '''';
+        -- Generic nullable text — always fill with data for quality seeds
+        IF p_is_nullable AND p_column_name NOT IN ('name', 'slug', 'email', 'username') THEN
+            RETURN '''' || left(p_column_name, 12) || '_' || v_idx || '''';
+        END IF;
+
+        -- Fallback text (truncated for short VARCHAR columns)
+        RETURN '''' || left(p_column_name, 12) || '_' || v_idx || '''';
     END IF;
 
     -- ── JSONB columns ──
@@ -519,7 +514,7 @@ BEGIN
         IF p_column_name = 'line_items' THEN RETURN '''[]''::JSONB'; END IF;
         IF p_column_name = 'validation_rules' THEN RETURN '''{}''::JSONB'; END IF;
         IF p_column_name = 'display_config' THEN RETURN '''{}''::JSONB'; END IF;
-        IF p_column_name = 'default_value' THEN RETURN 'NULL'; END IF;
+        IF p_column_name = 'default_value' THEN RETURN '''null''::JSONB'; END IF;
         IF p_column_name = 'template_data' THEN RETURN '''{"widgets":[],"layout":"grid"}''::JSONB'; END IF;
         IF p_column_name = 'conditions' THEN
             RETURN '''{"and":[{"attr":"user.role","op":"eq","val":"member"}]}''::JSONB';
@@ -530,11 +525,11 @@ BEGIN
         IF p_column_name = 'snapshot' THEN
             RETURN '''{"version":' || (v_idx + 1) || ',"data":"mock_snapshot"}''::JSONB';
         END IF;
-        IF p_column_name = 'change_diff' THEN RETURN 'NULL'; END IF;
+        IF p_column_name = 'change_diff' THEN RETURN '''{"mock":"diff_data"}''::JSONB'; END IF;
         IF p_column_name = 'payload' THEN
             RETURN '''{"event":"mock","index":' || v_idx || '}''::JSONB';
         END IF;
-        IF p_column_name = 'error_log' THEN RETURN 'NULL'; END IF;
+        IF p_column_name = 'error_log' THEN RETURN '''[]''::JSONB'; END IF;
         IF p_column_name = 'headers' THEN RETURN '''{}''::JSONB'; END IF;
         IF p_column_name IN ('connection_config', 'network_config', 'schema_cache') THEN
             RETURN '''{}''::JSONB';
@@ -735,6 +730,13 @@ DECLARE
     v_error TEXT;
     v_actual_rows INT;
     v_ref_count INT;
+    -- Polymorphic resolution variables
+    v_type_col TEXT;
+    v_type_val TEXT;
+    v_poly_table TEXT;
+    v_poly_uuid TEXT;
+    v_poly_count INT;
+    i INT;
 BEGIN
     -- ── Create temp table for FK reference cache ──
     CREATE TEMP TABLE IF NOT EXISTS _fk_cache (
@@ -801,6 +803,13 @@ BEGIN
         FROM fn_get_table_insert_order() t
     LOOP
         v_skip_table := FALSE;
+
+        -- ── Skip tables already populated by static seeds ──
+        EXECUTE format('SELECT COUNT(*)::INT FROM %I', v_table.tname) INTO v_ref_count;
+        IF v_ref_count >= rows_per_table THEN
+            INSERT INTO _seed_results VALUES (v_table.tname, v_ref_count, 'ALREADY SEEDED');
+            CONTINUE;
+        END IF;
 
         -- Determine how many rows to insert (fewer for junction tables)
         -- Check if table has a composite PK (junction table indicator)
@@ -890,11 +899,20 @@ BEGIN
                             END IF;
                         ELSE
                             -- Pick a row (cycle through available rows)
-                            EXECUTE format(
-                                'SELECT %I::TEXT FROM %I ORDER BY ctid OFFSET %s LIMIT 1',
-                                v_fk_map.ref_column, v_fk_map.ref_table,
-                                v_row % v_ref_count
-                            ) INTO v_fk_value;
+                            -- For resource_relations.target, shift offset to avoid self-ref
+                            IF v_table.tname = 'resource_relations' AND v_col.cname = 'target_resource_id' AND v_ref_count > 1 THEN
+                                EXECUTE format(
+                                    'SELECT %I::TEXT FROM %I ORDER BY ctid OFFSET %s LIMIT 1',
+                                    v_fk_map.ref_column, v_fk_map.ref_table,
+                                    (v_row + 1) % v_ref_count
+                                ) INTO v_fk_value;
+                            ELSE
+                                EXECUTE format(
+                                    'SELECT %I::TEXT FROM %I ORDER BY ctid OFFSET %s LIMIT 1',
+                                    v_fk_map.ref_column, v_fk_map.ref_table,
+                                    v_row % v_ref_count
+                                ) INTO v_fk_value;
+                            END IF;
                             v_fk_value := '''' || v_fk_value || '''';
                         END IF;
                     END IF;
@@ -902,6 +920,70 @@ BEGIN
                     v_col_list := array_append(v_col_list, v_col.cname);
                     v_val_list := array_append(v_val_list, v_fk_value);
                     CONTINUE;
+                END IF;
+
+                -- ── Polymorphic UUID resolution ──
+                -- These columns are UUID-typed but have no FK constraint because
+                -- they can point to different tables depending on a sibling *_type column.
+                IF v_col.uname = 'uuid' AND v_col.cname IN ('grantee_id', 'context_id') THEN
+                    -- Resolve polymorphic UUID based on sibling *_type column
+                    v_type_col := NULL;
+                    v_type_val := NULL;
+                    v_poly_table := NULL;
+
+                    IF v_col.cname = 'grantee_id' THEN
+                        v_type_col := 'grantee_type';
+                    ELSIF v_col.cname = 'context_id' THEN
+                        v_type_col := 'context_type';
+                    END IF;
+
+                    -- Find sibling type value in the already-built val list
+                    IF v_type_col IS NOT NULL AND array_length(v_col_list, 1) > 0 THEN
+                        FOR i IN 1..array_length(v_col_list, 1) LOOP
+                            IF v_col_list[i] = v_type_col THEN
+                                v_type_val := trim(both '''' from v_val_list[i]);
+                                EXIT;
+                            END IF;
+                        END LOOP;
+                    END IF;
+
+                    -- Map type to source table
+                    IF v_type_val IS NOT NULL AND v_type_val != 'NULL' THEN
+                        v_poly_table := CASE v_type_val
+                            WHEN 'user' THEN 'users'
+                            WHEN 'role' THEN 'roles'
+                            WHEN 'team' THEN 'organizations'
+                            WHEN 'global' THEN NULL
+                            WHEN 'organization' THEN 'organizations'
+                            WHEN 'project' THEN 'projects'
+                            WHEN 'workspace' THEN 'workspaces'
+                            ELSE NULL
+                        END;
+                    END IF;
+
+                    IF v_poly_table IS NOT NULL THEN
+                        EXECUTE format('SELECT COUNT(*)::INT FROM %I', v_poly_table) INTO v_poly_count;
+                        IF v_poly_count > 0 THEN
+                            EXECUTE format(
+                                'SELECT id::TEXT FROM %I ORDER BY ctid OFFSET %s LIMIT 1',
+                                v_poly_table, v_row % v_poly_count
+                            ) INTO v_poly_uuid;
+                            v_col_list := array_append(v_col_list, v_col.cname);
+                            v_val_list := array_append(v_val_list, '''' || v_poly_uuid || '''');
+                            CONTINUE;
+                        END IF;
+                    END IF;
+
+                    -- Fallback
+                    IF v_col.nullable THEN
+                        v_col_list := array_append(v_col_list, v_col.cname);
+                        v_val_list := array_append(v_val_list, 'NULL');
+                        CONTINUE;
+                    ELSE
+                        v_col_list := array_append(v_col_list, v_col.cname);
+                        v_val_list := array_append(v_val_list, '''' || gen_random_uuid()::TEXT || '''');
+                        CONTINUE;
+                    END IF;
                 END IF;
 
                 -- Skip columns that have a DEFAULT and are auto-managed
@@ -942,8 +1024,13 @@ BEGIN
                         CONTINUE;
                     ELSE
                         -- Non-nullable, no default, no FK — use generic fallback
-                        v_col_list := array_append(v_col_list, v_col.cname);
-                        v_val_list := array_append(v_val_list, '''' || v_col.cname || '_' || v_row || '''');
+                        IF v_col.uname = 'uuid' THEN
+                            v_col_list := array_append(v_col_list, v_col.cname);
+                            v_val_list := array_append(v_val_list, '''' || gen_random_uuid()::TEXT || '''');
+                        ELSE
+                            v_col_list := array_append(v_col_list, v_col.cname);
+                            v_val_list := array_append(v_val_list, '''' || v_col.cname || '_' || v_row || '''');
+                        END IF;
                         CONTINUE;
                     END IF;
                 END IF;
@@ -956,10 +1043,76 @@ BEGIN
                 EXIT; -- Break out of row loop
             END IF;
 
-            -- Build and execute INSERT
+            -- ── Post-processing: user_role_assignments scope matching ──
+            -- The trigger requires role.scope == context_type and context_id
+            -- to reference a real entity matching that scope.
+            IF v_table.tname = 'user_role_assignments' AND array_length(v_col_list, 1) > 0 THEN
+                -- Find role_id value in the built val_list
+                v_type_val := NULL;  -- reuse: role_id value
+                v_type_col := NULL;  -- reuse: role scope
+                FOR i IN 1..array_length(v_col_list, 1) LOOP
+                    IF v_col_list[i] = 'role_id' THEN
+                        v_type_val := trim(both '''' from v_val_list[i]);
+                        EXIT;
+                    END IF;
+                END LOOP;
+
+                -- Look up this role's scope
+                IF v_type_val IS NOT NULL THEN
+                    EXECUTE format(
+                        'SELECT scope FROM roles WHERE id = %L',
+                        v_type_val
+                    ) INTO v_type_col;
+                END IF;
+
+                IF v_type_col IS NOT NULL THEN
+                    -- Override context_type to match role scope
+                    FOR i IN 1..array_length(v_col_list, 1) LOOP
+                        IF v_col_list[i] = 'context_type' THEN
+                            v_val_list[i] := '''' || v_type_col || '''';
+                            EXIT;
+                        END IF;
+                    END LOOP;
+
+                    -- Determine context table and resolve context_id
+                    v_poly_table := CASE v_type_col
+                        WHEN 'organization' THEN 'organizations'
+                        WHEN 'project' THEN 'projects'
+                        WHEN 'workspace' THEN 'workspaces'
+                        WHEN 'global' THEN NULL
+                        ELSE NULL
+                    END;
+
+                    IF v_poly_table IS NOT NULL THEN
+                        EXECUTE format('SELECT COUNT(*)::INT FROM %I', v_poly_table) INTO v_poly_count;
+                        IF v_poly_count > 0 THEN
+                            EXECUTE format(
+                                'SELECT id::TEXT FROM %I ORDER BY ctid OFFSET %s LIMIT 1',
+                                v_poly_table, v_row % v_poly_count
+                            ) INTO v_poly_uuid;
+                            FOR i IN 1..array_length(v_col_list, 1) LOOP
+                                IF v_col_list[i] = 'context_id' THEN
+                                    v_val_list[i] := '''' || v_poly_uuid || '''';
+                                    EXIT;
+                                END IF;
+                            END LOOP;
+                        END IF;
+                    ELSE
+                        -- global scope: set context_id to NULL
+                        FOR i IN 1..array_length(v_col_list, 1) LOOP
+                            IF v_col_list[i] = 'context_id' THEN
+                                v_val_list[i] := 'NULL';
+                                EXIT;
+                            END IF;
+                        END LOOP;
+                    END IF;
+                END IF;
+            END IF;
+
+            -- Build and execute INSERT with ON CONFLICT DO NOTHING
             IF array_length(v_col_list, 1) > 0 THEN
                 v_sql := format(
-                    'INSERT INTO %I (%s) VALUES (%s)',
+                    'INSERT INTO %I (%s) VALUES (%s) ON CONFLICT DO NOTHING',
                     v_table.tname,
                     array_to_string(v_col_list, ', '),
                     array_to_string(v_val_list, ', ')
@@ -967,7 +1120,7 @@ BEGIN
 
                 BEGIN
                     EXECUTE v_sql;
-                    v_inserted := COALESCE(v_inserted, 0) + 1;
+                    GET DIAGNOSTICS v_inserted = ROW_COUNT;
                 EXCEPTION WHEN OTHERS THEN
                     GET STACKED DIAGNOSTICS v_error = MESSAGE_TEXT;
                     -- Log the error but continue with other rows
