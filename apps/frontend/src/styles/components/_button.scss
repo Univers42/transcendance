@@ -8,6 +8,7 @@
 // ============================================
 
 @use '../abstracts' as *;
+@use 'sass:color';
 
 // Base button styles
 .btn {
@@ -175,8 +176,8 @@
   border: 1px solid $data-error;
   
   &:hover:not(:disabled) {
-    background: darken($data-error, 10%);
-    border-color: darken($data-error, 10%);
+    background: color.adjust($data-error, $lightness: -10%);
+    border-color: color.adjust($data-error, $lightness: -10%);
   }
   
   @include theme('dark') {
@@ -184,8 +185,8 @@
     border-color: $dark-data-error;
     
     &:hover:not(:disabled) {
-      background: darken($dark-data-error, 10%);
-      border-color: darken($dark-data-error, 10%);
+      background: color.adjust($dark-data-error, $lightness: -10%);
+      border-color: color.adjust($dark-data-error, $lightness: -10%);
     }
   }
 }

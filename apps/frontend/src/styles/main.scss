@@ -2,20 +2,36 @@
 // PRISMATICA — Main Stylesheet
 // ============================================
 
-// 1. Abstracts (tokens + mixins)
-@use 'abstracts' as *;
+// Ya NO necesitas importar abstracts o graphical-chart aquí arriba, 
+// porque no vas a escribir CSS directamente en el main.scss.
+// Cada archivo de abajo ya importa lo que necesita.
 
-// 2. Base styles
+// 1. BASE
 @use 'base/reset';
 @use 'base/typography';
 
-// 4. Layouts
-@use 'layouts';
+// 2. COMPONENTES
+@use 'components/button';
+@use 'components/cards';
+@use 'components/input';
+@use 'components/table';
+@use 'components/badge';
+@use 'components/theme-toggle';
+@use 'components/hero';
+@use 'components/quickstart';
 
-// 5. Components
-@use 'components';
+// 3. LAYOUTS
+@use 'layout/container';
+@use 'layout/header';
+@use 'layout/footer';
+@use 'layout/app';
 
-// 3. CSS Custom Properties for theming
+// 4. UTILIDADES
+@use 'utilities/animations';
+
+// 5. CSS CUSTOM PROPERTIES PARA THEMING
+@use 'abstracts' as *; // Lo importamos aquí SOLO para usar el mixin de abajo
+
 :root {
   @include theme-variables('light');
 }
@@ -29,14 +45,3 @@
     @include theme-variables('dark');
   }
 }
-
-// 6. Utilities (opcional)
-.sr-only {
-  @include visually-hidden;
-}
-
-.text-center { text-align: center; }
-.text-right { text-align: right; }
-.text-left { text-align: left; }
-
-.hidden { display: none; }

@@ -2,6 +2,8 @@
 // PRISMATICA — CSS Reset
 // ============================================
 
+@use '../abstracts' as *;
+
 *,
 *::before,
 *::after {

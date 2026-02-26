@@ -24,8 +24,20 @@ interface HealthData {
 // ── Helpers ─────────────────────────────────────────
 
 function StatusDot({ ok }: { ok: boolean | null }) {
-  if (ok === null) return <span className="dot loading" />;
-  return <span className={`dot ${ok ? 'ok' : 'error'}`} />;
+  if (ok === null)
+    return (
+      <span
+        className="badge badge--no-dot badge--info"
+        style={{ animation: 'pulse 1.5s ease-in-out infinite' }}
+      >
+        checking
+      </span>
+    );
+  return ok ? (
+    <span className="badge badge--no-dot badge--success">online</span>
+  ) : (
+    <span className="badge badge--no-dot badge--error">offline</span>
+  );
 }
 
 function formatUptime(seconds: number): string {
@@ -68,140 +80,275 @@ function WelcomePage() {
 
   return (
     <div className="app">
-      {/* ── Hero ──────────────────────────────────── */}
-      <header className="hero">
-        <div className="hero-glow" />
-        <h1 className="title">
-          <span className="title-icon">⚡</span>
-          Transcendence
-        </h1>
-        <p className="subtitle">Full-Stack Platform · Ready to Build</p>
-        <div className="badge-row">
-          <span className="badge">TypeScript</span>
-          <span className="badge">NestJS 11</span>
-          <span className="badge">React 19</span>
-          <span className="badge">Prisma 7</span>
+
+      {/* ── Header ──────────────────────────────── */}
+      <header className="app__header">
+        <div className="header">
+          <div className="header__container">
+            <div className="header__brand">
+              <span style={{ fontSize: '1.5rem' }}>⚡</span>
+              <span className="header__title">Transcendence</span>
+            </div>
+            <div className="header__actions">
+              <span className="badge badge--no-dot badge--accent">Full-Stack Platform</span>
+            </div>
+          </div>
         </div>
       </header>
 
-      {/* ── Services ─────────────────────────────── */}
-      <section className="services">
-        <h2 className="section-title">Services</h2>
-        <div className="card-grid">
-          <a
-            href={`http://localhost:${bp}/api/docs`}
-            target="_blank"
-            rel="noreferrer"
-            className="card"
-          >
-            <div className="card-header">
-              <span className="card-icon">📖</span>
-              <StatusDot ok={backendOk} />
-            </div>
-            <h3>API Documentation</h3>
-            <p className="card-url">localhost:{bp}/api/docs</p>
-            <p className="card-desc">Swagger / OpenAPI interactive docs</p>
-          </a>
+      {/* ── Main ────────────────────────────────── */}
+      <main className="app__main">
 
-          <div className="card">
-            <div className="card-header">
-              <span className="card-icon">🚀</span>
-              <StatusDot ok={backendOk} />
+        {/* ── Hero ────────────────────────────────── */}
+        <section className="hero">
+          <div className="hero__container">
+            <div className="hero__content">
+              <h1 className="hero__title">
+                ⚡ Transcendence
+              </h1>
+              <p className="hero__subtitle">
+                Full-Stack Platform · Ready to Build
+              </p>
+              <div className="hero__actions">
+                <span className="badge badge--no-dot badge--accent">TypeScript</span>
+                <span className="badge badge--no-dot badge--info">NestJS 11</span>
+                <span className="badge badge--no-dot badge--success">React 19</span>
+                <span className="badge badge--no-dot badge--warning">Prisma 7</span>
+              </div>
             </div>
-            <h3>Backend API</h3>
-            <p className="card-url">localhost:{bp}</p>
-            <p className="card-desc">
-              {backendOk && health
-                ? `Up ${formatUptime(health.uptime)} · ${health.environment}`
-                : backendOk === false
-                  ? 'Offline — run make dev'
-                  : 'Checking…'}
-            </p>
           </div>
+        </section>
 
-          <div className="card active">
-            <div className="card-header">
-              <span className="card-icon">⚛️</span>
-              <StatusDot ok={true} />
+        {/* ── Services ─────────────────────────────── */}
+        <section style={{ padding: '3rem 0' }}>
+          <div className="container">
+            <h2 style={{ marginBottom: '2rem' }}>Services</h2>
+
+            <div
+              style={{
+                display: 'grid',
+                gap: '1.5rem',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              }}
+            >
+              {/* API Docs */}
+              <a
+                href={`http://localhost:${bp}/api/docs`}
+                target="_blank"
+                rel="noreferrer"
+                className="card card--interactive"
+                style={{ textDecoration: 'none' }}
+              >
+                <div className="card__header">
+                  <div>
+                    <p className="card__title" style={{ fontSize: '1rem' }}>
+                      📖 API Documentation
+                    </p>
+                    <p className="card__subtitle">localhost:{bp}/api/docs</p>
+                  </div>
+                  <div className="card__actions">
+                    <StatusDot ok={backendOk} />
+                  </div>
+                </div>
+                <div className="card__body">
+                  <p style={{ margin: 0 }}>Swagger / OpenAPI interactive docs</p>
+                </div>
+              </a>
+
+              {/* Backend */}
+              <div className="card card--data">
+                <div className="card__header">
+                  <div>
+                    <p className="card__title" style={{ fontSize: '1rem' }}>
+                      🚀 Backend API
+                    </p>
+                    <p className="card__subtitle">localhost:{bp}</p>
+                  </div>
+                  <div className="card__actions">
+                    <StatusDot ok={backendOk} />
+                  </div>
+                </div>
+                <div className="card__body">
+                  <p style={{ margin: 0 }}>
+                    {backendOk && health
+                      ? `Up ${formatUptime(health.uptime)} · ${health.environment}`
+                      : backendOk === false
+                        ? 'Offline — run make dev'
+                        : 'Checking…'}
+                  </p>
+                  {backendOk && health && (
+                    <div style={{ marginTop: '0.75rem' }}>
+                      <span className="card__value data-sm">
+                        {formatUptime(health.uptime)}
+                      </span>
+                      <span className="card__label" style={{ marginLeft: '0.5rem' }}>
+                        uptime
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Frontend */}
+              <div className="card card--data card--success">
+                <div className="card__header">
+                  <div>
+                    <p className="card__title" style={{ fontSize: '1rem' }}>
+                      ⚛️ Frontend
+                    </p>
+                    <p className="card__subtitle">localhost:{fp}</p>
+                  </div>
+                  <div className="card__actions">
+                    <StatusDot ok={true} />
+                  </div>
+                </div>
+                <div className="card__body">
+                  <p style={{ margin: 0 }}>React 19 + Vite — you are here</p>
+                </div>
+              </div>
+
+              {/* Mailpit */}
+              <a
+                href={`http://localhost:${mp}`}
+                target="_blank"
+                rel="noreferrer"
+                className="card card--interactive"
+                style={{ textDecoration: 'none' }}
+              >
+                <div className="card__header">
+                  <div>
+                    <p className="card__title" style={{ fontSize: '1rem' }}>
+                      📬 Mailpit
+                    </p>
+                    <p className="card__subtitle">localhost:{mp}</p>
+                  </div>
+                  <div className="card__actions">
+                    <span className="badge badge--no-dot">idle</span>
+                  </div>
+                </div>
+                <div className="card__body">
+                  <p style={{ margin: 0 }}>Dev email catcher</p>
+                </div>
+              </a>
+
+              {/* Prisma Studio */}
+              <a
+                href={`http://localhost:${pp}`}
+                target="_blank"
+                rel="noreferrer"
+                className="card card--interactive"
+                style={{ textDecoration: 'none' }}
+              >
+                <div className="card__header">
+                  <div>
+                    <p className="card__title" style={{ fontSize: '1rem' }}>
+                      🗄️ Prisma Studio
+                    </p>
+                    <p className="card__subtitle">localhost:{pp}</p>
+                  </div>
+                  <div className="card__actions">
+                    <span className="badge badge--no-dot">idle</span>
+                  </div>
+                </div>
+                <div className="card__body">
+                  <p style={{ margin: 0 }}>Visual database browser</p>
+                </div>
+              </a>
+
+              {/* Redis */}
+              <div className="card">
+                <div className="card__header">
+                  <div>
+                    <p className="card__title" style={{ fontSize: '1rem' }}>
+                      ⚡ Redis
+                    </p>
+                    <p className="card__subtitle">localhost:6379</p>
+                  </div>
+                  <div className="card__actions">
+                    <span className="badge badge--no-dot">idle</span>
+                  </div>
+                </div>
+                <div className="card__body">
+                  <p style={{ margin: 0 }}>Cache + real-time pub/sub</p>
+                </div>
+              </div>
             </div>
-            <h3>Frontend</h3>
-            <p className="card-url">localhost:{fp}</p>
-            <p className="card-desc">React 19 + Vite — you are here</p>
           </div>
+        </section>
 
-          <a
-            href={`http://localhost:${mp}`}
-            target="_blank"
-            rel="noreferrer"
-            className="card"
-          >
-            <div className="card-header">
-              <span className="card-icon">📬</span>
-              <span className="dot neutral" />
+        {/* ── Quick Start ──────────────────────────── */}
+        <section className="quickstart">
+          <div className="quickstart__container">
+            <h2 className="quickstart__title">Quick Start</h2>
+            <div className="table-container">
+              <table className="table">
+                <thead className="table__head">
+                  <tr className="table__header-row">
+                    <th className="table__header-cell">Command</th>
+                    <th className="table__header-cell">Description</th>
+                  </tr>
+                </thead>
+                <tbody className="table__body">
+                  {[
+                    ['make', 'Full bootstrap (default)'],
+                    ['make turn-on', 'Start dev servers + open browser'],
+                    ['make turn-off', 'Stop everything + free ports'],
+                    ['make help', 'All available commands'],
+                    ['make doctor', 'Full environment diagnostic'],
+                  ].map(([cmd, desc]) => (
+                    <tr className="table__row" key={cmd}>
+                      <td className="table__cell">
+                        <code className="table__data data-sm">{cmd}</code>
+                      </td>
+                      <td className="table__cell table__cell--secondary">{desc}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-            <h3>Mailpit</h3>
-            <p className="card-url">localhost:{mp}</p>
-            <p className="card-desc">Dev email catcher</p>
-          </a>
+          </div>
+        </section>
 
-          <a
-            href={`http://localhost:${pp}`}
-            target="_blank"
-            rel="noreferrer"
-            className="card"
-          >
-            <div className="card-header">
-              <span className="card-icon">🗄️</span>
-              <span className="dot neutral" />
-            </div>
-            <h3>Prisma Studio</h3>
-            <p className="card-url">localhost:{pp}</p>
-            <p className="card-desc">Visual database browser</p>
-          </a>
-
-          <div className="card">
-            <div className="card-header">
-              <span className="card-icon">⚡</span>
-              <span className="dot neutral" />
-            </div>
-            <h3>Redis</h3>
-            <p className="card-url">localhost:6379</p>
-            <p className="card-desc">Cache + real-time pub/sub</p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Quick Start ──────────────────────────── */}
-      <section className="quickstart">
-        <h2 className="section-title">Quick Start</h2>
-        <div className="commands">
-          <div className="cmd">
-            <code>make</code>
-            <span>Full bootstrap (default)</span>
-          </div>
-          <div className="cmd">
-            <code>make turn-on</code>
-            <span>Start dev servers + open browser</span>
-          </div>
-          <div className="cmd">
-            <code>make turn-off</code>
-            <span>Stop everything + free ports</span>
-          </div>
-          <div className="cmd">
-            <code>make help</code>
-            <span>All available commands</span>
-          </div>
-          <div className="cmd">
-            <code>make doctor</code>
-            <span>Full environment diagnostic</span>
-          </div>
-        </div>
-      </section>
+      </main>
 
       {/* ── Footer ───────────────────────────────── */}
-      <footer className="footer">
-        <p>Transcendence · Built with ❤️ and TypeScript</p>
+      <footer className="app__footer">
+        <div className="footer">
+          <div className="footer__container">
+            <div className="footer__content">
+              <span className="footer__brand">⚡ Transcendence</span>
+              <span className="footer__copy">Built with ❤️ and TypeScript</span>
+              <div className="footer__links">
+                <a
+                  href={`http://localhost:${bp}/api/docs`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer__link"
+                >
+                  API Docs
+                </a>
+                <a
+                  href={`http://localhost:${mp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer__link"
+                >
+                  Mailpit
+                </a>
+                <a
+                  href={`http://localhost:${pp}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="footer__link"
+                >
+                  Prisma Studio
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
       </footer>
+
     </div>
   );
 }

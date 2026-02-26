@@ -6,6 +6,7 @@
 // ============================================
 
 @use '../abstracts' as *;
+@use 'sass:color';
 
 .table-container {
   width: 100%;
@@ -154,10 +155,10 @@
         }
         
         &:hover {
-          background: darken($bg-selected, 3%);
+          background: color.adjust($bg-selected, $lightness: -3%);
           
           @include theme('dark') {
-            background: lighten($dark-bg-selected, 5%);
+            background: color.adjust($dark-bg-selected, $lightness: -5%);
           }
         }
       }

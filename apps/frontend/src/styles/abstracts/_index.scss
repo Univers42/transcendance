@@ -5,9 +5,7 @@
 // Usage: @use 'abstracts' as *;
 // ============================================
 
-// The graphical chart is the SINGLE SOURCE OF TRUTH
-// All design tokens come from here
-@forward '../base/graphical-chart';
+@forward 'graphical-chart';
 
 // Mixins extend the tokens with reusable patterns
 @forward 'mixins';
