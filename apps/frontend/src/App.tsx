@@ -1,6 +1,7 @@
 // src/App.tsx
 import { useState, useEffect } from 'react';
 import { Navbar } from './components/navbar/Navbar';
+import { HeroSection } from './components/herosection/HeroSection';
 import type { LanguageCode } from './components/navbar/types';
 import { LANGUAGES, NAV_LINKS } from './components/navbar/constants';
 
@@ -27,7 +28,6 @@ export default function App() {
 
   return (
     <div className="app">
-
       {/* ── Header ──────────────────────────────── */}
       <div className="app__header">
         <Navbar
@@ -43,6 +43,7 @@ export default function App() {
       {/* ── Main ────────────────────────────────── */}
       <main className="app__main">
         <div className="container">
+          <HeroSection />
           <h1>Navbar funcionando ✅</h1>
           <p>Aquí irán HeroSection, ProductDescription y Footer cuando los tengas.</p>
         </div>
