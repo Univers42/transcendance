@@ -341,3 +341,17 @@ $z-toast: 800;
     --prisma-shadow-lg: none;
   }
 }
+
+// ======================================================
+//   Theme tokens — Image Slider
+// ======================================================
+
+[data-theme='light'] {
+  --slider-dot-bg: rgba(255, 255, 255, 0.45);
+  --slider-dot-active-bg: #ffffff;
+}
+
+[data-theme='dark'] {
+  --slider-dot-bg: rgba(255, 255, 255, 0.35);
+  --slider-dot-active-bg: #ffffff;
+}

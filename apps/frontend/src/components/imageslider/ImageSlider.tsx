@@ -14,9 +14,14 @@ interface ImageSliderProps {
   className?: string;
 }
 
-export function ImageSlider({ slides, autoPlayInterval = 4500, className = '' }: ImageSliderProps) {
+export function ImageSlider({
+  slides,
+  autoPlayInterval = 4500,
+  className = '',
+}: ImageSliderProps) {
   const [current, setCurrent] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+
   const touchStartX = useRef(0);
   const touchEndX = useRef(0);
 
@@ -41,6 +46,7 @@ export function ImageSlider({ slides, autoPlayInterval = 4500, className = '' }:
   const handleTouchEnd = (e: React.TouchEvent) => {
     touchEndX.current = e.changedTouches[0].clientX;
     const diff = touchStartX.current - touchEndX.current;
+
     if (Math.abs(diff) > 50) {
       diff > 0 ? goNext() : goPrev();
     }
@@ -54,7 +60,7 @@ export function ImageSlider({ slides, autoPlayInterval = 4500, className = '' }:
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Slides track */}
+      {/* Slides */}
       <div
         className="slider__track"
         style={{ transform: `translateX(-${current * 100}%)` }}
@@ -67,9 +73,9 @@ export function ImageSlider({ slides, autoPlayInterval = 4500, className = '' }:
               className="slider__img"
               loading={i === 0 ? 'eager' : 'lazy'}
             />
-            {/* Gradient overlay */}
+
             <div className="slider__overlay" />
-            {/* Slide info */}
+
             <div className="slider__info">
               <span className="slider__tag">{slide.tag}</span>
               <p className="slider__title">{slide.title}</p>
@@ -79,35 +85,36 @@ export function ImageSlider({ slides, autoPlayInterval = 4500, className = '' }:
         ))}
       </div>
 
-      {/* Navigation arrows — hidden on mobile, appear on hover desktop */}
+      {/* Navigation */}
       <button
-        onClick={goPrev}
-        aria-label="Anterior"
+        type="button"
         className="slider__nav slider__nav--prev"
+        aria-label="Anterior"
+        onClick={goPrev}
       >
         <ChevronLeft className="icon-md" />
       </button>
+
       <button
-        onClick={goNext}
-        aria-label="Siguiente"
+        type="button"
         className="slider__nav slider__nav--next"
+        aria-label="Siguiente"
+        onClick={goNext}
       >
         <ChevronRight className="icon-md" />
       </button>
 
-      {/* Dot indicators */}
+      {/* Dots */}
       <div className="slider__dots">
         {slides.map((_, i) => (
           <button
             key={i}
-            onClick={() => setCurrent(i)}
+            type="button"
             aria-label={`Diapositiva ${i + 1}`}
-            className="slider__dot"
-            style={{
-              width: i === current ? '20px' : '6px',
-              height: '6px',
-              backgroundColor: i === current ? '#FFFFFF' : 'rgba(255,255,255,0.45)',
-            }}
+            onClick={() => setCurrent(i)}
+            className={`slider__dot ${
+              i === current ? 'slider__dot--active' : ''
+            }`}
           />
         ))}
       </div>

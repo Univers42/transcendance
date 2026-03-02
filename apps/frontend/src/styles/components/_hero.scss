@@ -30,6 +30,8 @@
     width: 100%;
     aspect-ratio: 4/3;
     min-height: 240px;
+    position: relative;
+    overflow: hidden;
   }
 
   &__slider-img {
@@ -37,7 +39,12 @@
     height: 100%;
     object-fit: cover;
   }
-
+  &__slider--framed {
+    background: $bg-secondary;
+    border-radius: $radius-xl;
+    overflow: hidden;
+    border: 1px solid $border-default;
+  }
   // Copy/content containers
   &__copy-container {
     display: flex;

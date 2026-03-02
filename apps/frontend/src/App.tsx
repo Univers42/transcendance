@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react';
 import { Navbar } from './components/navbar/Navbar';
 import { HeroSection } from './components/herosection/HeroSection';
+import { ProductDescription } from './components/productdescription/ProductDescription';
+import { Footer } from './components/footer/Footer';
 import type { LanguageCode } from './components/navbar/types';
 import { LANGUAGES, NAV_LINKS } from './components/navbar/constants';
 
@@ -44,11 +46,10 @@ export default function App() {
       <main className="app__main">
         <div className="container">
           <HeroSection />
-          <h1>Navbar funcionando ✅</h1>
-          <p>Aquí irán HeroSection, ProductDescription y Footer cuando los tengas.</p>
+          <ProductDescription />
         </div>
       </main>
-
+          <Footer />
     </div>
   );
 }

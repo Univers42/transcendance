@@ -7,6 +7,8 @@
 .slider {
   position: relative;
   overflow: hidden;
+  width: 100%;
+  height: 100%;
 
   &__track {
     display: flex;
@@ -102,16 +104,63 @@
     position: absolute;
     left: 0;
     right: 0;
-    bottom: 5.625rem;
+    bottom: 1rem;
     display: flex;
     justify-content: center;
     gap: $space-1;
-    pointer-events: none;
+    pointer-events: auto;
+    z-index: 30;
+
+    @include sm-up {
+      bottom: 5.625rem;
+    }
   }
 
   &__dot {
+    width: 6px;
+    height: 6px;
     border-radius: $radius-full;
-    transition: all 0.3s;
-    pointer-events: auto;
+    background-color: var(--slider-dot-bg);
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  &__dot--active {
+    width: 20px;
+    background-color: var(--slider-dot-active-bg);
+  }
+  &__track {
+    display: flex;
+    height: 100%;
+    transform: translateX(calc(var(--slider-index, 0) * -100%));
+    transition: transform 600ms ease;
+  }
+}
+
+// Theme-specific overrides for better contrast on light/dark
+[data-theme="light"] {
+  .slider__overlay {
+    background: linear-gradient(to top, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 100%);
+  }
+
+  .slider__dot {
+    background-color: rgba(0, 0, 0, 0.25);
+  }
+
+  .slider__dot--active {
+    background-color: #0f172a;
+  }
+}
+
+[data-theme="dark"] {
+  .slider__overlay {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 40%, transparent 100%);
+  }
+
+  .slider__dot {
+    background-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .slider__dot--active {
+    background-color: #ffffff;
   }
 }
