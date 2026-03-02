@@ -105,122 +105,143 @@ export function ProductDescription() {
     <div id="producto" style={{ backgroundColor: 'var(--bg-primary)' }}>
 
       {/* ── FEATURES ── */}
-      <section className="max-w-7xl mx-auto px-5 sm:px-6 py-16 sm:py-24">
-        {/* Heading */}
-        <div className="flex flex-col items-center text-center mb-12 sm:mb-16 gap-3">
-          <span
-            className="inline-flex items-center px-3 py-1 rounded-full border"
-            style={{
-              borderColor: 'var(--border-strong)',
-              color: 'var(--text-secondary)',
-              fontSize: '12px',
-              fontWeight: 500,
-              letterSpacing: '0.06em',
-            }}
-          >
-            FUNCIONALIDADES
-          </span>
-          <h2
-            style={{
-              fontSize: 'clamp(22px, 4vw, 32px)',
-              fontWeight: 600,
-              lineHeight: 1.25,
-              letterSpacing: '-0.01em',
-              color: 'var(--text-primary)',
-            }}
-          >
-            Todo lo que necesitas, en un solo lugar
-          </h2>
-          <p
-            style={{
-              fontSize: '14px',
-              lineHeight: 1.6,
-              color: 'var(--text-secondary)',
-              maxWidth: '520px',
-              letterSpacing: '0.01em',
-            }}
-          >
-            Datrix combina la potencia de una base de datos profesional con la
-            simplicidad de un dashboard moderno. Sin infraestructura propia que gestionar.
-          </p>
-        </div>
+      <section style={{ paddingTop: '4rem', paddingBottom: '4rem' }}>
+        <div className="container">
+          {/* Heading */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '3rem', gap: '0.75rem' }}>
+            <span
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                paddingLeft: '0.75rem',
+                paddingRight: '0.75rem',
+                paddingTop: '0.25rem',
+                paddingBottom: '0.25rem',
+                borderRadius: '9999px',
+                border: '1px solid var(--border-strong)',
+                color: 'var(--text-secondary)',
+                fontSize: '12px',
+                fontWeight: 500,
+                letterSpacing: '0.06em',
+              }}
+            >
+              FUNCIONALIDADES
+            </span>
+            <h2
+              style={{
+                fontSize: 'clamp(22px, 4vw, 32px)',
+                fontWeight: 600,
+                lineHeight: 1.25,
+                letterSpacing: '-0.01em',
+                color: 'var(--text-primary)',
+              }}
+            >
+              Todo lo que necesitas, en un solo lugar
+            </h2>
+            <p
+              style={{
+                fontSize: '14px',
+                lineHeight: 1.6,
+                color: 'var(--text-secondary)',
+                maxWidth: '520px',
+                letterSpacing: '0.01em',
+              }}
+            >
+              Datrix combina la potencia de una base de datos profesional con la
+              simplicidad de un dashboard moderno. Sin infraestructura propia que gestionar.
+            </p>
+          </div>
 
-        {/* Feature grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {FEATURES.map((feat, i) => {
-            const Icon = feat.icon;
-            return (
-              <div
-                key={i}
-                className="flex flex-col gap-3 p-6 rounded-2xl border transition-all duration-300"
-                style={{
-                  backgroundColor: 'var(--bg-elevated)',
-                  borderColor: 'var(--border-default)',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.borderColor = feat.color + '55';
-                  e.currentTarget.style.boxShadow = `0 4px 20px ${feat.color}18`;
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.borderColor = 'var(--border-default)';
-                  e.currentTarget.style.boxShadow = 'none';
-                }}
-              >
-                {/* Icon */}
+          {/* Feature grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.25rem' }}>
+            {FEATURES.map((feat, i) => {
+              const Icon = feat.icon;
+              return (
                 <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: feat.color + '18' }}
+                  key={i}
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '0.75rem',
+                    padding: '1.5rem',
+                    borderRadius: '1rem',
+                    border: '1px solid var(--border-default)',
+                    backgroundColor: 'var(--bg-elevated)',
+                    transition: 'all 300ms cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                  onMouseEnter={e => {
+                    e.currentTarget.style.borderColor = feat.color + '55';
+                    e.currentTarget.style.boxShadow = `0 4px 20px ${feat.color}18`;
+                  }}
+                  onMouseLeave={e => {
+                    e.currentTarget.style.borderColor = 'var(--border-default)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
                 >
-                  <Icon className="w-5 h-5" style={{ color: feat.color }} />
-                </div>
-                {/* Text */}
-                <div>
-                  <h3
+                  {/* Icon */}
+                  <div
                     style={{
-                      fontSize: '15px',
-                      fontWeight: 600,
-                      color: 'var(--text-primary)',
-                      marginBottom: '6px',
-                      lineHeight: 1.3,
+                      width: '2.5rem',
+                      height: '2.5rem',
+                      borderRadius: '0.75rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      backgroundColor: feat.color + '18',
                     }}
                   >
-                    {feat.title}
-                  </h3>
-                  <p
-                    style={{
-                      fontSize: '13px',
-                      lineHeight: 1.6,
-                      color: 'var(--text-secondary)',
-                      letterSpacing: '0.01em',
-                    }}
-                  >
-                    {feat.description}
-                  </p>
+                    <Icon style={{ width: '1.25rem', height: '1.25rem', color: feat.color }} />
+                  </div>
+                  {/* Text */}
+                  <div>
+                    <h3
+                      style={{
+                        fontSize: '15px',
+                        fontWeight: 600,
+                        color: 'var(--text-primary)',
+                        marginBottom: '6px',
+                        lineHeight: 1.3,
+                      }}
+                    >
+                      {feat.title}
+                    </h3>
+                    <p
+                      style={{
+                        fontSize: '13px',
+                        lineHeight: 1.6,
+                        color: 'var(--text-secondary)',
+                        letterSpacing: '0.01em',
+                      }}
+                    >
+                      {feat.description}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </section>
 
       {/* ── DIVIDER ── */}
-      <div
-        className="max-w-7xl mx-auto px-5 sm:px-6"
-        style={{ height: '1px', backgroundColor: 'var(--border-default)' }}
-      />
+      <div className="container" style={{ height: '1px', backgroundColor: 'var(--border-default)' }} />
 
       {/* ── WHO IS IT FOR ── */}
-      <section
-        className="py-16 sm:py-24"
-        style={{ backgroundColor: 'var(--bg-secondary)' }}
-      >
-        <div className="max-w-7xl mx-auto px-5 sm:px-6">
+      <section style={{ paddingTop: '4rem', paddingBottom: '4rem', backgroundColor: 'var(--bg-secondary)' }}>
+        <div className="container">
           {/* Heading */}
-          <div className="flex flex-col items-center text-center mb-12 gap-3">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '2.5rem', gap: '0.75rem' }}>
             <span
-              className="inline-flex items-center px-3 py-1 rounded-full border"
               style={{
-                borderColor: 'var(--border-strong)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                paddingLeft: '0.75rem',
+                paddingRight: '0.75rem',
+                paddingTop: '0.25rem',
+                paddingBottom: '0.25rem',
+                borderRadius: '9999px',
+                border: '1px solid var(--border-strong)',
                 color: 'var(--text-secondary)',
                 fontSize: '12px',
                 fontWeight: 500,
@@ -254,28 +275,47 @@ export function ProductDescription() {
           </div>
 
           {/* Tier cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.25rem' }}>
             {TIERS.map((tier, i) => (
               <div
                 key={i}
-                className="flex flex-col gap-5 p-7 rounded-2xl border relative overflow-hidden transition-all duration-300"
                 style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: '1.25rem',
+                  padding: '1.75rem',
+                  borderRadius: '1rem',
+                  border: tier.accent ? 'none' : '1px solid var(--border-default)',
+                  position: 'relative',
+                  overflow: 'hidden',
                   backgroundColor: tier.accent ? 'var(--accent-default)' : 'var(--bg-elevated)',
-                  borderColor: tier.accent ? 'transparent' : 'var(--border-default)',
                   boxShadow: tier.accent ? '0 8px 32px rgba(59,130,246,0.28)' : 'none',
+                  transition: 'all 300ms cubic-bezier(0, 0, 0.2, 1)',
                 }}
               >
                 {tier.accent && (
                   <div
-                    className="absolute top-3 right-3 px-2.5 py-0.5 rounded-full"
-                    style={{ backgroundColor: 'rgba(255,255,255,0.22)', fontSize: '11px', color: '#fff', fontWeight: 500 }}
+                    style={{
+                      position: 'absolute',
+                      top: '0.75rem',
+                      right: '0.75rem',
+                      backgroundColor: 'rgba(255,255,255,0.22)',
+                      paddingLeft: '0.625rem',
+                      paddingRight: '0.625rem',
+                      paddingTop: '0.125rem',
+                      paddingBottom: '0.125rem',
+                      borderRadius: '9999px',
+                      fontSize: '11px',
+                      color: '#fff',
+                      fontWeight: 500,
+                    }}
                   >
                     Popular
                   </div>
                 )}
 
                 {/* Header */}
-                <div className="flex items-center gap-3">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                   <span style={{ fontSize: '24px' }}>{tier.icon}</span>
                   <div>
                     <p
@@ -292,7 +332,7 @@ export function ProductDescription() {
                       style={{
                         fontSize: '12px',
                         color: tier.accent ? 'rgba(255,255,255,0.75)' : 'var(--text-secondary)',
-                        marginTop: '1px',
+                        marginTop: '0.25px',
                       }}
                     >
                       {tier.tagline}
@@ -301,12 +341,19 @@ export function ProductDescription() {
                 </div>
 
                 {/* Perks */}
-                <ul className="flex flex-col gap-2.5">
+                <ul style={{ display: 'flex', flexDirection: 'column', gap: '0.625rem' }}>
                   {tier.perks.map((perk, j) => (
-                    <li key={j} className="flex items-start gap-2.5">
+                    <li key={j} style={{ display: 'flex', alignItems: 'flex-start', gap: '0.625rem' }}>
                       <span
-                        className="w-4 h-4 rounded-full flex items-center justify-center shrink-0 mt-0.5"
                         style={{
+                          width: '1rem',
+                          height: '1rem',
+                          borderRadius: '9999px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          flexShrink: 0,
+                          marginTop: '0.125rem',
                           backgroundColor: tier.accent ? 'rgba(255,255,255,0.25)' : 'var(--bg-tertiary)',
                         }}
                       >
@@ -330,12 +377,14 @@ export function ProductDescription() {
                 {/* CTA */}
                 <Link
                   to="/auth"
-                  className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl mt-auto transition-all duration-200"
+                  className="btn"
                   style={{
+                    marginTop: 'auto',
                     backgroundColor: tier.accent ? '#FFFFFF' : 'var(--accent-default)',
                     color: tier.accent ? 'var(--accent-default)' : '#FFFFFF',
                     fontSize: '14px',
                     fontWeight: 500,
+                    textDecoration: 'none',
                   }}
                   onMouseEnter={e => {
                     e.currentTarget.style.opacity = '0.9';
@@ -345,7 +394,7 @@ export function ProductDescription() {
                   }}
                 >
                   {tier.cta}
-                  <ArrowRight className="w-3.5 h-3.5" />
+                  <ArrowRight style={{ width: '0.875rem', height: '0.875rem' }} />
                 </Link>
               </div>
             ))}
@@ -355,23 +404,35 @@ export function ProductDescription() {
 
       {/* ── IMPORT HIGHLIGHT ── */}
       <section
-        className="py-16 sm:py-20 border-t"
-        style={{ backgroundColor: 'var(--bg-primary)', borderColor: 'var(--border-default)' }}
+        style={{
+          paddingTop: '4rem',
+          paddingBottom: '5rem',
+          backgroundColor: 'var(--bg-primary)',
+          borderTop: '1px solid var(--border-default)',
+        }}
       >
-        <div className="max-w-7xl mx-auto px-5 sm:px-6 flex flex-col lg:flex-row items-center gap-10">
+        <div className="container" style={{ display: 'flex', flexDirection: 'column', gap: '2.5rem' }}>
           {/* Text */}
-          <div className="flex-1 flex flex-col gap-4">
+          <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <span
-              className="inline-flex w-fit items-center gap-2 px-3 py-1 rounded-full border"
               style={{
-                borderColor: '#059669' + '44',
+                display: 'inline-flex',
+                width: 'fit-content',
+                alignItems: 'center',
+                gap: '0.5rem',
+                paddingLeft: '0.75rem',
+                paddingRight: '0.75rem',
+                paddingTop: '0.25rem',
+                paddingBottom: '0.25rem',
+                borderRadius: '9999px',
+                border: '1px solid #05966944',
                 color: '#059669',
                 fontSize: '12px',
                 fontWeight: 500,
                 letterSpacing: '0.06em',
               }}
             >
-              <Upload className="w-3 h-3" />
+              <Upload style={{ width: '0.75rem', height: '0.75rem' }} />
               IMPORTACIÓN
             </span>
             <h2
@@ -400,28 +461,39 @@ export function ProductDescription() {
 
           {/* Faux code block */}
           <div
-            className="flex-1 rounded-2xl border overflow-hidden w-full"
             style={{
+              flex: 1,
+              borderRadius: '1rem',
+              border: '1px solid var(--border-default)',
+              overflow: 'hidden',
+              width: '100%',
               backgroundColor: 'var(--bg-secondary)',
-              borderColor: 'var(--border-default)',
               fontFamily: 'var(--font-mono)',
               maxWidth: '480px',
             }}
           >
             {/* Mac-style bar */}
             <div
-              className="flex items-center gap-2 px-4 py-3 border-b"
-              style={{ borderColor: 'var(--border-default)' }}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                paddingLeft: '1rem',
+                paddingRight: '1rem',
+                paddingTop: '0.75rem',
+                paddingBottom: '0.75rem',
+                borderBottom: '1px solid var(--border-default)',
+              }}
             >
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#FF5F57' }} />
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#FEBC2E' }} />
-              <span className="w-3 h-3 rounded-full" style={{ backgroundColor: '#28C840' }} />
-              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginLeft: '8px' }}>
+              <span style={{ width: '0.75rem', height: '0.75rem', borderRadius: '9999px', backgroundColor: '#FF5F57' }} />
+              <span style={{ width: '0.75rem', height: '0.75rem', borderRadius: '9999px', backgroundColor: '#FEBC2E' }} />
+              <span style={{ width: '0.75rem', height: '0.75rem', borderRadius: '9999px', backgroundColor: '#28C840' }} />
+              <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', marginLeft: '0.5rem' }}>
                 import.sql
               </span>
             </div>
             {/* Code lines */}
-            <div className="p-5 flex flex-col gap-2" style={{ fontSize: '12px', lineHeight: 1.6 }}>
+            <div style={{ paddingLeft: '1.25rem', paddingRight: '1.25rem', paddingTop: '1.25rem', paddingBottom: '1.25rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', fontSize: '12px', lineHeight: 1.6 }}>
               {[
                 { indent: 0, color: '#60A5FA', text: '-- Conexión a tu base de datos' },
                 { indent: 0, color: 'var(--text-secondary)', text: 'CONNECT TO postgresql://your-db' },

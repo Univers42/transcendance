@@ -53,26 +53,34 @@ const SOCIAL = [
 export function Footer() {
   return (
     <footer
-      className="border-t"
       style={{
         backgroundColor: 'var(--bg-secondary)',
         borderColor: 'var(--border-default)',
+        borderTop: '1px solid var(--border-default)',
       }}
     >
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 pt-14 pb-8">
+      <div className="container" style={{ paddingTop: '3.5rem', paddingBottom: '2rem' }}>
 
         {/* Top grid: brand + links */}
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 lg:grid-cols-5 mb-12">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '2rem', marginBottom: '3rem' }}>
 
           {/* Brand column */}
-          <div className="col-span-2 sm:col-span-3 lg:col-span-1 flex flex-col gap-4">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             {/* Logo */}
-            <div className="flex items-center gap-2.5">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.625rem' }}>
               <div
-                className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
-                style={{ backgroundColor: 'var(--accent-default)' }}
+                style={{
+                  width: '1.75rem',
+                  height: '1.75rem',
+                  borderRadius: '0.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                  backgroundColor: 'var(--accent-default)',
+                }}
               >
-                <Database className="w-4 h-4 text-white" />
+                <Database style={{ width: '1rem', height: '1rem', color: 'white' }} />
               </div>
               <span
                 style={{
@@ -82,7 +90,7 @@ export function Footer() {
                   color: 'var(--text-primary)',
                 }}
               >
-                Datrix
+                Prismatica
               </span>
             </div>
             <p
@@ -96,7 +104,7 @@ export function Footer() {
               La plataforma de datos en la nube diseñada para equipos de todos los tamaños.
             </p>
             {/* Social icons */}
-            <div className="flex items-center gap-2 mt-1">
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.25rem' }}>
               {SOCIAL.map(s => {
                 const Icon = s.icon;
                 return (
@@ -104,10 +112,16 @@ export function Footer() {
                     key={s.label}
                     href={s.href}
                     aria-label={s.label}
-                    className="flex items-center justify-center w-8 h-8 rounded-lg border transition-all duration-200"
                     style={{
-                      borderColor: 'var(--border-default)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '2rem',
+                      height: '2rem',
+                      borderRadius: '0.5rem',
+                      border: '1px solid var(--border-default)',
                       color: 'var(--text-tertiary)',
+                      transition: 'all 200ms cubic-bezier(0.4, 0, 0.2, 1)',
                     }}
                     onMouseEnter={e => {
                       e.currentTarget.style.borderColor = 'var(--accent-default)';
@@ -118,7 +132,7 @@ export function Footer() {
                       e.currentTarget.style.color = 'var(--text-tertiary)';
                     }}
                   >
-                    <Icon className="w-3.5 h-3.5" />
+                    <Icon style={{ width: '0.875rem', height: '0.875rem' }} />
                   </a>
                 );
               })}
@@ -127,7 +141,7 @@ export function Footer() {
 
           {/* Link columns */}
           {FOOTER_LINKS.map(col => (
-            <div key={col.heading} className="flex flex-col gap-3">
+            <div key={col.heading} style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <p
                 style={{
                   fontSize: '12px',
@@ -144,8 +158,7 @@ export function Footer() {
                 <a
                   key={link.label}
                   href={link.href}
-                  className="transition-colors duration-150"
-                  style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4 }}
+                  style={{ fontSize: '13px', color: 'var(--text-secondary)', lineHeight: 1.4, transition: 'color 150ms cubic-bezier(0.4, 0, 0.2, 1)' }}
                   onMouseEnter={e => (e.currentTarget.style.color = 'var(--accent-default)')}
                   onMouseLeave={e => (e.currentTarget.style.color = 'var(--text-secondary)')}
                 >
@@ -157,12 +170,12 @@ export function Footer() {
         </div>
 
         {/* Divider */}
-        <div className="h-px mb-6" style={{ backgroundColor: 'var(--border-default)' }} />
+        <div style={{ height: '1px', marginBottom: '1.5rem', backgroundColor: 'var(--border-default)' }} />
 
         {/* Bottom row */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
           <p style={{ fontSize: '12px', color: 'var(--text-tertiary)', lineHeight: 1.5 }}>
-            © {new Date().getFullYear()} Datrix Technologies S.L. Todos los derechos reservados.
+            © {new Date().getFullYear()} Prismatica S.L. Todos los derechos reservados.
           </p>
           <p
             style={{
@@ -173,7 +186,7 @@ export function Footer() {
               textAlign: 'right',
             }}
           >
-            Datrix es una plataforma SaaS. Los datos almacenados son responsabilidad
+            Prismatica es una plataforma SaaS. Los datos almacenados son responsabilidad
             del usuario. Consulta nuestra{' '}
             <a
               href="#"
