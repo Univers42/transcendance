@@ -14,10 +14,10 @@ export interface NavLink {
 }
 
 export interface NavbarProps {
-  darkMode: boolean;
-  setDarkMode: Dispatch<SetStateAction<boolean>>;
-  language: LanguageCode;
-  setLanguage: Dispatch<SetStateAction<LanguageCode>>;
+  isDarkMode: boolean;
+  onToggleTheme: Dispatch<SetStateAction<boolean>>;
+  currentLanguage: LanguageCode;
+  onLanguageChange: (language: LanguageCode) => void;
 
   links: readonly NavLink[];
   languages: readonly Language[];

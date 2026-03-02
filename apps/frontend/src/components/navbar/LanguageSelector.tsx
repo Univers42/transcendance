@@ -4,11 +4,11 @@ import type { Language, LanguageCode } from './types';
 
 interface Props {
   language: LanguageCode;
-  setLanguage: (lang: LanguageCode) => void;
+  onLanguageChange: (lang: LanguageCode) => void;
   languages: readonly Language[];
 }
 
-export function LanguageSelector({ language, setLanguage, languages }: Props) {
+export function LanguageSelector({ language, onLanguageChange, languages }: Props) {
   const [open, setOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const menuRef   = useRef<HTMLDivElement>(null);
@@ -72,7 +72,7 @@ export function LanguageSelector({ language, setLanguage, languages }: Props) {
             role="menuitem"
             className={`theme-toggle__option${lang.code === language ? ' theme-toggle__option--active' : ''}`}
             onClick={() => {
-              setLanguage(lang.code);
+              onLanguageChange(lang.code);
               setOpen(false);
               buttonRef.current?.focus();
             }}

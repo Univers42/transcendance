@@ -7,10 +7,10 @@ import { LanguageSelector } from './LanguageSelector';
 import { ThemeToggle }      from './ThemeToggle';
 
 export function Navbar({
-  darkMode,
-  setDarkMode,
-  language,
-  setLanguage,
+  isDarkMode,
+  onToggleTheme,
+  currentLanguage,
+  onLanguageChange,
   links,
   languages,
 }: NavbarProps) {
@@ -61,14 +61,14 @@ export function Navbar({
         <div className="header__actions">
 
           <LanguageSelector
-            language={language}
-            setLanguage={setLanguage}
+            language={currentLanguage}
+            onLanguageChange={onLanguageChange}
             languages={languages}
           />
 
           {/* Dark mode — .theme-toggle ya oculta bajo 768px */}
           <div className="theme-toggle">
-            <ThemeToggle darkMode={darkMode} toggle={() => setDarkMode(v => !v)} />
+            <ThemeToggle darkMode={isDarkMode} toggle={() => onToggleTheme(v => !v)} />
           </div>
 
           {/* CTA escritorio — oculto en móvil, visible en lg */}
@@ -107,7 +107,7 @@ export function Navbar({
 
           <hr style={{ border: 'none', borderTop: '1px solid var(--prisma-border)', margin: '.5rem 0' }} />
 
-          <ThemeToggle darkMode={darkMode} toggle={() => setDarkMode(v => !v)} />
+          <ThemeToggle darkMode={isDarkMode} toggle={() => onToggleTheme(v => !v)} />
 
           <a
             href="#login"
