@@ -4,18 +4,39 @@
 
 @use '../abstracts' as *;
 
+// =============================================================================
+// BASE HEADER
+// =============================================================================
+
 .header {
-  position: sticky;
+  position: fixed;              // Cambiado: sticky → fixed (requerido para backdrop-filter)
   top: 0;
+  left: 0;
+  right: 0;
   z-index: $z-sticky;
-  height: 4rem;     // 64px
-  background: $bg-primary;
+  background: rgba($bg-primary, 0.85);  // Añadido: translucidez para blur
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
   border-bottom: 1px solid $border-default;
   width: 100%;
-
+  
   @include theme('dark') {
-    background: $dark-bg-primary;
+    background: rgba($dark-bg-primary, 0.85);
     border-color: $dark-border-default;
+  }
+  
+  // ---------------------------------------------------------------------------
+  // MAIN BAR (Contenedor superior fijo)
+  // ---------------------------------------------------------------------------
+  
+  &__bar {
+    height: 4rem;               // 64px - Altura de la barra principal
+    background: transparent;    // El blur está en .header padre
+    border-bottom: 1px solid $border-default;
+    
+    @include theme('dark') {
+      border-color: $dark-border-default;
+    }
   }
   
   &__container {
@@ -24,15 +45,35 @@
     height: 100%;
   }
   
+  // ---------------------------------------------------------------------------
+  // BRAND / LOGO
+  // ---------------------------------------------------------------------------
+  
   &__brand {
     display: flex;
     align-items: center;
     gap: $space-3;
+    text-decoration: none;      // Movido: era inline style
+    
+    &:focus-visible {
+      @include focus-ring;
+      border-radius: $radius-md;
+    }
   }
   
-  &__logo {
+  &__logo-icon {
+    width: 2rem;
     height: 2rem;
-    width: auto;
+    border-radius: $radius-md;  // .5rem → variable
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--prisma-accent);  // Mantenido: variable CSS custom
+    
+    svg {
+      display: block;           // Elimina espacio extra inline
+    }
   }
   
   &__title {
@@ -45,6 +86,10 @@
       color: $dark-text-primary;
     }
   }
+  
+  // ---------------------------------------------------------------------------
+  // NAVIGATION (Desktop)
+  // ---------------------------------------------------------------------------
   
   &__nav {
     display: none;
@@ -84,36 +129,112 @@
     &:focus-visible {
       @include focus-ring;
     }
+    
+    // Mobile variant
+    &--mobile {
+      display: flex;
+      width: 100%;
+      padding: $space-3 $space-4;  // .75rem 1rem → variables
+    }
   }
+  
+  // ---------------------------------------------------------------------------
+  // ACTIONS (Right side controls)
+  // ---------------------------------------------------------------------------
   
   &__actions {
     display: flex;
     align-items: center;
     gap: $space-2;
   }
-}
-
-.header__cta {
-  display: none;
-
-  @media (min-width: 1024px) {
-    display: inline-flex;
+  
+  &__theme-toggle {
+    display: none;                // Hidden on mobile by default
+    
+    @include md-up {             // Show from 768px (md breakpoint)
+      display: block;
+    }
   }
-}
-
-// Hamburguesa: visible en móvil, oculta desde 1024px
-.header__hamburger {
-  display: flex;
-
-  @media (min-width: 1024px) {
+  
+  &__cta {
     display: none;
+    
+    @include lg-up {             // Show from 1024px
+      display: inline-flex;
+    }
   }
-}
-
-// Nav link versión móvil: ocupa todo el ancho con padding generoso
-.header__nav-link--mobile {
-  display: flex;
-  width: 100%;
-  padding: .75rem 1rem;
-  border-radius: .5rem;
+  
+  &__hamburger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    @include lg-up {             // Hidden from 1024px
+      display: none;
+    }
+  }
+  
+  // ---------------------------------------------------------------------------
+  // MOBILE MENU (Collapsible panel)
+  // ---------------------------------------------------------------------------
+  
+  &__mobile-menu {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 300ms ease-in-out, opacity 200ms ease-in-out;
+    border-bottom: none;
+    background: rgba($bg-primary, 0.95);
+    backdrop-filter: blur(14px);
+    
+    @include theme('dark') {
+      background: rgba($dark-bg-primary, 0.95);
+    }
+    
+    // Open state (controlled by React via data-open attribute)
+    &[data-open="true"] {
+      max-height: 480px;          // Altura máxima del menú expandido
+      opacity: 1;
+      border-bottom: 1px solid $border-default;
+      
+      @include theme('dark') {
+        border-color: $dark-border-default;
+      }
+    }
+    
+    // Accessibility: hidden from screen readers when closed
+    &[aria-hidden="true"] {
+      visibility: hidden;         // Prevents focus trap when closed
+    }
+  }
+  
+  &__mobile-container {
+    @include container;
+    padding-top: $space-3;       // .75rem
+    padding-bottom: $space-3;
+    display: flex;
+    flex-direction: column;
+    gap: $space-1;               // .25rem
+  }
+  
+  &__mobile-divider {
+    border: none;
+    border-top: 1px solid $border-default;
+    margin: $space-2 0;          // .5rem
+    
+    @include theme('dark') {
+      border-color: $dark-border-default;
+    }
+  }
+  
+  &__mobile-controls {
+    display: flex;
+    align-items: center;
+    padding: $space-2 0;
+  }
+  
+  &__mobile-cta {
+    margin-top: $space-1;        // .25rem
+    margin-bottom: $space-2;     // .5rem
+  }
 }

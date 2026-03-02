@@ -1,11 +1,39 @@
-// src/components/navbar/Navbar.tsx
-import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
-import type { NavbarProps } from './types';
-import { NavLinks }         from './NavLinks';
-import { LanguageSelector } from './LanguageSelector';
-import { ThemeToggle }      from './ThemeToggle';
+/**
+ * @file Navbar.tsx
+ * @description Main navigation header component.
+ * 
+ * @author serjimen
+ * @date 2026-03-02
+ * @version 1.0.0
+ */
 
+import { useState, useEffect, useCallback } from 'react';
+import type { JSX } from 'react';
+import { Menu, X } from 'lucide-react';
+
+import type { NavbarProps } from './Navbar.types';
+import { NavLinks } from './NavLinks';
+import { BrandLogo } from '../ui/brand-logo';
+import { LanguageSelector } from '../ui/language-selector/LanguageSelector';
+import { ThemeToggle } from '../ui/theme-toggle/ThemeToggle';
+
+// =============================================================================
+// CONSTANTS & CONFIGURATION
+// =============================================================================
+
+const DESKTOP_BREAKPOINT = 1024;
+const MOBILE_MENU_ID = 'navbar-mobile-menu';
+
+// =============================================================================
+// COMPONENT
+// =============================================================================
+
+/**
+ * Main navigation header.
+ * 
+ * @param {NavbarProps} props - Configuration and state callbacks
+ * @returns {JSX.Element} Responsive navigation header
+ */
 export function Navbar({
   isDarkMode,
   onToggleTheme,
@@ -13,107 +41,143 @@ export function Navbar({
   onLanguageChange,
   links,
   languages,
-}: NavbarProps) {
+}: NavbarProps): JSX.Element {
+  // ---------------------------------------------------------------------------
+  // STATE
+  // ---------------------------------------------------------------------------
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  /** Controls mobile menu visibility state */
+  const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
+  // ---------------------------------------------------------------------------
+  // SIDE EFFECTS
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Auto-close mobile menu when resizing to desktop.
+   * Prevents menu staying open if user rotates device or resizes window.
+   */
   useEffect(() => {
-    function onResize(): void {
-      if (window.innerWidth >= 1024) setMenuOpen(false);
-    }
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
+    const handleResize = (): void => {
+      if (window.innerWidth >= DESKTOP_BREAKPOINT && isMenuOpen) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [isMenuOpen]);
+
+  // ---------------------------------------------------------------------------
+  // EVENT HANDLERS
+  // ---------------------------------------------------------------------------
+
+  /** Toggles mobile menu open/closed state */
+  const toggleMenu = useCallback((): void => {
+    setIsMenuOpen((previous) => !previous);
   }, []);
 
+  /** Closes mobile menu (used for navigation and CTA clicks) */
+  const closeMenu = useCallback((): void => {
+    setIsMenuOpen(false);
+  }, []);
+
+  /** Handles theme toggle with menu preservation */
+  const handleThemeToggle = useCallback((): void => {
+    onToggleTheme();
+  }, [onToggleTheme]);
+
+  // ---------------------------------------------------------------------------
+  // RENDER HELPERS
+  // ---------------------------------------------------------------------------
+
+  const hamburgerLabel = isMenuOpen ? 'Cerrar menú' : 'Abrir menú';
+
+  // ---------------------------------------------------------------------------
+  // RENDER
+  // ---------------------------------------------------------------------------
+
   return (
-    <header
-      className="header"
-      style={{ position: 'fixed', backdropFilter: 'blur(14px)', WebkitBackdropFilter: 'blur(14px)' }}
-    >
+    <header className="header">
+      {/* Main navigation bar */}
+      <div className="header__bar">
+        <div className="header__container">
+          
+          {/* Brand */}
+          <BrandLogo className='header__brand'/>
 
-      {/* ── Barra principal ─────────────────────── */}
-      <div className="header__container">
+          {/* Desktop navigation - hidden below breakpoint via CSS */}
+          <nav className="header__nav" aria-label="Navegación principal">
+            <NavLinks links={links} variant="desktop" />
+          </nav>
 
-        {/* Logo */}
-        <a href="/" className="header__brand" style={{ textDecoration: 'none' }}>
-          <span
-            style={{
-              width: '2rem', height: '2rem', borderRadius: '.5rem', flexShrink: 0,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              background: 'var(--prisma-accent)',
-            }}
-          >
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <ellipse cx="9" cy="4" rx="6" ry="2.25" stroke="white" strokeWidth="1.4" />
-              <path d="M3 4v10c0 1.24 2.69 2.25 6 2.25s6-1.01 6-2.25V4" stroke="white" strokeWidth="1.4" />
-              <path d="M3 9c0 1.24 2.69 2.25 6 2.25S15 10.24 15 9" stroke="white" strokeWidth="1.4" />
-            </svg>
-          </span>
-          <span className="header__title">Prismatica</span>
-        </a>
+          {/* Right-side controls */}
+          <div className="header__actions">
+            
+            {/* Language selection */}
+            <LanguageSelector
+              language={currentLanguage}
+              onLanguageChange={onLanguageChange}
+              languages={languages}
+            />
 
-        {/* Links escritorio — .header__nav ya oculta bajo 1024px */}
-        <nav className="header__nav">
-          <NavLinks links={links} variant="desktop" />
-        </nav>
+            {/* Theme toggle - hidden on mobile via CSS */}
+            <div className="header__theme-toggle">
+              <ThemeToggle 
+                darkMode={isDarkMode} 
+                onToggle={handleThemeToggle} 
+              />
+            </div>
 
-        {/* Controles derecha */}
-        <div className="header__actions">
+            {/* Desktop CTA - hidden on mobile */}
+            <a href="#login" className="btn btn--primary btn--sm header__cta">
+              Iniciar sesión
+            </a>
 
-          <LanguageSelector
-            language={currentLanguage}
-            onLanguageChange={onLanguageChange}
-            languages={languages}
-          />
+            {/* Mobile menu toggle */}
+            <button
+              type="button"
+              onClick={toggleMenu}
+              className="btn btn--ghost btn--icon btn--sm header__hamburger"
+              aria-label={hamburgerLabel}
+              aria-expanded={isMenuOpen}
+              aria-controls={MOBILE_MENU_ID}
+            >
+              {isMenuOpen ? <X className="btn__icon" /> : <Menu className="btn__icon" />}
+            </button>
 
-          {/* Dark mode — .theme-toggle ya oculta bajo 768px */}
-          <div className="theme-toggle">
-            <ThemeToggle darkMode={isDarkMode} toggle={() => onToggleTheme(v => !v)} />
           </div>
-
-          {/* CTA escritorio — oculto en móvil, visible en lg */}
-          <a href="#login" className="btn btn--primary btn--sm header__cta">
-            Iniciar sesión
-          </a>
-
-          {/* Hamburguesa — visible en móvil, oculta en lg */}
-          <button
-            onClick={() => setMenuOpen(v => !v)}
-            className="btn btn--ghost btn--icon btn--sm header__hamburger"
-            aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
-            aria-expanded={menuOpen}
-          >
-            {menuOpen ? <X className="btn__icon" /> : <Menu className="btn__icon" />}
-          </button>
-
         </div>
       </div>
 
-      {/* ── Menú móvil ──────────────────────────── */}
+      {/* Mobile menu - collapsible panel */}
       <div
-        style={{
-          overflow: 'hidden',
-          maxHeight: menuOpen ? '480px' : '0px',
-          opacity: menuOpen ? 1 : 0,
-          transition: 'max-height 300ms ease-in-out, opacity 200ms ease-in-out',
-          borderBottom: menuOpen ? '1px solid var(--prisma-border)' : 'none',
-          background: 'var(--prisma-bg-primary)',
-          backdropFilter: 'blur(14px)',
-        }}
+        id={MOBILE_MENU_ID}
+        className="header__mobile-menu"
+        data-open={isMenuOpen}
+        aria-hidden={!isMenuOpen}
       >
-        <div className="container" style={{ paddingTop: '.75rem', paddingBottom: '.75rem', display: 'flex', flexDirection: 'column', gap: '.25rem' }}>
+        <div className="header__mobile-container">
+          
+          <NavLinks 
+            links={links} 
+            variant="mobile" 
+            onItemClick={closeMenu} 
+          />
 
-          <NavLinks links={links} variant="mobile" onClick={() => setMenuOpen(false)} />
+          <hr className="header__mobile-divider" />
 
-          <hr style={{ border: 'none', borderTop: '1px solid var(--prisma-border)', margin: '.5rem 0' }} />
-
-          <ThemeToggle darkMode={isDarkMode} toggle={() => onToggleTheme(v => !v)} />
+          <div className="header__mobile-controls">
+            <ThemeToggle 
+              darkMode={isDarkMode} 
+              onToggle={handleThemeToggle} 
+            />
+          </div>
 
           <a
             href="#login"
-            onClick={() => setMenuOpen(false)}
-            className="btn btn--primary btn--block"
-            style={{ marginTop: '.25rem', marginBottom: '.5rem' }}
+            onClick={closeMenu}
+            className="btn btn--primary btn--block header__mobile-cta"
           >
             Iniciar sesión
           </a>

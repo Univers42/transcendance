@@ -3,13 +3,13 @@ import { Sun, Moon } from 'lucide-react';
 
 interface ThemeToggleProps {
   darkMode: boolean;
-  toggle: () => void;
+  onToggle: () => void;
 }
 
-export function ThemeToggle({ darkMode, toggle }: ThemeToggleProps) {
+export function ThemeToggle({ darkMode, onToggle }: ThemeToggleProps) {
   return (
     <button
-      onClick={toggle}
+      onClick={onToggle}
       className={`theme-toggle__button${darkMode ? ' theme-toggle__button--active' : ''}`}
       aria-label={darkMode ? 'Activar modo claro' : 'Activar modo oscuro'}
     >

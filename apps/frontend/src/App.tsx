@@ -10,14 +10,15 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import type { JSX } from 'react';
 
 import { Navbar } from './components/navbar/Navbar';
 import { HeroSection } from './components/herosection/HeroSection';
 import { ProductDescription } from './components/productdescription/ProductDescription';
 import { Footer } from './components/footer/Footer';
 
-import type { LanguageCode } from './components/navbar/types';
-import { LANGUAGES, NAV_LINKS } from './components/navbar/constants';
+import type { LanguageCode } from './components/navbar/Navbar.types';
+import { LANGUAGES, NAV_LINKS } from './components/navbar/Navbar.constants';
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
@@ -106,7 +107,7 @@ const persistThemePreference = (isDarkMode: boolean): void => {
  * @param {AppProps} props - Component props
  * @returns {React.ReactElement} Application root element
  */
-export default function App({ initialLanguage = 'EN' }: AppProps): React.ReactElement {
+export default function App({ initialLanguage = 'EN' }: AppProps): JSX.Element {
   // ---------------------------------------------------------------------------
   // STATE
   // ---------------------------------------------------------------------------
