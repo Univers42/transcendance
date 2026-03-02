@@ -50,6 +50,8 @@ $bg-tertiary: $slate-200;
 $bg-elevated: $slate-50;
 $bg-hover: $slate-100;
 $bg-selected: #EFF6FF;
+$bg-active: #f9fafb;
+$bg-subtle: #f3f4f6;
 $bg-masked: rgba($slate-900, 0.5);
 
 // Alias para compatibilidad con mixins existentes
@@ -86,6 +88,9 @@ $border-default: $slate-200;
 $border-strong: $slate-300;
 $border-divider: $slate-200;
 $border-accent: $blue-500;
+$border-hover: #d1d5db;
+$border-active: #9ca3af;
+$border-subtle: #f3f4f6;
 $border-error: #FCA5A5;
 $border-color: $border-default;  // Alias para compatibilidad
 
@@ -99,6 +104,8 @@ $dark-bg-tertiary: $slate-700;
 $dark-bg-elevated: $slate-800;
 $dark-bg-hover: $slate-800;
 $dark-bg-selected: #1E3A8A;
+$dark-bg-active: #1f2937;
+$dark-bg-subtle: #111827;
 $dark-bg-masked: rgba(0, 0, 0, 0.7);
 $dark-bg-card: $dark-bg-elevated;
 $dark-bg-card-hover: $dark-bg-hover;
@@ -124,6 +131,9 @@ $dark-border-default: $slate-700;
 $dark-border-strong: $slate-600;
 $dark-border-divider: $slate-800;
 $dark-border-accent: $blue-400;
+$dark-border-hover: #4b5563;
+$dark-border-active: #6b7280;
+$dark-border-subtle: #374151;
 $dark-border-color: $dark-border-default;
 
 // ------------------------------------------------------

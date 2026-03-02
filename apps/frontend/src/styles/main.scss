@@ -11,14 +11,21 @@
 @use 'base/typography';
 
 // 2. COMPONENTES
+@use 'components/badge';
+@use 'components/brand-logo';
 @use 'components/button';
 @use 'components/cards';
-@use 'components/input';
-@use 'components/table';
-@use 'components/badge';
-@use 'components/theme-toggle';
+@use 'components/display';
+@use 'components/hero-slider';
 @use 'components/hero';
+@use 'components/icon';
+@use 'components/input';
+@use 'components/language-selector';
+@use 'components/live-badge';
 @use 'components/quickstart';
+@use 'components/sizing';
+@use 'components/table';
+@use 'components/theme-toggle';
 
 // 3. LAYOUTS
 @use 'layout/container';
