@@ -1,0 +1,17 @@
+[sqlfluff]
+dialect = postgres
+# Exclude rules
+exclude_rules = L031
+
+[sqlfluff:indentation]
+tab_space_size = 4
+
+[sqlfluff:layout:type:comma]
+line_position = trailing
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+[sqlfluff]
+dialect = postgres
+large_file_skip_byte_limit = 50000
