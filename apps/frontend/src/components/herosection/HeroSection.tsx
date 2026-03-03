@@ -1,30 +1,26 @@
+/**
+ * @file HeroSection.tsx
+ * @description Hero section for the landing page.
+ * Composes the SplitLayout with specific landing copy and the ImageSlider.
+ * * @author serjimen
+ * @date 2026-03-03
+ * @version 1.2.1
+ */
+
+import type { JSX } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
-import { Link } from "react-router-dom";
-import { ImageSlider, type Slide } from "../imageslider/ImageSlider";
 
-const SLIDES: Slide[] = [
-  {
-    image: "https://images.unsplash.com/photo-1763568258696-32147bb44379?...",
-    title: "Dashboard personalizable",
-    description:
-      "Visualiza tus métricas en tiempo real con widgets interactivos",
-    tag: "ANALYTICS",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1758691736407-02406d18df6c?...",
-    title: "Visualización avanzada",
-    description: "Gráficas interactivas y reportes exportables a tu medida",
-    tag: "CHARTS",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1740645580343-efafff76d4c6?...",
-    title: "Consultas en tiempo real",
-    description: "Editor SQL avanzado con autocompletado y sintaxis resaltada",
-    tag: "QUERY",
-  },
-];
+import { ImageSlider } from "../imageslider/ImageSlider";
+import { SplitLayout } from "../ui/split-layout";
+import { Button } from "../ui/button";
+import type { HeroSectionProps } from "./HeroSection.types";
+import { HERO_SLIDES } from "./HeroSection.constants";
 
-function LiveBadge() {
+// =============================================================================
+// SUB-COMPONENTS
+// =============================================================================
+
+function LiveBadge(): JSX.Element {
   return (
     <span className="live-badge">
       <span className="live-badge__dot" />
@@ -33,7 +29,7 @@ function LiveBadge() {
   );
 }
 
-function HeroCopy({ centered = false }: { centered?: boolean }) {
+function HeroCopy({ centered = false }: { centered?: boolean }): JSX.Element {
   return (
     <div
       className={`hero__content ${
@@ -66,15 +62,22 @@ function HeroCopy({ centered = false }: { centered?: boolean }) {
       </div>
 
       <div className="hero__actions">
-        <Link to="/auth" className="btn btn--primary btn--lg">
-          <Sparkles className="icon-md" />
-          Pruébalo gratis
-          <ArrowRight className="icon-md" />
-        </Link>
+        <Button 
+          to="/auth" 
+          variant="primary" 
+          size="lg"
+          leftIcon={<Sparkles className="icon-md" />}
+          rightIcon={<ArrowRight className="icon-md" />}
+          label="Pruébalo gratis"
+        />
 
-        <a href="#producto" className="btn btn--ghost btn--lg">
-          Ver más
-        </a>
+        {/* Fix TS2322: Usamos 'to' en lugar de 'href' para React Router */}
+        <Button 
+          to="#producto" 
+          variant="ghost" 
+          size="lg"
+          label="Ver más"
+        />
       </div>
 
       <p className="hero__disclaimer">
@@ -84,32 +87,34 @@ function HeroCopy({ centered = false }: { centered?: boolean }) {
   );
 }
 
-export function HeroSection() {
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
+
+export function HeroSection({ className = '', id = 'hero' }: HeroSectionProps): JSX.Element {
   return (
-    <section id="hero" className="hero">
-      {/* MOBILE */}
-      <div className="hero__mobile">
-        <div className="hero__slider hero__slider--framed">
-          <ImageSlider slides={SLIDES} />
-        </div>
-
-        <div className="hero__copy-container">
-          <HeroCopy />
-        </div>
-      </div>
-
-      {/* DESKTOP */}
-      <div className="hero__desktop">
-        <div className="hero__left">
-          <HeroCopy />
-        </div>
-
-        <div className="hero__right">
+    <section 
+      id={id} 
+      className={`hero ${className}`.trim()}
+      style={{
+        // Corrección visual: Altura mínima, centrado y espacio para el navbar
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        paddingTop: '6rem', 
+        paddingBottom: '3rem'
+      }}
+    >
+      <SplitLayout
+        variant="split"
+        maxWidth="1200px"
+        leftContent={<HeroCopy />}
+        rightContent={
           <div className="hero__slider hero__slider--framed">
-            <ImageSlider slides={SLIDES} />
+            <ImageSlider slides={HERO_SLIDES} />
           </div>
-        </div>
-      </div>
+        }
+      />
     </section>
   );
 }
