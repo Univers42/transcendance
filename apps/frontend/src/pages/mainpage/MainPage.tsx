@@ -14,19 +14,9 @@ import { HeroSection } from "../../components/herosection/HeroSection";
 import { ProductDescription } from "../../components/productdescription/ProductDescription";
 import { Footer } from "../../components/footer/Footer";
 
-import type { LanguageCode } from "../../components/navbar/Navbar.types";
+import type { MainPageProps } from "./MainPage.types";
 import { LANGUAGES, NAV_LINKS } from "../../components/navbar/Navbar.constants";
 
-// =============================================================================
-// TYPES
-// =============================================================================
-
-export interface MainPageProps {
-  isDarkMode: boolean;
-  onToggleTheme: () => void;
-  currentLanguage: LanguageCode;
-  onLanguageChange: (language: LanguageCode) => void;
-}
 
 // =============================================================================
 // COMPONENT

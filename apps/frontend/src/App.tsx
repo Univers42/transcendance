@@ -101,7 +101,15 @@ export default function App(): JSX.Element {
           />
         }
       />
-      <Route path="/auth" element={<AuthPage />} />
+      <Route path="/auth" element={
+        <AuthPage 
+        isDarkMode={isDarkMode}
+        onToggleTheme={handleToggleTheme}
+        currentLanguage={currentLanguage}
+        onLanguageChange={handleLanguageChange}
+        />
+        } 
+        />
     </Routes>
   );
 }

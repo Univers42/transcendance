@@ -9,7 +9,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import type { JSX } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X , ArrowLeft} from "lucide-react";
 
 import type { NavbarProps } from "./Navbar.types";
 import { NavLinks } from "./NavLinks";
@@ -42,6 +42,7 @@ export function Navbar({
   onLanguageChange,
   links,
   languages,
+  ctaMode = 'login',
 }: NavbarProps): JSX.Element {
   // ---------------------------------------------------------------------------
   // STATE
@@ -94,6 +95,19 @@ export function Navbar({
 
   const hamburgerLabel = isMenuOpen ? "Cerrar menú" : "Abrir menú";
 
+
+  // ---------------------------------------------------------------------------
+  // CONFIGURACIÓN DINÁMICA DEL BOTÓN (CTA)
+  // ---------------------------------------------------------------------------
+  const isBackMode = ctaMode === 'back';
+  const ctaConfig = {
+    to: isBackMode ? '/' : '/auth',
+    label: isBackMode ? 'Volver' : 'Sign In',
+    variant: (isBackMode ? 'ghost' : 'primary') as 'ghost' | 'primary',
+    leftIcon: isBackMode ? <ArrowLeft className="w-4 h-4" /> : undefined,
+  };
+
+
   // ---------------------------------------------------------------------------
   // RENDER
   // ---------------------------------------------------------------------------
@@ -127,11 +141,12 @@ export function Navbar({
 
             {/* Desktop CTA - hidden on mobile */}
             <Button
-              to="/auth"
-              variant="primary"
+              to={ctaConfig.to}
+              variant={ctaConfig.variant}
               size="sm"
               className="header__cta"
-              label="Sign In"
+              label={ctaConfig.label}
+              leftIcon={ctaConfig.leftIcon}
             />
             {/* Mobile menu toggle */}
             <Button
@@ -170,12 +185,13 @@ export function Navbar({
             <ThemeToggle darkMode={isDarkMode} onToggle={handleThemeToggle} />
           </div>
           <Button
-            to="/auth"
-            variant="primary"
+            to={ctaConfig.to}
+            variant={ctaConfig.variant}
             isBlock={true}
             onClick={closeMenu}
             className="header__mobile-cta"
-            label="Sign In"
+            label={ctaConfig.label}
+            leftIcon={ctaConfig.leftIcon}
           />
         </div>
       </div>

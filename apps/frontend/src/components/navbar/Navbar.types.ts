@@ -39,6 +39,7 @@ export interface NavbarProps {
   onToggleTheme: () => void;
   currentLanguage: LanguageCode;
   onLanguageChange: (language: LanguageCode) => void;
+  ctaMode? : 'login' | 'back';
 
   links: readonly NavLink[];
   languages: readonly Language[];
