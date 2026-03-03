@@ -8,6 +8,7 @@
  */
 
 import type { ReactNode, ButtonHTMLAttributes, AnchorHTMLAttributes } from 'react';
+import type { LinkProps } from 'react-router-dom';
 
 /**
  * Visual style variants for the button.
@@ -41,17 +42,25 @@ interface BaseButtonProps {
 export type StandardButtonProps = BaseButtonProps & 
   Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & {
     href?: never;
+    to?: never;
   };
 
 /**
  * Button rendered as `<a>` element (link).
  */
-export type LinkButtonProps = BaseButtonProps & 
+export type AnchorButtonProps = BaseButtonProps & 
   Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'> & {
     href: string;
+    to: never;
+  };
+
+export type RouterLinkButtonProps = BaseButtonProps & 
+  Omit<LinkProps, 'className' | 'to'> & {
+    to: string;
+    href?: never;
   };
 
 /**
  * Union type: Button can be either `<button>` or `<a>`.
  */
-export type ButtonProps = StandardButtonProps | LinkButtonProps;
+export type ButtonProps = StandardButtonProps | AnchorButtonProps | RouterLinkButtonProps;

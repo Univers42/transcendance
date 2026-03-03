@@ -7,8 +7,9 @@
  * @version 1.1.0
  */
 
+import { Link } from 'react-router-dom';
 import type { JSX } from 'react';
-import type { ButtonProps, StandardButtonProps } from './Button.types';
+import type { ButtonProps, StandardButtonProps, RouterLinkButtonProps, AnchorButtonProps } from './Button.types';
 
 export function Button({
   label,
@@ -40,9 +41,19 @@ export function Button({
     </>
   );
 
-  // Renderizado polimórfico (Enlace)
+// Renderizado polimórfico (React Router Link)
+  if ('to' in props && props.to) {
+    const { to, ...linkProps } = props as RouterLinkButtonProps;
+    return (
+      <Link to={to} className={combinedClasses} {...linkProps}>
+        {buttonContent}
+      </Link>
+    );
+  }
+
+  // Renderizado polimórfico (Enlace HTML Externo)
   if ('href' in props && props.href) {
-    const { href, ...anchorProps } = props;
+    const { href, ...anchorProps } = props as AnchorButtonProps;
     return (
       <a href={href} className={combinedClasses} {...anchorProps}>
         {buttonContent}
@@ -53,8 +64,8 @@ export function Button({
   // Renderizado polimórfico (Botón nativo)
   const { disabled, ...buttonProps } = props as StandardButtonProps;
   return (
-    <button
-      className={combinedClasses}
+    <button 
+      className={combinedClasses} 
       disabled={isLoading || disabled}
       {...buttonProps}
     >

@@ -1,5 +1,19 @@
+/**
+ * @file ImageSlider.tsx
+ * @description Componente de carrusel de imágenes con soporte para autoplay,
+ * navegación manual y gestos táctiles (swipe).
+ * * @author serjimen
+ * @date 2026-03-03
+ * @version 1.0.1
+ */
+
 import { useState, useEffect, useRef, useCallback } from 'react';
+import type { JSX } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+
+// =============================================================================
+// TYPES
+// =============================================================================
 
 export interface Slide {
   image: string;
@@ -8,59 +22,85 @@ export interface Slide {
   tag: string;
 }
 
-interface ImageSliderProps {
+export interface ImageSliderProps {
   slides: Slide[];
+  /** Tiempo en milisegundos entre cada transición automática (Default: 4500) */
   autoPlayInterval?: number;
   className?: string;
 }
+
+// =============================================================================
+// COMPONENT
+// =============================================================================
 
 export function ImageSlider({
   slides,
   autoPlayInterval = 4500,
   className = '',
-}: ImageSliderProps) {
-  const [current, setCurrent] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
+}: ImageSliderProps): JSX.Element {
+  // ---------------------------------------------------------------------------
+  // STATE & REFS
+  // ---------------------------------------------------------------------------
 
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
+  const [current, setCurrent] = useState<number>(0);
+  const [isPaused, setIsPaused] = useState<boolean>(false);
 
-  const goNext = useCallback(() => {
-    setCurrent(prev => (prev + 1) % slides.length);
+  // Referencias para la posición del gesto táctil (swipe)
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+
+  // ---------------------------------------------------------------------------
+  // EVENT HANDLERS
+  // ---------------------------------------------------------------------------
+
+  const goNext = useCallback((): void => {
+    setCurrent((prev) => (prev + 1) % slides.length);
   }, [slides.length]);
 
-  const goPrev = useCallback(() => {
-    setCurrent(prev => (prev - 1 + slides.length) % slides.length);
+  const goPrev = useCallback((): void => {
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
   }, [slides.length]);
 
-  useEffect(() => {
-    if (isPaused) return;
-    const timer = setInterval(goNext, autoPlayInterval);
-    return () => clearInterval(timer);
-  }, [isPaused, goNext, autoPlayInterval]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
+  // Manejo de gestos táctiles con acceso seguro a las coordenadas
+  const handleTouchStart = (e: React.TouchEvent): void => {
+    touchStartX.current = e.touches[0]?.clientX ?? 0;
   };
 
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    touchEndX.current = e.changedTouches[0].clientX;
+  const handleTouchEnd = (e: React.TouchEvent): void => {
+    touchEndX.current = e.changedTouches[0]?.clientX ?? 0;
+    
     const diff = touchStartX.current - touchEndX.current;
 
+    // Umbral de 50px para considerar que es un swipe intencionado
     if (Math.abs(diff) > 50) {
       diff > 0 ? goNext() : goPrev();
     }
   };
 
+  // ---------------------------------------------------------------------------
+  // SIDE EFFECTS
+  // ---------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (isPaused) return;
+    
+    const timer = setInterval(goNext, autoPlayInterval);
+    return () => clearInterval(timer);
+  }, [isPaused, goNext, autoPlayInterval]);
+
+  // ---------------------------------------------------------------------------
+  // RENDER
+  // ---------------------------------------------------------------------------
+
   return (
     <div
-      className={`slider ${className}`}
+      className={`slider ${className}`.trim()}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      {/* Slides */}
+      {/* ── TRACK & SLIDES ──────────────────────────────────────────────── */}
       <div
         className="slider__track"
         style={{ transform: `translateX(-${current * 100}%)` }}
@@ -85,7 +125,7 @@ export function ImageSlider({
         ))}
       </div>
 
-      {/* Navigation */}
+      {/* ── NAVIGATION BUTTONS ──────────────────────────────────────────── */}
       <button
         type="button"
         className="slider__nav slider__nav--prev"
@@ -104,7 +144,7 @@ export function ImageSlider({
         <ChevronRight className="icon-md" />
       </button>
 
-      {/* Dots */}
+      {/* ── DOTS INDICATORS ─────────────────────────────────────────────── */}
       <div className="slider__dots">
         {slides.map((_, i) => (
           <button
@@ -112,9 +152,7 @@ export function ImageSlider({
             type="button"
             aria-label={`Diapositiva ${i + 1}`}
             onClick={() => setCurrent(i)}
-            className={`slider__dot ${
-              i === current ? 'slider__dot--active' : ''
-            }`}
+            className={`slider__dot ${i === current ? 'slider__dot--active' : ''}`.trim()}
           />
         ))}
       </div>

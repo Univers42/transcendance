@@ -132,7 +132,7 @@ export function Navbar({
 
             {/* Desktop CTA - hidden on mobile */}
             <Button 
-              href="#login" 
+              to="/auth" 
               variant="primary" 
               size="sm" 
               className="header__cta"
@@ -179,7 +179,7 @@ export function Navbar({
             />
           </div>
           <Button
-            href="#login"
+            to="/auth"
             variant="primary"
             isBlock={true}
             onClick={closeMenu}
