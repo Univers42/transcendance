@@ -1,29 +1,29 @@
 /**
  * @file Navbar.tsx
  * @description Main navigation header component.
- * 
+ *
  * @author serjimen
  * @date 2026-03-02
  * @version 1.0.0
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import type { JSX } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect, useCallback } from "react";
+import type { JSX } from "react";
+import { Menu, X } from "lucide-react";
 
-import type { NavbarProps } from './Navbar.types';
-import { NavLinks } from './NavLinks';
-import { BrandLogo } from '../ui/brand-logo';
-import { LanguageSelector } from '../ui/language-selector/LanguageSelector';
-import { ThemeToggle } from '../ui/theme-toggle/ThemeToggle';
-import { Button } from '../ui/button';
+import type { NavbarProps } from "./Navbar.types";
+import { NavLinks } from "./NavLinks";
+import { BrandLogo } from "../ui/brand-logo";
+import { LanguageSelector } from "../ui/language-selector/LanguageSelector";
+import { ThemeToggle } from "../ui/theme-toggle/ThemeToggle";
+import { Button } from "../ui/button";
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
 // =============================================================================
 
 const DESKTOP_BREAKPOINT = 1024;
-const MOBILE_MENU_ID = 'navbar-mobile-menu';
+const MOBILE_MENU_ID = "navbar-mobile-menu";
 
 // =============================================================================
 // COMPONENT
@@ -31,7 +31,7 @@ const MOBILE_MENU_ID = 'navbar-mobile-menu';
 
 /**
  * Main navigation header.
- * 
+ *
  * @param {NavbarProps} props - Configuration and state callbacks
  * @returns {JSX.Element} Responsive navigation header
  */
@@ -65,8 +65,8 @@ export function Navbar({
       }
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, [isMenuOpen]);
 
   // ---------------------------------------------------------------------------
@@ -92,7 +92,7 @@ export function Navbar({
   // RENDER HELPERS
   // ---------------------------------------------------------------------------
 
-  const hamburgerLabel = isMenuOpen ? 'Cerrar menú' : 'Abrir menú';
+  const hamburgerLabel = isMenuOpen ? "Cerrar menú" : "Abrir menú";
 
   // ---------------------------------------------------------------------------
   // RENDER
@@ -103,9 +103,8 @@ export function Navbar({
       {/* Main navigation bar */}
       <div className="header__bar">
         <div className="header__container">
-          
           {/* Brand */}
-          <BrandLogo className='header__brand'/>
+          <BrandLogo className="header__brand" />
 
           {/* Desktop navigation - hidden below breakpoint via CSS */}
           <nav className="header__nav" aria-label="Navegación principal">
@@ -114,7 +113,6 @@ export function Navbar({
 
           {/* Right-side controls */}
           <div className="header__actions">
-            
             {/* Language selection */}
             <LanguageSelector
               language={currentLanguage}
@@ -124,19 +122,16 @@ export function Navbar({
 
             {/* Theme toggle - hidden on mobile via CSS */}
             <div className="header__theme-toggle">
-              <ThemeToggle 
-                darkMode={isDarkMode} 
-                onToggle={handleThemeToggle} 
-              />
+              <ThemeToggle darkMode={isDarkMode} onToggle={handleThemeToggle} />
             </div>
 
             {/* Desktop CTA - hidden on mobile */}
-            <Button 
-              to="/auth" 
-              variant="primary" 
-              size="sm" 
+            <Button
+              to="/auth"
+              variant="primary"
+              size="sm"
               className="header__cta"
-              label="Sign In" 
+              label="Sign In"
             />
             {/* Mobile menu toggle */}
             <Button
@@ -149,7 +144,11 @@ export function Navbar({
               aria-expanded={isMenuOpen}
               aria-controls={MOBILE_MENU_ID}
             >
-              {isMenuOpen ? <X className="btn__icon" /> : <Menu className="btn__icon" />}
+              {isMenuOpen ? (
+                <X className="btn__icon" />
+              ) : (
+                <Menu className="btn__icon" />
+              )}
             </Button>
           </div>
         </div>
@@ -163,20 +162,12 @@ export function Navbar({
         aria-hidden={!isMenuOpen}
       >
         <div className="header__mobile-container">
-          
-          <NavLinks 
-            links={links} 
-            variant="mobile" 
-            onItemClick={closeMenu} 
-          />
+          <NavLinks links={links} variant="mobile" onItemClick={closeMenu} />
 
           <hr className="header__mobile-divider" />
 
           <div className="header__mobile-controls">
-            <ThemeToggle 
-              darkMode={isDarkMode} 
-              onToggle={handleThemeToggle} 
-            />
+            <ThemeToggle darkMode={isDarkMode} onToggle={handleThemeToggle} />
           </div>
           <Button
             to="/auth"

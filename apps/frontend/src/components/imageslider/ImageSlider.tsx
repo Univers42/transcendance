@@ -7,9 +7,9 @@
  * @version 1.0.1
  */
 
-import { useState, useEffect, useRef, useCallback } from 'react';
-import type { JSX } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useState, useEffect, useRef, useCallback } from "react";
+import type { JSX } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // =============================================================================
 // TYPES
@@ -36,7 +36,7 @@ export interface ImageSliderProps {
 export function ImageSlider({
   slides,
   autoPlayInterval = 4500,
-  className = '',
+  className = "",
 }: ImageSliderProps): JSX.Element {
   // ---------------------------------------------------------------------------
   // STATE & REFS
@@ -68,12 +68,15 @@ export function ImageSlider({
 
   const handleTouchEnd = (e: React.TouchEvent): void => {
     touchEndX.current = e.changedTouches[0]?.clientX ?? 0;
-    
+
     const diff = touchStartX.current - touchEndX.current;
 
-    // Umbral de 50px para considerar que es un swipe intencionado
     if (Math.abs(diff) > 50) {
-      diff > 0 ? goNext() : goPrev();
+      if (diff > 0) {
+        goNext();
+      } else {
+        goPrev();
+      }
     }
   };
 
@@ -83,7 +86,7 @@ export function ImageSlider({
 
   useEffect(() => {
     if (isPaused) return;
-    
+
     const timer = setInterval(goNext, autoPlayInterval);
     return () => clearInterval(timer);
   }, [isPaused, goNext, autoPlayInterval]);
@@ -111,7 +114,7 @@ export function ImageSlider({
               src={slide.image}
               alt={slide.title}
               className="slider__img"
-              loading={i === 0 ? 'eager' : 'lazy'}
+              loading={i === 0 ? "eager" : "lazy"}
             />
 
             <div className="slider__overlay" />
@@ -152,7 +155,7 @@ export function ImageSlider({
             type="button"
             aria-label={`Diapositiva ${i + 1}`}
             onClick={() => setCurrent(i)}
-            className={`slider__dot ${i === current ? 'slider__dot--active' : ''}`.trim()}
+            className={`slider__dot ${i === current ? "slider__dot--active" : ""}`.trim()}
           />
         ))}
       </div>

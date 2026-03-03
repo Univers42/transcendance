@@ -2,25 +2,25 @@
  * @file LanguageSelector.tsx
  * @description Language selection dropdown with keyboard navigation.
  *              Optimized for visual appeal and accessibility.
- * 
+ *
  * @author serjimen
  * @date 2026-03-02
  * @version 1.0.1
  */
 
-import { useState, useEffect, useRef, useCallback,useId } from 'react';
-import type { JSX } from 'react';
+import { useState, useEffect, useRef, useCallback, useId } from "react";
+import type { JSX } from "react";
 
-import type { LanguageSelectorProps } from './LanguageSelector.types';
+import type { LanguageSelectorProps } from "./LanguageSelector.types";
 
 // =============================================================================
 // CONSTANTS
 // =============================================================================
 
 const KEYS = {
-  ESCAPE: 'Escape',
-  ENTER: 'Enter',
-  SPACE: ' ',
+  ESCAPE: "Escape",
+  ENTER: "Enter",
+  SPACE: " ",
 } as const;
 
 // =============================================================================
@@ -29,7 +29,7 @@ const KEYS = {
 
 /**
  * Language selector dropdown.
- * 
+ *
  * @param {LanguageSelectorProps} props - Configuration
  * @returns {JSX.Element} Language selector
  */
@@ -50,9 +50,12 @@ export function LanguageSelector({
   const componentId = providedId ?? generatedId;
 
   // FIX #2: Non-null assertion con fallback seguro
-  const currentLanguage = languages.find((l) => l.code === language) ?? languages[0]!;
+  const currentLanguage =
+    languages.find((l) => l.code === language) ?? languages[0]!;
   if (!currentLanguage) {
-    throw new Error('[LanguageSelector] No languages provided or language not found');
+    throw new Error(
+      "[LanguageSelector] No languages provided or language not found",
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -68,10 +71,15 @@ export function LanguageSelector({
     setIsOpen((prev) => !prev);
   }, []);
 
-  const selectLanguage = useCallback((langCode: string): void => {
-    onLanguageChange(langCode as import('./LanguageSelector.types').LanguageCode);
-    closeMenu();
-  }, [onLanguageChange, closeMenu]);
+  const selectLanguage = useCallback(
+    (langCode: string): void => {
+      onLanguageChange(
+        langCode as import("./LanguageSelector.types").LanguageCode,
+      );
+      closeMenu();
+    },
+    [onLanguageChange, closeMenu],
+  );
 
   // ---------------------------------------------------------------------------
   // SIDE EFFECTS
@@ -95,12 +103,12 @@ export function LanguageSelector({
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('mousedown', handleClickOutside);
-    
+    document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isOpen, closeMenu]);
 
@@ -123,27 +131,24 @@ export function LanguageSelector({
         <span className="language-selector__flag" aria-hidden="true">
           {currentLanguage.flag}
         </span>
-        <span className="language-selector__code">
-          {currentLanguage.code}
-        </span>
+        <span className="language-selector__code">{currentLanguage.code}</span>
       </button>
 
       {/* Dropdown - Estructura mejorada para UX fluida */}
       {isOpen && (
-        <div
-          ref={menuRef}
-          className="language-selector__dropdown"
-          role="menu"
-        >
+        <div ref={menuRef} className="language-selector__dropdown" role="menu">
           {languages.map((lang) => (
             <button
               key={lang.code}
               type="button"
               role="menuitem"
-              className={`language-selector__option${lang.code === language ? ' is-active' : ''}`}
+              className={`language-selector__option${lang.code === language ? " is-active" : ""}`}
               onClick={() => selectLanguage(lang.code)}
             >
-              <span className="language-selector__option-flag" aria-hidden="true">
+              <span
+                className="language-selector__option-flag"
+                aria-hidden="true"
+              >
                 {lang.flag}
               </span>
               <span className="language-selector__option-label">

@@ -1,7 +1,7 @@
 /**
  * @file Navbar.types.ts
  * @description Type definitions for the Navbar component and its dependencies.
- * 
+ *
  * @author serjimen
  * @date 2026-03-02
  * @version 1.0.0

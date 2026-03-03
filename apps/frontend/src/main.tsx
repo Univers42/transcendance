@@ -1,7 +1,7 @@
 /**
  * @file main.tsx
  * @description Main entry point of the React application.
- * 
+ *
  * @author serjimen
  * @date 2026-03-02
  * @version 1.1.0
@@ -31,7 +31,7 @@ const rootElement = document.getElementById("root");
 if (!rootElement) {
   throw new Error(
     "[main.tsx] Could not find element with id 'root'. " +
-    "Make sure your index.html contains <div id='root'></div>"
+      "Make sure your index.html contains <div id='root'></div>",
   );
 }
 
@@ -41,12 +41,12 @@ if (!rootElement) {
 
 /**
  * Create a concurrent React root (React 18+).
- * 
+ *
  * The createRoot API enables:
  * - Concurrent rendering for better user experience
  * - React 18 features (Suspense, Transitions, etc.)
  * - Improved performance for updates
- * 
+ *
  * @see https://react.dev/reference/react-dom/client/createRoot
  */
 const root = createRoot(rootElement);
@@ -57,13 +57,13 @@ const root = createRoot(rootElement);
 
 /**
  * Mount the application with the following configurations:
- * 
+ *
  * 1. StrictMode: Enables additional checks in development
  *    - Detects unintended side effects
  *    - Identifies deprecated APIs
  *    - Warns about incorrect ref usage
  *    ⚠️ Components render twice in DEV (intentional to surface bugs)
- * 
+ *
  * 2. BrowserRouter: Enables URL‑based routing for the browser
  *    - Uses the History API (pushState/replaceState)
  *    - Clean URLs: /route instead of /#/route (unlike HashRouter)
@@ -74,5 +74,5 @@ root.render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </StrictMode>
+  </StrictMode>,
 );

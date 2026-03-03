@@ -1,30 +1,30 @@
 /**
  * @file App.tsx
- * @description Root application component. Manages global state (theme, language) 
+ * @description Root application component. Manages global state (theme, language)
  * and base routing using react-router-dom.
  * * @author serjimen
  * @date 2026-03-03
  * @version 1.2.0
  */
 
-import { useState, useEffect, useCallback } from 'react';
-import { Routes, Route } from 'react-router-dom';
-import type { JSX } from 'react';
+import { useState, useEffect, useCallback } from "react";
+import { Routes, Route } from "react-router-dom";
+import type { JSX } from "react";
 
 // Pages
-import { MainPage } from './pages/mainpage/MainPage';
-import { AuthPage } from './pages/authpage/AuthPage';
+import { MainPage } from "./pages/mainpage/MainPage";
+import { AuthPage } from "./pages/authpage/AuthPage";
 
 // Types
-import type { LanguageCode } from './components/navbar/Navbar.types';
+import type { LanguageCode } from "./components/navbar/Navbar.types";
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
 // =============================================================================
 
-const STORAGE_KEY_THEME = 'prismatica-dark-mode';
-const MEDIA_QUERY_DARK_MODE = '(prefers-color-scheme: dark)';
-const THEME_ATTRIBUTE = 'data-theme';
+const STORAGE_KEY_THEME = "prismatica-dark-mode";
+const MEDIA_QUERY_DARK_MODE = "(prefers-color-scheme: dark)";
+const THEME_ATTRIBUTE = "data-theme";
 
 // =============================================================================
 // UTILITY FUNCTIONS
@@ -43,7 +43,9 @@ const getInitialDarkMode = (): boolean => {
 const persistThemePreference = (isDarkMode: boolean): void => {
   try {
     localStorage.setItem(STORAGE_KEY_THEME, JSON.stringify(isDarkMode));
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
 };
 
 // =============================================================================
@@ -54,16 +56,19 @@ export default function App(): JSX.Element {
   // ---------------------------------------------------------------------------
   // STATE
   // ---------------------------------------------------------------------------
-  
+
   const [isDarkMode, setIsDarkMode] = useState<boolean>(getInitialDarkMode);
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('ES');
+  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("ES");
 
   // ---------------------------------------------------------------------------
   // SIDE EFFECTS
   // ---------------------------------------------------------------------------
 
   useEffect(() => {
-    document.documentElement.setAttribute(THEME_ATTRIBUTE, isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute(
+      THEME_ATTRIBUTE,
+      isDarkMode ? "dark" : "light",
+    );
     persistThemePreference(isDarkMode);
   }, [isDarkMode]);
 
@@ -85,21 +90,18 @@ export default function App(): JSX.Element {
 
   return (
     <Routes>
-      <Route 
-        path="/" 
+      <Route
+        path="/"
         element={
-          <MainPage 
+          <MainPage
             isDarkMode={isDarkMode}
             onToggleTheme={handleToggleTheme}
             currentLanguage={currentLanguage}
             onLanguageChange={handleLanguageChange}
           />
-        } 
+        }
       />
-      <Route 
-        path="/auth" 
-        element={<AuthPage />} 
-      />
+      <Route path="/auth" element={<AuthPage />} />
     </Routes>
   );
 }

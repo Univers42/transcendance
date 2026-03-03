@@ -6,7 +6,7 @@
  * @version 1.0.0
  */
 
-import type { JSX } from 'react';
+import type { JSX } from "react";
 
 // =============================================================================
 // COMPONENT

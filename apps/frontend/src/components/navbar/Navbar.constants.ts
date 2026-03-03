@@ -1,7 +1,7 @@
 /**
  * @file Navbar.constants.ts
  * @description Static configuration data for the Navbar component.
- * 
+ *
  * @author serjimen
  * @date 2026-03-02
  * @version 1.0.0

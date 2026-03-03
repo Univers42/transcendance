@@ -1,25 +1,26 @@
-import { ArrowRight, Sparkles } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { ImageSlider, type Slide } from '../imageslider/ImageSlider';
+import { ArrowRight, Sparkles } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ImageSlider, type Slide } from "../imageslider/ImageSlider";
 
 const SLIDES: Slide[] = [
   {
-    image: 'https://images.unsplash.com/photo-1763568258696-32147bb44379?...',
-    title: 'Dashboard personalizable',
-    description: 'Visualiza tus métricas en tiempo real con widgets interactivos',
-    tag: 'ANALYTICS',
+    image: "https://images.unsplash.com/photo-1763568258696-32147bb44379?...",
+    title: "Dashboard personalizable",
+    description:
+      "Visualiza tus métricas en tiempo real con widgets interactivos",
+    tag: "ANALYTICS",
   },
   {
-    image: 'https://images.unsplash.com/photo-1758691736407-02406d18df6c?...',
-    title: 'Visualización avanzada',
-    description: 'Gráficas interactivas y reportes exportables a tu medida',
-    tag: 'CHARTS',
+    image: "https://images.unsplash.com/photo-1758691736407-02406d18df6c?...",
+    title: "Visualización avanzada",
+    description: "Gráficas interactivas y reportes exportables a tu medida",
+    tag: "CHARTS",
   },
   {
-    image: 'https://images.unsplash.com/photo-1740645580343-efafff76d4c6?...',
-    title: 'Consultas en tiempo real',
-    description: 'Editor SQL avanzado con autocompletado y sintaxis resaltada',
-    tag: 'QUERY',
+    image: "https://images.unsplash.com/photo-1740645580343-efafff76d4c6?...",
+    title: "Consultas en tiempo real",
+    description: "Editor SQL avanzado con autocompletado y sintaxis resaltada",
+    tag: "QUERY",
   },
 ];
 
@@ -36,16 +37,14 @@ function HeroCopy({ centered = false }: { centered?: boolean }) {
   return (
     <div
       className={`hero__content ${
-        centered ? 'hero__content--centered' : 'hero__content--left'
+        centered ? "hero__content--centered" : "hero__content--left"
       }`}
     >
       <LiveBadge />
 
       <h1 className="hero__title">
-        Tu base de datos{' '}
-        <span className="hero__accent">en la nube,</span>
-        <br />
-        a tu manera.
+        Tu base de datos <span className="hero__accent">en la nube,</span>
+        <br />a tu manera.
       </h1>
 
       <p className="hero__subtitle">
@@ -55,10 +54,10 @@ function HeroCopy({ centered = false }: { centered?: boolean }) {
 
       <div className="hero__stats">
         {[
-          { value: '50K+', label: 'bases de datos' },
-          { value: '12K+', label: 'equipos activos' },
-          { value: '99.9%', label: 'disponibilidad' },
-        ].map(stat => (
+          { value: "50K+", label: "bases de datos" },
+          { value: "12K+", label: "equipos activos" },
+          { value: "99.9%", label: "disponibilidad" },
+        ].map((stat) => (
           <div key={stat.label} className="hero__stat">
             <span className="hero__stat-value">{stat.value}</span>
             <span className="hero__stat-label">{stat.label}</span>
