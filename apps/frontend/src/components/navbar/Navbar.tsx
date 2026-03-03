@@ -16,6 +16,7 @@ import { NavLinks } from './NavLinks';
 import { BrandLogo } from '../ui/brand-logo';
 import { LanguageSelector } from '../ui/language-selector/LanguageSelector';
 import { ThemeToggle } from '../ui/theme-toggle/ThemeToggle';
+import { Button } from '../ui/button';
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
@@ -130,22 +131,26 @@ export function Navbar({
             </div>
 
             {/* Desktop CTA - hidden on mobile */}
-            <a href="#login" className="btn btn--primary btn--sm header__cta">
-              Iniciar sesión
-            </a>
-
+            <Button 
+              href="#login" 
+              variant="primary" 
+              size="sm" 
+              className="header__cta"
+              label="Sign In" 
+            />
             {/* Mobile menu toggle */}
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={toggleMenu}
-              className="btn btn--ghost btn--icon btn--sm header__hamburger"
+              className="header__hamburger"
               aria-label={hamburgerLabel}
               aria-expanded={isMenuOpen}
               aria-controls={MOBILE_MENU_ID}
             >
               {isMenuOpen ? <X className="btn__icon" /> : <Menu className="btn__icon" />}
-            </button>
-
+            </Button>
           </div>
         </div>
       </div>
@@ -173,18 +178,16 @@ export function Navbar({
               onToggle={handleThemeToggle} 
             />
           </div>
-
-          <a
+          <Button
             href="#login"
+            variant="primary"
+            isBlock={true}
             onClick={closeMenu}
-            className="btn btn--primary btn--block header__mobile-cta"
-          >
-            Iniciar sesión
-          </a>
-
+            className="header__mobile-cta"
+            label="Sign In"
+          />
         </div>
       </div>
-
     </header>
   );
 }
