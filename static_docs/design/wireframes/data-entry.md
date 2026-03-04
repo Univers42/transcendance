@@ -22,7 +22,7 @@
 
 > Each data row has edit (pencil) and delete (trash) icon buttons in the Actions column. These are the two essential per-row operations — correctly present and icon-differentiated.
 
-##
+## Proposed Improvements
 
 ### Import CSV — Not Accessible from Data View
 
