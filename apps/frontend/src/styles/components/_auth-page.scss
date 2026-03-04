@@ -2,37 +2,13 @@
  * @file _auth-page.scss
  * @description Styles for AuthPage component
  * Aligned with main.scss design system
+ * Uses same structure as app layout for consistency
  */
 
 @use '../abstracts' as *;
 
 /* ─────────────────────────────────────────────────────────────────────────── */
-/* AUTH PAGE LAYOUT */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--bg-primary);
-  transition: background-color 200ms ease;
-}
-
-.auth-page__main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: $space-16 $space-6 $space-8 $space-6;  // 4rem 1.5rem 2rem 1.5rem (consistent with header height)
-  gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-  flex-wrap: wrap;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* INFO PANEL */
+/* INFO PANEL (Left content) */
 /* ─────────────────────────────────────────────────────────────────────────── */
 
 .auth-page__info-panel {
@@ -145,7 +121,7 @@
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
-/* AUTH FORM CARD */
+/* FORM CARD (Right content) */
 /* ─────────────────────────────────────────────────────────────────────────── */
 
 .auth-page__form-card {

@@ -4,7 +4,7 @@
  * Reuses Navbar for consistency and SplitLayout for the two-column structure.
  * * @author serjimen
  * @date 2026-03-03
- * @version 1.3.0
+ * @version 1.3.1
  */
 
 import type { JSX } from 'react';
@@ -84,7 +84,7 @@ export function AuthPage({
   onLanguageChange 
 }: AuthPageProps): JSX.Element {
   return (
-    <div className="auth-page">
+    <div className="app" aria-hidden="false">
       {/* ── TOP NAVIGATION BAR ── */}
       <header className="app__header">
         <Navbar
@@ -99,33 +99,39 @@ export function AuthPage({
       </header>
 
       {/* ── MAIN CONTENT AREA ── */}
-      <main 
-        className="auth-page__main" 
-        style={{
-          minHeight: '100vh',
-          display: 'flex',
-          alignItems: 'center',
-          paddingTop: '6rem', // Compensa la cabecera fija
-          paddingBottom: '3rem'
-        }}
-      >
-        <SplitLayout
-          variant="split"
-          maxWidth="1200px"
-          leftContent={<InfoPanel />}
-          rightContent={
-            <div className="auth-page__form-card">
-              <div className="auth-page__form-placeholder">
-                <h2 className="auth-page__form-title">
-                  Formularios próximamente
-                </h2>
-                <p className="auth-page__form-subtitle">
-                  Aquí integraremos el Login y Registro.
-                </p>
-              </div>
-            </div>
-          }
-        />
+      <main className="app__main" id="main-content">
+        <div className="container">
+          
+          {/* 🔥 ENVOLTORIO DE CENTRADO (Igual que HeroSection) 🔥 */}
+          <section 
+            style={{
+              minHeight: '100vh',
+              display: 'flex',
+              alignItems: 'center',
+              paddingTop: '6rem', 
+              paddingBottom: '3rem'
+            }}
+          >
+            <SplitLayout
+              variant="split"
+              maxWidth="1200px" // Ajustado para que coincida milimétricamente con el Hero
+              leftContent={<InfoPanel />}
+              rightContent={
+                <div className="auth-page__form-card">
+                  <div className="auth-page__form-placeholder">
+                    <h2 className="auth-page__form-title">
+                      Formularios próximamente
+                    </h2>
+                    <p className="auth-page__form-subtitle">
+                      Aquí integraremos el Login y Registro.
+                    </p>
+                  </div>
+                </div>
+              }
+            />
+          </section>
+
+        </div>
       </main>
     </div>
   );

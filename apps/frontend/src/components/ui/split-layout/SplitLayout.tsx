@@ -19,49 +19,20 @@ export function SplitLayout({
   id,
 }: SplitLayoutProps): JSX.Element {
   
-  const isSplit = variant === 'split';
-
   return (
     <div
       id={id}
       className={`split-layout split-layout--${variant} ${className}`.trim()}
-      style={{
-        maxWidth,
-        width: '100%',
-        margin: '0 auto',
-        display: 'flex',
-        // Si es split usa fila, si es centrado usa columna
-        flexDirection: isSplit ? 'row' : 'column',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        justifyContent: isSplit ? 'space-between' : 'center',
-        gap: '3rem',
-      }}
+      style={{ maxWidth }}
     >
       {/* ── LADO IZQUIERDO ── */}
-      <div 
-        className="split-layout__left" 
-        style={{ 
-          flex: isSplit ? '1 1 400px' : '1 1 auto', 
-          width: isSplit ? 'auto' : '100%',
-          display: 'flex', 
-          flexDirection: 'column' 
-        }}
-      >
+      <div className="split-layout__left">
         {leftContent}
       </div>
 
       {/* ── LADO DERECHO (Solo se renderiza si existe) ── */}
       {rightContent && (
-        <div 
-          className="split-layout__right" 
-          style={{ 
-            flex: isSplit ? '1 1 400px' : '1 1 auto',
-            width: isSplit ? 'auto' : '100%',
-            display: 'flex',
-            justifyContent: isSplit ? 'flex-end' : 'center'
-          }}
-        >
+        <div className="split-layout__right">
           {rightContent}
         </div>
       )}
