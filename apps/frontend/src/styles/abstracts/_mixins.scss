@@ -12,40 +12,58 @@
 
 // Mobile-first: styles apply ABOVE breakpoint
 @mixin xs-up {
-  @media (min-width: $breakpoint-xs) { @content; }
+  @media (min-width: $breakpoint-xs) {
+    @content;
+  }
 }
 
 @mixin sm-up {
-  @media (min-width: $breakpoint-sm) { @content; }
+  @media (min-width: $breakpoint-sm) {
+    @content;
+  }
 }
 
 @mixin md-up {
-  @media (min-width: $breakpoint-md) { @content; }
+  @media (min-width: $breakpoint-md) {
+    @content;
+  }
 }
 
 @mixin lg-up {
-  @media (min-width: $breakpoint-lg) { @content; }
+  @media (min-width: $breakpoint-lg) {
+    @content;
+  }
 }
 
 @mixin xl-up {
-  @media (min-width: $breakpoint-xl) { @content; }
+  @media (min-width: $breakpoint-xl) {
+    @content;
+  }
 }
 
 @mixin xxl-up {
-  @media (min-width: $breakpoint-2xl) { @content; }
+  @media (min-width: $breakpoint-2xl) {
+    @content;
+  }
 }
 
 // Max-width: styles apply BELOW breakpoint (excepciones)
 @mixin xs-only {
-  @media (max-width: #{$breakpoint-xs - 1px}) { @content; }
+  @media (max-width: #{$breakpoint-xs - 1px}) {
+    @content;
+  }
 }
 
 @mixin sm-only {
-  @media (max-width: #{$breakpoint-sm - 1px}) { @content; }
+  @media (max-width: #{$breakpoint-sm - 1px}) {
+    @content;
+  }
 }
 
 @mixin md-only {
-  @media (max-width: #{$breakpoint-md - 1px}) { @content; }
+  @media (max-width: #{$breakpoint-md - 1px}) {
+    @content;
+  }
 }
 
 // ════════════════════════════════════════════
@@ -56,7 +74,10 @@
   background: $bg-card;
   border: 1px solid $border-color;
   border-radius: $radius-lg;
-  transition: $transition-colors, transform $duration-slow $ease-out, box-shadow $duration-slow $ease-out;
+  transition:
+    $transition-colors,
+    transform $duration-slow $ease-out,
+    box-shadow $duration-slow $ease-out;
 
   @if $hoverable {
     &:hover {
@@ -75,7 +96,7 @@
 @mixin card-elevated {
   @include card;
   box-shadow: $shadow-md;
-  
+
   &:hover {
     box-shadow: $shadow-xl;
   }
@@ -117,7 +138,7 @@
 
 @mixin status-dot($color) {
   display: inline-block;
-  width: 0.625rem;  // 10px
+  width: 0.625rem; // 10px
   height: 0.625rem;
   border-radius: $radius-full;
   background: $color;
@@ -163,7 +184,7 @@
 @mixin focus-ring($color: $accent) {
   outline: 2px solid $color;
   outline-offset: 2px;
-  
+
   @media (prefers-reduced-motion: no-preference) {
     transition: outline-offset $duration-fast $ease-out;
   }
@@ -185,11 +206,11 @@
   font: inherit;
   color: inherit;
   text-align: inherit;
-  
+
   &:focus {
     outline: none;
   }
-  
+
   &:focus-visible {
     @include focus-ring;
   }
@@ -222,7 +243,7 @@
   font-family: $font-family-data;
   font-variant-numeric: tabular-nums;
   letter-spacing: $tracking-normal;
-  
+
   @if $size == 'xl' {
     font-size: $data-xl;
     font-weight: $weight-semibold;
@@ -319,7 +340,7 @@
 
 // Apply styles only when data-theme attribute is set
 @mixin theme($mode) {
-  [data-theme="#{$mode}"] & {
+  [data-theme='#{$mode}'] & {
     @content;
   }
 }

@@ -6,10 +6,20 @@
 
 .container {
   @include container;
-  
-  &--sm { max-width: $container-sm; }
-  &--md { max-width: $container-md; }
-  &--lg { max-width: $container-lg; }
-  &--xl { max-width: $container-xl; }
-  &--full { max-width: none; }
+
+  &--sm {
+    max-width: $container-sm;
+  }
+  &--md {
+    max-width: $container-md;
+  }
+  &--lg {
+    max-width: $container-lg;
+  }
+  &--xl {
+    max-width: $container-xl;
+  }
+  &--full {
+    max-width: none;
+  }
 }

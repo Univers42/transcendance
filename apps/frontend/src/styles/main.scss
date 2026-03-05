@@ -2,7 +2,7 @@
 // PRISMATICA — Main Stylesheet
 // ============================================
 
-// Ya NO necesitas importar abstracts o graphical-chart aquí arriba, 
+// Ya NO necesitas importar abstracts o graphical-chart aquí arriba,
 // porque no vas a escribir CSS directamente en el main.scss.
 // Cada archivo de abajo ya importa lo que necesita.
 
@@ -11,11 +11,14 @@
 @use 'base/typography';
 
 // 2. COMPONENTES
+@use 'components/auth-page';
+@use 'components/authforms';
 @use 'components/badge';
 @use 'components/brand-logo';
 @use 'components/button';
 @use 'components/cards';
 @use 'components/display';
+@use 'components/footer';
 @use 'components/hero-slider';
 @use 'components/hero';
 @use 'components/icon';
@@ -24,13 +27,13 @@
 @use 'components/live-badge';
 @use 'components/quickstart';
 @use 'components/sizing';
+@use 'components/split-layout';
 @use 'components/table';
 @use 'components/theme-toggle';
 
 // 3. LAYOUTS
 @use 'layout/container';
 @use 'layout/header';
-@use 'layout/footer';
 @use 'layout/app';
 
 // 4. UTILIDADES
@@ -43,7 +46,7 @@
   @include theme-variables('light');
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   @include theme-variables('dark');
 }
 

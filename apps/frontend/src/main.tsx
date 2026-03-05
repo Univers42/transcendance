@@ -7,12 +7,12 @@
  * @version 1.1.0
  */
 
-import { StrictMode } from "react";
-import { createRoot } from "react-dom/client";
-import { BrowserRouter } from "react-router-dom";
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 
-import App from "./App";
-import "./styles/main.scss";
+import App from './App';
+import './styles/main.scss';
 
 // =============================================================================
 // ROOT CONTAINER VALIDATION
@@ -22,7 +22,7 @@ import "./styles/main.scss";
  * DOM element where the React app will be mounted.
  * It must exist in index.html: <div id="root"></div>
  */
-const rootElement = document.getElementById("root");
+const rootElement = document.getElementById('root');
 
 /**
  * Verify that the root container exists before attempting to mount the app.

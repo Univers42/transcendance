@@ -12,7 +12,7 @@
 // =============================================================================
 
 /** Supported language codes across the application */
-export type LanguageCode = "ES" | "EN" | "FR" | "DE" | "PT";
+export type LanguageCode = 'ES' | 'EN' | 'FR' | 'DE' | 'PT';
 
 /** Structure for language selection options */
 export interface Language {
@@ -39,6 +39,7 @@ export interface NavbarProps {
   onToggleTheme: () => void;
   currentLanguage: LanguageCode;
   onLanguageChange: (language: LanguageCode) => void;
+  ctaMode?: 'login' | 'back';
 
   links: readonly NavLink[];
   languages: readonly Language[];

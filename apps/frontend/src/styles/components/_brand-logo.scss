@@ -10,16 +10,16 @@
   gap: $space-3;
   text-decoration: none;
   color: inherit;
-  
+
   &:hover {
     opacity: 0.9;
   }
-  
+
   &:focus-visible {
     @include focus-ring;
     border-radius: $radius-md;
   }
-  
+
   &__icon {
     width: 2rem;
     height: 2rem;
@@ -29,19 +29,19 @@
     align-items: center;
     justify-content: center;
     background: var(--prisma-accent);
-    color: white;  // Para el stroke="currentColor" del SVG
+    color: white; // Para el stroke="currentColor" del SVG
   }
-  
+
   &__svg {
     display: block;
   }
-  
+
   &__title {
     font-family: $font-family-ui;
     font-size: $text-lg;
     font-weight: $weight-semibold;
     color: $text-primary;
-    
+
     @include theme('dark') {
       color: $dark-text-primary;
     }

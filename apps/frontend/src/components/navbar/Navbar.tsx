@@ -7,23 +7,23 @@
  * @version 1.0.0
  */
 
-import { useState, useEffect, useCallback } from "react";
-import type { JSX } from "react";
-import { Menu, X } from "lucide-react";
+import { useState, useEffect, useCallback } from 'react';
+import type { JSX } from 'react';
+import { Menu, X, ArrowLeft } from 'lucide-react';
 
-import type { NavbarProps } from "./Navbar.types";
-import { NavLinks } from "./NavLinks";
-import { BrandLogo } from "../ui/brand-logo";
-import { LanguageSelector } from "../ui/language-selector/LanguageSelector";
-import { ThemeToggle } from "../ui/theme-toggle/ThemeToggle";
-import { Button } from "../ui/button";
+import type { NavbarProps } from './Navbar.types';
+import { NavLinks } from './NavLinks';
+import { BrandLogo } from '../ui/brand-logo';
+import { LanguageSelector } from '../ui/language-selector/LanguageSelector';
+import { ThemeToggle } from '../ui/theme-toggle/ThemeToggle';
+import { Button } from '../ui/button';
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
 // =============================================================================
 
 const DESKTOP_BREAKPOINT = 1024;
-const MOBILE_MENU_ID = "navbar-mobile-menu";
+const MOBILE_MENU_ID = 'navbar-mobile-menu';
 
 // =============================================================================
 // COMPONENT
@@ -42,6 +42,7 @@ export function Navbar({
   onLanguageChange,
   links,
   languages,
+  ctaMode = 'login',
 }: NavbarProps): JSX.Element {
   // ---------------------------------------------------------------------------
   // STATE
@@ -65,8 +66,8 @@ export function Navbar({
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isMenuOpen]);
 
   // ---------------------------------------------------------------------------
@@ -92,7 +93,18 @@ export function Navbar({
   // RENDER HELPERS
   // ---------------------------------------------------------------------------
 
-  const hamburgerLabel = isMenuOpen ? "Cerrar menú" : "Abrir menú";
+  const hamburgerLabel = isMenuOpen ? 'Cerrar menú' : 'Abrir menú';
+
+  // ---------------------------------------------------------------------------
+  // CONFIGURACIÓN DINÁMICA DEL BOTÓN (CTA)
+  // ---------------------------------------------------------------------------
+  const isBackMode = ctaMode === 'back';
+  const ctaConfig = {
+    to: isBackMode ? '/' : '/auth',
+    label: isBackMode ? 'Volver' : 'Sign In',
+    variant: (isBackMode ? 'ghost' : 'primary') as 'ghost' | 'primary',
+    leftIcon: isBackMode ? <ArrowLeft className="w-4 h-4" /> : undefined,
+  };
 
   // ---------------------------------------------------------------------------
   // RENDER
@@ -127,11 +139,12 @@ export function Navbar({
 
             {/* Desktop CTA - hidden on mobile */}
             <Button
-              to="/auth"
-              variant="primary"
+              to={ctaConfig.to}
+              variant={ctaConfig.variant}
               size="sm"
               className="header__cta"
-              label="Sign In"
+              label={ctaConfig.label}
+              leftIcon={ctaConfig.leftIcon}
             />
             {/* Mobile menu toggle */}
             <Button
@@ -170,12 +183,13 @@ export function Navbar({
             <ThemeToggle darkMode={isDarkMode} onToggle={handleThemeToggle} />
           </div>
           <Button
-            to="/auth"
-            variant="primary"
+            to={ctaConfig.to}
+            variant={ctaConfig.variant}
             isBlock={true}
             onClick={closeMenu}
             className="header__mobile-cta"
-            label="Sign In"
+            label={ctaConfig.label}
+            leftIcon={ctaConfig.leftIcon}
           />
         </div>
       </div>

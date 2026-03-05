@@ -32,7 +32,12 @@
   &__overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, rgba(0, 0, 0, 0.1) 40%, transparent 100%);
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.65) 0%,
+      rgba(0, 0, 0, 0.1) 40%,
+      transparent 100%
+    );
   }
 
   &__info {
@@ -121,7 +126,9 @@
     height: 6px;
     border-radius: $radius-full;
     background-color: var(--slider-dot-bg);
-    transition: width 0.3s ease, background-color 0.3s ease;
+    transition:
+      width 0.3s ease,
+      background-color 0.3s ease;
   }
 
   &__dot--active {
@@ -137,9 +144,14 @@
 }
 
 // Theme-specific overrides for better contrast on light/dark
-[data-theme="light"] {
+[data-theme='light'] {
   .slider__overlay {
-    background: linear-gradient(to top, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.2) 40%, transparent 100%);
+    background: linear-gradient(
+      to top,
+      rgba(255, 255, 255, 0.75) 0%,
+      rgba(255, 255, 255, 0.2) 40%,
+      transparent 100%
+    );
   }
 
   .slider__dot {
@@ -151,9 +163,14 @@
   }
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
   .slider__overlay {
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0.25) 40%, transparent 100%);
+    background: linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.75) 0%,
+      rgba(0, 0, 0, 0.25) 40%,
+      transparent 100%
+    );
   }
 
   .slider__dot {

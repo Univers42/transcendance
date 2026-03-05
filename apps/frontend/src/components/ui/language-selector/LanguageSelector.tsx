@@ -8,19 +8,19 @@
  * @version 1.0.1
  */
 
-import { useState, useEffect, useRef, useCallback, useId } from "react";
-import type { JSX } from "react";
+import { useState, useEffect, useRef, useCallback, useId } from 'react';
+import type { JSX } from 'react';
 
-import type { LanguageSelectorProps } from "./LanguageSelector.types";
+import type { LanguageSelectorProps } from './LanguageSelector.types';
 
 // =============================================================================
 // CONSTANTS
 // =============================================================================
 
 const KEYS = {
-  ESCAPE: "Escape",
-  ENTER: "Enter",
-  SPACE: " ",
+  ESCAPE: 'Escape',
+  ENTER: 'Enter',
+  SPACE: ' ',
 } as const;
 
 // =============================================================================
@@ -54,7 +54,7 @@ export function LanguageSelector({
     languages.find((l) => l.code === language) ?? languages[0]!;
   if (!currentLanguage) {
     throw new Error(
-      "[LanguageSelector] No languages provided or language not found",
+      '[LanguageSelector] No languages provided or language not found',
     );
   }
 
@@ -74,7 +74,7 @@ export function LanguageSelector({
   const selectLanguage = useCallback(
     (langCode: string): void => {
       onLanguageChange(
-        langCode as import("./LanguageSelector.types").LanguageCode,
+        langCode as import('./LanguageSelector.types').LanguageCode,
       );
       closeMenu();
     },
@@ -103,12 +103,12 @@ export function LanguageSelector({
       }
     };
 
-    document.addEventListener("keydown", handleKeyDown);
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('mousedown', handleClickOutside);
 
     return () => {
-      document.removeEventListener("keydown", handleKeyDown);
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [isOpen, closeMenu]);
 
@@ -142,7 +142,7 @@ export function LanguageSelector({
               key={lang.code}
               type="button"
               role="menuitem"
-              className={`language-selector__option${lang.code === language ? " is-active" : ""}`}
+              className={`language-selector__option${lang.code === language ? ' is-active' : ''}`}
               onClick={() => selectLanguage(lang.code)}
             >
               <span
