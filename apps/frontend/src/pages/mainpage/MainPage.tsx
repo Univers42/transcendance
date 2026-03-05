@@ -7,16 +7,15 @@
  * @version 1.0.0
  */
 
-import type { JSX } from "react";
+import type { JSX } from 'react';
 
-import { Navbar } from "../../components/navbar/Navbar";
-import { HeroSection } from "../../components/herosection/HeroSection";
-import { ProductDescription } from "../../components/productdescription/ProductDescription";
-import { Footer } from "../../components/footer/Footer";
+import { Navbar } from '../../components/navbar/Navbar';
+import { HeroSection } from '../../components/herosection/HeroSection';
+import { ProductDescription } from '../../components/productdescription/ProductDescription';
+import { Footer } from '../../components/footer/Footer';
 
-import type { MainPageProps } from "./MainPage.types";
-import { LANGUAGES, NAV_LINKS } from "../../components/navbar/Navbar.constants";
-
+import type { MainPageProps } from './MainPage.types';
+import { LANGUAGES, NAV_LINKS } from '../../components/navbar/Navbar.constants';
 
 // =============================================================================
 // COMPONENT

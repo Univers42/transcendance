@@ -1,6 +1,6 @@
 /**
  * @file AuthPage.tsx
- * @description Authentication page layout. 
+ * @description Authentication page layout.
  * Reuses Navbar for consistency and SplitLayout for the two-column structure.
  * * @author serjimen
  * @date 2026-03-03
@@ -23,11 +23,11 @@ import type { AuthPageProps } from './AuthPage.types';
 // MAIN COMPONENT
 // =============================================================================
 
-export function AuthPage({ 
-  isDarkMode, 
-  onToggleTheme, 
-  currentLanguage, 
-  onLanguageChange 
+export function AuthPage({
+  isDarkMode,
+  onToggleTheme,
+  currentLanguage,
+  onLanguageChange,
 }: AuthPageProps): JSX.Element {
   return (
     <div className="app" aria-hidden="false">
@@ -39,7 +39,7 @@ export function AuthPage({
           onLanguageChange={onLanguageChange}
           links={NAV_LINKS}
           languages={LANGUAGES}
-          ctaMode="back" 
+          ctaMode="back"
         />
       </header>
 

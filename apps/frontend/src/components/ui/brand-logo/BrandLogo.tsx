@@ -8,8 +8,8 @@
  * @version 1.0.0
  */
 
-import type { JSX } from "react";
-import type { BrandLogoProps } from "./BrandLogo.types";
+import type { JSX } from 'react';
+import type { BrandLogoProps } from './BrandLogo.types';
 
 // =============================================================================
 // DEFAULTS
@@ -47,8 +47,8 @@ const DefaultLogoIcon = (): JSX.Element => (
 );
 
 /** Default configuration values */
-const DEFAULT_HREF = "/";
-const DEFAULT_TITLE = "Prismatica";
+const DEFAULT_HREF = '/';
+const DEFAULT_TITLE = 'Prismatica';
 
 // =============================================================================
 // COMPONENT
@@ -65,10 +65,10 @@ export function BrandLogo({
   href = DEFAULT_HREF,
   title = DEFAULT_TITLE,
   icon,
-  className = "",
+  className = '',
   onClick,
 }: BrandLogoProps): JSX.Element {
-  const logoClasses = ["brand-logo", className].filter(Boolean).join(" ");
+  const logoClasses = ['brand-logo', className].filter(Boolean).join(' ');
 
   return (
     <a

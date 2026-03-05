@@ -22,7 +22,6 @@ export function AuthForms(): JSX.Element {
   return (
     <div className="auth-form__container">
       <div className="auth-form__card">
-        
         {/* Tab switcher */}
         <div className="auth-form__tabs">
           {(['login', 'register'] as Tab[]).map((t) => (
@@ -43,20 +42,24 @@ export function AuthForms(): JSX.Element {
             {tab === 'login' ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
           </h2>
           <p className="auth-form__description">
-            {tab === 'login' ? 'Accede a tu panel de datos y dashboards' : 'Empieza gratis, sin tarjeta de crédito'}
+            {tab === 'login'
+              ? 'Accede a tu panel de datos y dashboards'
+              : 'Empieza gratis, sin tarjeta de crédito'}
           </p>
         </div>
 
         {/* Active form */}
-        {tab === 'login' 
-          ? <LoginForm onSwitch={() => setTab('register')} /> 
-          : <RegisterForm onSwitch={() => setTab('login')} />
-        }
+        {tab === 'login' ? (
+          <LoginForm onSwitch={() => setTab('register')} />
+        ) : (
+          <RegisterForm onSwitch={() => setTab('login')} />
+        )}
       </div>
 
       {/* Footer disclaimer */}
       <p className="auth-form__footer">
-        Al usar Datrix aceptas nuestros <a href="#">Términos</a> y <a href="#">Privacidad</a>.<br />
+        Al usar Datrix aceptas nuestros <a href="#">Términos</a> y{' '}
+        <a href="#">Privacidad</a>.<br />
         Los datos están cifrados y protegidos.
       </p>
     </div>

@@ -11,18 +11,18 @@ import type {
   ReactNode,
   ButtonHTMLAttributes,
   AnchorHTMLAttributes,
-} from "react";
-import type { LinkProps } from "react-router-dom";
+} from 'react';
+import type { LinkProps } from 'react-router-dom';
 
 /**
  * Visual style variants for the button.
  */
-export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 
 /**
  * Size presets for the button.
  */
-export type ButtonSize = "sm" | "md" | "lg" | "icon";
+export type ButtonSize = 'sm' | 'md' | 'lg' | 'icon';
 
 /**
  * Base props shared across all button types.
@@ -44,7 +44,7 @@ interface BaseButtonProps {
  * Button rendered as `<button>` element.
  */
 export type StandardButtonProps = BaseButtonProps &
-  Omit<ButtonHTMLAttributes<HTMLButtonElement>, "className"> & {
+  Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'className'> & {
     href?: never;
     to?: never;
   };
@@ -53,13 +53,13 @@ export type StandardButtonProps = BaseButtonProps &
  * Button rendered as `<a>` element (link).
  */
 export type AnchorButtonProps = BaseButtonProps &
-  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, "className"> & {
+  Omit<AnchorHTMLAttributes<HTMLAnchorElement>, 'className'> & {
     href: string;
     to: never;
   };
 
 export type RouterLinkButtonProps = BaseButtonProps &
-  Omit<LinkProps, "className" | "to"> & {
+  Omit<LinkProps, 'className' | 'to'> & {
     to: string;
     href?: never;
   };

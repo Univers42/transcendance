@@ -1,7 +1,7 @@
 /**
  * @file SplitLayout.types.ts
  * @description Type definitions for SplitLayout component.
- * 
+ *
  * @author serjimen
  * @date 2026-03-03
  * @version 1.0.0

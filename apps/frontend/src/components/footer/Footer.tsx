@@ -1,53 +1,53 @@
-import { Database, Twitter, Github, Linkedin, Mail } from "lucide-react";
+import { Database, Twitter, Github, Linkedin, Mail } from 'lucide-react';
 
 const FOOTER_LINKS = [
   {
-    heading: "Producto",
+    heading: 'Producto',
     links: [
-      { label: "Funcionalidades", href: "#funcionalidades" },
-      { label: "Precios", href: "#precios" },
-      { label: "Integraciones", href: "#" },
-      { label: "Novedades", href: "#" },
-      { label: "Roadmap", href: "#" },
+      { label: 'Funcionalidades', href: '#funcionalidades' },
+      { label: 'Precios', href: '#precios' },
+      { label: 'Integraciones', href: '#' },
+      { label: 'Novedades', href: '#' },
+      { label: 'Roadmap', href: '#' },
     ],
   },
   {
-    heading: "Empresa",
+    heading: 'Empresa',
     links: [
-      { label: "Acerca de", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Empleo", href: "#" },
-      { label: "Prensa", href: "#" },
-      { label: "Contacto", href: "#" },
+      { label: 'Acerca de', href: '#' },
+      { label: 'Blog', href: '#' },
+      { label: 'Empleo', href: '#' },
+      { label: 'Prensa', href: '#' },
+      { label: 'Contacto', href: '#' },
     ],
   },
   {
-    heading: "Recursos",
+    heading: 'Recursos',
     links: [
-      { label: "Documentación", href: "#docs" },
-      { label: "API Reference", href: "#" },
-      { label: "Estado del servicio", href: "#" },
-      { label: "Comunidad", href: "#" },
-      { label: "Soporte", href: "#" },
+      { label: 'Documentación', href: '#docs' },
+      { label: 'API Reference', href: '#' },
+      { label: 'Estado del servicio', href: '#' },
+      { label: 'Comunidad', href: '#' },
+      { label: 'Soporte', href: '#' },
     ],
   },
   {
-    heading: "Legal",
+    heading: 'Legal',
     links: [
-      { label: "Privacidad", href: "#" },
-      { label: "Términos de uso", href: "#" },
-      { label: "Política de cookies", href: "#" },
-      { label: "GDPR", href: "#" },
-      { label: "Aviso legal", href: "#" },
+      { label: 'Privacidad', href: '#' },
+      { label: 'Términos de uso', href: '#' },
+      { label: 'Política de cookies', href: '#' },
+      { label: 'GDPR', href: '#' },
+      { label: 'Aviso legal', href: '#' },
     ],
   },
 ];
 
 const SOCIAL = [
-  { icon: Twitter, label: "Twitter / X", href: "#" },
-  { icon: Github, label: "GitHub", href: "#" },
-  { icon: Linkedin, label: "LinkedIn", href: "#" },
-  { icon: Mail, label: "Email", href: "mailto:hola@datrix.io" },
+  { icon: Twitter, label: 'Twitter / X', href: '#' },
+  { icon: Github, label: 'GitHub', href: '#' },
+  { icon: Linkedin, label: 'LinkedIn', href: '#' },
+  { icon: Mail, label: 'Email', href: 'mailto:hola@datrix.io' },
 ];
 
 export function Footer() {
@@ -63,9 +63,7 @@ export function Footer() {
               <div className="footer__brand-icon">
                 <Database />
               </div>
-              <span className="footer__brand-name">
-                Prismatica
-              </span>
+              <span className="footer__brand-name">Prismatica</span>
             </div>
             <p className="footer__description">
               La plataforma de datos en la nube diseñada para equipos de todos
@@ -91,20 +89,11 @@ export function Footer() {
 
           {/* Link columns */}
           {FOOTER_LINKS.map((col) => (
-            <div
-              key={col.heading}
-              className="footer__section"
-            >
-              <p className="footer__section-title">
-                {col.heading}
-              </p>
+            <div key={col.heading} className="footer__section">
+              <p className="footer__section-title">{col.heading}</p>
               <div className="footer__section-links">
                 {col.links.map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="footer__link"
-                  >
+                  <a key={link.label} href={link.href} className="footer__link">
                     {link.label}
                   </a>
                 ))}
@@ -125,20 +114,14 @@ export function Footer() {
           <div className="footer__bottom-links">
             <p className="footer__disclaimer">
               Prismatica es una plataforma SaaS. Los datos almacenados son
-              responsabilidad del usuario. Consulta nuestra{" "}
-              <a
-                href="#"
-                className="footer__bottom-link"
-              >
+              responsabilidad del usuario. Consulta nuestra{' '}
+              <a href="#" className="footer__bottom-link">
                 política de privacidad
-              </a>{" "}
-              y{" "}
-              <a
-                href="#"
-                className="footer__bottom-link"
-              >
+              </a>{' '}
+              y{' '}
+              <a href="#" className="footer__bottom-link">
                 términos de uso
-              </a>{" "}
+              </a>{' '}
               para más información.
             </p>
           </div>

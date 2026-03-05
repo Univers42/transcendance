@@ -7,7 +7,7 @@
  * @version 1.0.0
  */
 
-import type { ReactNode } from "react";
+import type { ReactNode } from 'react';
 
 /**
  * Props for the BrandLogo component.

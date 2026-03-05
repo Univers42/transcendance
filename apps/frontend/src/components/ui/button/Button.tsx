@@ -7,32 +7,32 @@
  * @version 1.1.0
  */
 
-import { Link } from "react-router-dom";
-import type { JSX } from "react";
+import { Link } from 'react-router-dom';
+import type { JSX } from 'react';
 import type {
   ButtonProps,
   StandardButtonProps,
   RouterLinkButtonProps,
   AnchorButtonProps,
-} from "./Button.types";
+} from './Button.types';
 
 export function Button({
   label,
   children,
-  variant = "primary",
-  size = "md",
+  variant = 'primary',
+  size = 'md',
   fullWidth = false,
   isBlock = false,
   isLoading = false,
   leftIcon,
   rightIcon,
-  className = "",
+  className = '',
   ...props
 }: ButtonProps): JSX.Element {
   // Clases dinámicas
   const baseClasses = `btn btn--${variant} btn--${size}`;
-  const blockClass = isBlock || fullWidth ? "btn--block" : "";
-  const loadingClass = isLoading ? "is-loading" : "";
+  const blockClass = isBlock || fullWidth ? 'btn--block' : '';
+  const loadingClass = isLoading ? 'is-loading' : '';
   const combinedClasses =
     `${baseClasses} ${blockClass} ${loadingClass} ${className}`.trim();
 
@@ -47,7 +47,7 @@ export function Button({
   );
 
   // Renderizado polimórfico (React Router Link)
-  if ("to" in props && props.to) {
+  if ('to' in props && props.to) {
     const { to, ...linkProps } = props as RouterLinkButtonProps;
     return (
       <Link to={to} className={combinedClasses} {...linkProps}>
@@ -57,7 +57,7 @@ export function Button({
   }
 
   // Renderizado polimórfico (Enlace HTML Externo)
-  if ("href" in props && props.href) {
+  if ('href' in props && props.href) {
     const { href, ...anchorProps } = props as AnchorButtonProps;
     return (
       <a href={href} className={combinedClasses} {...anchorProps}>

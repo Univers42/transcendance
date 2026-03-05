@@ -7,24 +7,24 @@
  * @version 1.2.0
  */
 
-import { useState, useEffect, useCallback } from "react";
-import { Routes, Route } from "react-router-dom";
-import type { JSX } from "react";
+import { useState, useEffect, useCallback } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import type { JSX } from 'react';
 
 // Pages
-import { MainPage } from "./pages/mainpage/MainPage";
-import { AuthPage } from "./pages/authpage/AuthPage";
+import { MainPage } from './pages/mainpage/MainPage';
+import { AuthPage } from './pages/authpage/AuthPage';
 
 // Types
-import type { LanguageCode } from "./components/navbar/Navbar.types";
+import type { LanguageCode } from './components/navbar/Navbar.types';
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
 // =============================================================================
 
-const STORAGE_KEY_THEME = "prismatica-dark-mode";
-const MEDIA_QUERY_DARK_MODE = "(prefers-color-scheme: dark)";
-const THEME_ATTRIBUTE = "data-theme";
+const STORAGE_KEY_THEME = 'prismatica-dark-mode';
+const MEDIA_QUERY_DARK_MODE = '(prefers-color-scheme: dark)';
+const THEME_ATTRIBUTE = 'data-theme';
 
 // =============================================================================
 // UTILITY FUNCTIONS
@@ -58,7 +58,7 @@ export default function App(): JSX.Element {
   // ---------------------------------------------------------------------------
 
   const [isDarkMode, setIsDarkMode] = useState<boolean>(getInitialDarkMode);
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("ES");
+  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>('ES');
 
   // ---------------------------------------------------------------------------
   // SIDE EFFECTS
@@ -67,7 +67,7 @@ export default function App(): JSX.Element {
   useEffect(() => {
     document.documentElement.setAttribute(
       THEME_ATTRIBUTE,
-      isDarkMode ? "dark" : "light",
+      isDarkMode ? 'dark' : 'light',
     );
     persistThemePreference(isDarkMode);
   }, [isDarkMode]);
@@ -101,15 +101,17 @@ export default function App(): JSX.Element {
           />
         }
       />
-      <Route path="/auth" element={
-        <AuthPage 
-        isDarkMode={isDarkMode}
-        onToggleTheme={handleToggleTheme}
-        currentLanguage={currentLanguage}
-        onLanguageChange={handleLanguageChange}
-        />
-        } 
-        />
+      <Route
+        path="/auth"
+        element={
+          <AuthPage
+            isDarkMode={isDarkMode}
+            onToggleTheme={handleToggleTheme}
+            currentLanguage={currentLanguage}
+            onLanguageChange={handleLanguageChange}
+          />
+        }
+      />
     </Routes>
   );
 }

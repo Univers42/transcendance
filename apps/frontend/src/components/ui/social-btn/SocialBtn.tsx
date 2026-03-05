@@ -10,7 +10,11 @@ interface SocialBtnProps {
   onClick: () => void;
 }
 
-export function SocialBtn({ icon, label, onClick }: SocialBtnProps): JSX.Element {
+export function SocialBtn({
+  icon,
+  label,
+  onClick,
+}: SocialBtnProps): JSX.Element {
   return (
     <button type="button" onClick={onClick} className="auth-form__social-btn">
       {icon} {label}

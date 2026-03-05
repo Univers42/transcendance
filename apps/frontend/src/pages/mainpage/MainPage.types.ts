@@ -11,7 +11,7 @@
 // TYPES
 // =============================================================================
 
-import type { LanguageCode } from "../../components/navbar/Navbar.types";
+import type { LanguageCode } from '../../components/navbar/Navbar.types';
 
 export interface MainPageProps {
   isDarkMode: boolean;

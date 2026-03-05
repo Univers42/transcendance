@@ -1,7 +1,7 @@
 /**
  * @file SplitLayout.tsx
  * @description Generic layout component for rendering responsive columns.
- * 
+ *
  * @author serjimen
  * @date 2026-03-03
  * @version 1.0.0
@@ -18,7 +18,6 @@ export function SplitLayout({
   className = '',
   id,
 }: SplitLayoutProps): JSX.Element {
-  
   return (
     <div
       id={id}
@@ -26,15 +25,11 @@ export function SplitLayout({
       style={{ maxWidth }}
     >
       {/* ── LADO IZQUIERDO ── */}
-      <div className="split-layout__left">
-        {leftContent}
-      </div>
+      <div className="split-layout__left">{leftContent}</div>
 
       {/* ── LADO DERECHO (Solo se renderiza si existe) ── */}
       {rightContent && (
-        <div className="split-layout__right">
-          {rightContent}
-        </div>
+        <div className="split-layout__right">{rightContent}</div>
       )}
     </div>
   );

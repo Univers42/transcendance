@@ -7,14 +7,14 @@
  * @version 1.2.1
  */
 
-import type { JSX } from "react";
-import { ArrowRight, Sparkles } from "lucide-react";
+import type { JSX } from 'react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
-import { ImageSlider } from "../imageslider/ImageSlider";
-import { SplitLayout } from "../ui/split-layout";
-import { Button } from "../ui/button";
-import type { HeroSectionProps } from "./HeroSection.types";
-import { HERO_SLIDES } from "./HeroSection.constants";
+import { ImageSlider } from '../imageslider/ImageSlider';
+import { SplitLayout } from '../ui/split-layout';
+import { Button } from '../ui/button';
+import type { HeroSectionProps } from './HeroSection.types';
+import { HERO_SLIDES } from './HeroSection.constants';
 
 // =============================================================================
 // SUB-COMPONENTS
@@ -33,7 +33,7 @@ function HeroCopy({ centered = false }: { centered?: boolean }): JSX.Element {
   return (
     <div
       className={`hero__content ${
-        centered ? "hero__content--centered" : "hero__content--left"
+        centered ? 'hero__content--centered' : 'hero__content--left'
       }`}
     >
       <LiveBadge />
@@ -50,9 +50,9 @@ function HeroCopy({ centered = false }: { centered?: boolean }): JSX.Element {
 
       <div className="hero__stats">
         {[
-          { value: "50K+", label: "bases de datos" },
-          { value: "12K+", label: "equipos activos" },
-          { value: "99.9%", label: "disponibilidad" },
+          { value: '50K+', label: 'bases de datos' },
+          { value: '12K+', label: 'equipos activos' },
+          { value: '99.9%', label: 'disponibilidad' },
         ].map((stat) => (
           <div key={stat.label} className="hero__stat">
             <span className="hero__stat-value">{stat.value}</span>
@@ -62,9 +62,9 @@ function HeroCopy({ centered = false }: { centered?: boolean }): JSX.Element {
       </div>
 
       <div className="hero__actions">
-        <Button 
-          to="/auth" 
-          variant="primary" 
+        <Button
+          to="/auth"
+          variant="primary"
           size="lg"
           leftIcon={<Sparkles className="icon-md" />}
           rightIcon={<ArrowRight className="icon-md" />}
@@ -72,12 +72,7 @@ function HeroCopy({ centered = false }: { centered?: boolean }): JSX.Element {
         />
 
         {/* Fix TS2322: Usamos 'to' en lugar de 'href' para React Router */}
-        <Button 
-          to="#producto" 
-          variant="ghost" 
-          size="lg"
-          label="Ver más"
-        />
+        <Button to="#producto" variant="ghost" size="lg" label="Ver más" />
       </div>
 
       <p className="hero__disclaimer">
@@ -91,18 +86,21 @@ function HeroCopy({ centered = false }: { centered?: boolean }): JSX.Element {
 // MAIN COMPONENT
 // =============================================================================
 
-export function HeroSection({ className = '', id = 'hero' }: HeroSectionProps): JSX.Element {
+export function HeroSection({
+  className = '',
+  id = 'hero',
+}: HeroSectionProps): JSX.Element {
   return (
-    <section 
-      id={id} 
+    <section
+      id={id}
       className={`hero ${className}`.trim()}
       style={{
         // Corrección visual: Altura mínima, centrado y espacio para el navbar
         minHeight: '100vh',
         display: 'flex',
         alignItems: 'center',
-        paddingTop: '6rem', 
-        paddingBottom: '3rem'
+        paddingTop: '6rem',
+        paddingBottom: '3rem',
       }}
     >
       <SplitLayout

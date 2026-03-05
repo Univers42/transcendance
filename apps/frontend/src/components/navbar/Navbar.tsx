@@ -7,23 +7,23 @@
  * @version 1.0.0
  */
 
-import { useState, useEffect, useCallback } from "react";
-import type { JSX } from "react";
-import { Menu, X , ArrowLeft} from "lucide-react";
+import { useState, useEffect, useCallback } from 'react';
+import type { JSX } from 'react';
+import { Menu, X, ArrowLeft } from 'lucide-react';
 
-import type { NavbarProps } from "./Navbar.types";
-import { NavLinks } from "./NavLinks";
-import { BrandLogo } from "../ui/brand-logo";
-import { LanguageSelector } from "../ui/language-selector/LanguageSelector";
-import { ThemeToggle } from "../ui/theme-toggle/ThemeToggle";
-import { Button } from "../ui/button";
+import type { NavbarProps } from './Navbar.types';
+import { NavLinks } from './NavLinks';
+import { BrandLogo } from '../ui/brand-logo';
+import { LanguageSelector } from '../ui/language-selector/LanguageSelector';
+import { ThemeToggle } from '../ui/theme-toggle/ThemeToggle';
+import { Button } from '../ui/button';
 
 // =============================================================================
 // CONSTANTS & CONFIGURATION
 // =============================================================================
 
 const DESKTOP_BREAKPOINT = 1024;
-const MOBILE_MENU_ID = "navbar-mobile-menu";
+const MOBILE_MENU_ID = 'navbar-mobile-menu';
 
 // =============================================================================
 // COMPONENT
@@ -66,8 +66,8 @@ export function Navbar({
       }
     };
 
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [isMenuOpen]);
 
   // ---------------------------------------------------------------------------
@@ -93,8 +93,7 @@ export function Navbar({
   // RENDER HELPERS
   // ---------------------------------------------------------------------------
 
-  const hamburgerLabel = isMenuOpen ? "Cerrar menú" : "Abrir menú";
-
+  const hamburgerLabel = isMenuOpen ? 'Cerrar menú' : 'Abrir menú';
 
   // ---------------------------------------------------------------------------
   // CONFIGURACIÓN DINÁMICA DEL BOTÓN (CTA)
@@ -106,7 +105,6 @@ export function Navbar({
     variant: (isBackMode ? 'ghost' : 'primary') as 'ghost' | 'primary',
     leftIcon: isBackMode ? <ArrowLeft className="w-4 h-4" /> : undefined,
   };
-
 
   // ---------------------------------------------------------------------------
   // RENDER

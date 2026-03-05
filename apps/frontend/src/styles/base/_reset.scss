@@ -27,7 +27,7 @@ body {
   color: $text-primary;
   background: $bg-primary;
   overflow-y: scroll;
-  
+
   @include theme('dark') {
     color: $dark-text-primary;
     background: $dark-bg-primary;

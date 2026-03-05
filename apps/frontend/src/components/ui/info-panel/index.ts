@@ -5,4 +5,4 @@
  * @date 2026-03-05
  */
 
-export { InfoPanel } from "./InfoPanel"
+export { InfoPanel } from './InfoPanel';

@@ -8,19 +8,19 @@
  * @version 1.0.0
  */
 
-import type { NavLink } from "./Navbar.types";
-import type { JSX } from "react";
+import type { NavLink } from './Navbar.types';
+import type { JSX } from 'react';
 
 export interface NavLinksProps {
   links: readonly NavLink[];
   onItemClick?: () => void;
-  variant?: "desktop" | "mobile";
+  variant?: 'desktop' | 'mobile';
 }
 
 export function NavLinks({
   links,
   onItemClick,
-  variant = "desktop",
+  variant = 'desktop',
 }: NavLinksProps): JSX.Element {
   return (
     <>
@@ -30,9 +30,9 @@ export function NavLinks({
           href={link.href}
           onClick={onItemClick}
           className={
-            variant === "desktop"
-              ? "header__nav-link"
-              : "header__nav-link header__nav-link--mobile"
+            variant === 'desktop'
+              ? 'header__nav-link'
+              : 'header__nav-link header__nav-link--mobile'
           }
         >
           {link.label}
