@@ -47,4 +47,4 @@
 ### Fix Sidebar Layout
 
 > By default the sidebar may be hidden
-
+> Fix the sidebar

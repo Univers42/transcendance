@@ -1,6 +1,5 @@
 # Dashboard Feedback
 
-
 ###  Overall Layout Architecture
 > The three-panel structure (sidebar + topbar + main content) is correctly implemented and aligns with the project brief's app shell specification.
 > Optional 4 layer structure with, chatbot ai and general chat with organization members.
@@ -28,3 +27,5 @@
 
 ### Topbar — Search
 > No global search control. The topbar is missing its primary utility element.
+> User navigation
+> Adjust colors, width and many options
