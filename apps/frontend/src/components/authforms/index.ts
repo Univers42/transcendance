@@ -6,4 +6,4 @@
  */
 
 export { AuthForms } from './AuthForms';
-export type { Tab, LoginForm, RegisterForm, FieldErrors } from './AuthForms.types';
+export type { Tab, FieldErrors } from './AuthForms.types';
