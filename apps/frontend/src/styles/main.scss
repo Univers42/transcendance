@@ -12,11 +12,13 @@
 
 // 2. COMPONENTES
 @use 'components/auth-page';
+@use 'components/authforms';
 @use 'components/badge';
 @use 'components/brand-logo';
 @use 'components/button';
 @use 'components/cards';
 @use 'components/display';
+@use 'components/footer';
 @use 'components/hero-slider';
 @use 'components/hero';
 @use 'components/icon';
@@ -32,7 +34,6 @@
 // 3. LAYOUTS
 @use 'layout/container';
 @use 'layout/header';
-@use 'layout/footer';
 @use 'layout/app';
 
 // 4. UTILIDADES
