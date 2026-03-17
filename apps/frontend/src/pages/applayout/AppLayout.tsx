@@ -1,25 +1,24 @@
-/**
- * @file AppLayout.tsx
- * @description Main shell for the authenticated area. 
- * Orchestrates Sidebar, Header and dynamic content via Outlet.
- */
-
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/sidebar/Sidebar';
 import { AppHeader } from '@/components/header/Header';
 
-export function AppLayout() {
+// 1. Interfaz para las props
+interface AppLayoutProps {
+  isDarkMode: boolean;
+  onToggleTheme: () => void;
+}
+
+// 2. APLICAR la interfaz aquí (esto quita el error TS6196 y TS2322)
+export function AppLayout({ isDarkMode, onToggleTheme }: AppLayoutProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const { pathname } = useLocation(); // La URL nos dice qué "tab" está activa
+  const { pathname } = useLocation();
 
-  // Lógica de Responsividad
   useEffect(() => {
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
-      // En escritorio empezamos abierto, en móvil cerrado
       setIsSidebarOpen(!mobile);
     };
     
@@ -28,7 +27,6 @@ export function AppLayout() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Cerrar sidebar automáticamente al cambiar de ruta en móvil
   useEffect(() => {
     if (isMobile) setIsSidebarOpen(false);
   }, [pathname, isMobile]);
@@ -39,17 +37,19 @@ export function AppLayout() {
         isOpen={isSidebarOpen} 
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         isMobile={isMobile}
+        // 3. Pasamos las props al Sidebar (quita el error TS2739)
+        isDarkMode={isDarkMode}
+        onToggleTheme={onToggleTheme}
       />
       
       <div className="app-shell__main">
         <AppHeader 
           onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} 
-          isSidebarOpen={isSidebarOpen}
+          // 4. Eliminamos isSidebarOpen (quita el error TS2322)
         />
         
         <main id="main-content" className="app-shell__content">
           <div className="app-shell__container">
-            {/* Aquí es donde React Router inyectará el AdminDashboard */}
             <Outlet />
           </div>
         </main>

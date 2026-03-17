@@ -2,12 +2,10 @@
  * @file AppHeader.tsx
  * @description Refactored Header for Prismatica App Shell.
  */
-import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
-  Menu, Search, Bell, ChevronRight, User, Settings, 
-  HelpCircle, BookOpen, LogOut, Building2, Folder, 
-  LayoutTemplate, Database, LayoutDashboard, Layers, Globe 
+  Menu, Search, Bell, ChevronRight, User, Settings, LogOut
 } from 'lucide-react';
 import { clsx } from 'clsx';
 
@@ -17,7 +15,6 @@ interface AppHeaderProps {
 
 export function AppHeader({ onMenuClick }: AppHeaderProps) {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   

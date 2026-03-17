@@ -2,11 +2,10 @@
  * @file Sidebar.tsx
  * @description Refactored Prismatica Sidebar.
  */
-import { useLocation, useNavigate } from 'react-router-dom';
 import { 
-  Building2, Folder, Database, LayoutTemplate, LayoutDashboard, 
-  Plug, Settings, User, ChevronLeft, ChevronDown, ChevronRight, 
-  Moon, Sun, PanelLeftClose, PanelLeft, Palette, Layers 
+  Building2, Folder, Database, LayoutDashboard, 
+  Plug, ChevronDown, ChevronRight, 
+  Moon, Sun, PanelLeftClose, PanelLeft
 } from 'lucide-react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -20,8 +19,6 @@ interface SidebarProps {
 }
 
 export function Sidebar({ isOpen, onToggle, isMobile, isDarkMode, onToggleTheme }: SidebarProps) {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     'Workspace': true,
     'Build': true
@@ -96,20 +93,6 @@ export function Sidebar({ isOpen, onToggle, isMobile, isDarkMode, onToggleTheme 
 
               {(expandedSections[section.title] || !isOpen) && (
                 <div className="mt-1">
-                  {section.items.map((item) => {
-                    const isActive = pathname === item.path;
-                    return (
-                      <button
-                        key={item.id}
-                        onClick={() => navigate(item.path)}
-                        className={clsx("sidebar__item", isActive && "sidebar__item--active")}
-                        title={!isOpen ? item.label : undefined}
-                      >
-                        <item.icon size={20} className="shrink-0" />
-                        {isOpen && <span className="text-sm font-medium">{item.label}</span>}
-                      </button>
-                    );
-                  })}
                 </div>
               )}
             </div>
