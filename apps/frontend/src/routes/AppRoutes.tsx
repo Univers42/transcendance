@@ -3,9 +3,10 @@
  * @description Centralized routing configuration for the application.
  */
 
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { MainPage } from "../pages/mainpage/MainPage";
 import { AuthPage } from "../pages/authpage/AuthPage";
+import { AppLayout } from "../pages/applayout/AppLayout";
 import type { LanguageCode } from "../components/navbar/Navbar.types";
 
 type AppRoutesProps = {
@@ -35,6 +36,11 @@ export function AppRoutes({
         }
       />
       <Route path="/auth" element={<AuthPage />} />
+      <Route path="/app" element={<AppLayout />}>
+        <Route index element={<AdminDashboard />} />
+        {/* <Route path="datasets" element={<DatasetsPage />} /> */}
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
 }

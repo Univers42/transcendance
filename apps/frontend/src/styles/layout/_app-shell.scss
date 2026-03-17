@@ -1,0 +1,62 @@
+// ============================================
+// PRISMATICA — App Layout
+// ============================================
+
+@use '../abstracts' as *;
+
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+
+  &__header {
+    flex-shrink: 0;
+  }
+
+  &__main {
+    flex: 1;
+    padding: $space-6 0;
+  }
+
+  &__footer {
+    flex-shrink: 0;
+  }
+}
+
+.app-shell {
+  display: flex;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: var(--prisma-bg-primary, $noir-900);
+  color: var(--prisma-text-primary, $white);
+
+  &__main {
+    flex: 1;
+    @include flex-column;
+    min-width: 0; // Crucial para que los gráficos de Recharts no rompan el layout
+    position: relative;
+    transition: margin-left $duration-base $ease-out;
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+    background-color: var(--prisma-bg-secondary, $noir-800);
+    padding: $space-6;
+    
+    // Aplicamos un scrollbar sutil estilo Noir
+    &::-webkit-scrollbar { width: 6px; }
+    &::-webkit-scrollbar-thumb { 
+      background: var(--prisma-border); 
+      border-radius: $radius-full; 
+    }
+  }
+
+  &__container {
+    height: 100%;
+    width: 100%;
+    max-width: $container-xl; // 1280px para que los dashboards no se estiren al infinito
+    margin-inline: auto;
+  }
+}
