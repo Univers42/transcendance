@@ -1,0 +1,97 @@
+/**
+ * @file _header.scss
+ * @description Prismatica App Header with search and dropdown styles.
+ */
+@use '../abstracts' as *;
+
+.header {
+  height: 64px;
+  background-color: var(--prisma-bg-primary);
+  border-bottom: 1px solid var(--prisma-border);
+  @include flex-between;
+  padding-inline: $space-6;
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+
+  &__left, &__right {
+    @include flex-center;
+    align-items: center;
+    gap: $space-4;
+  }
+
+  &__title {
+    @include data-text('md');
+    font-weight: $weight-semibold;
+    color: var(--prisma-text-primary);
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+
+    @include lg-up { display: block; }
+  }
+
+  // Búsqueda expandible
+  &__search {
+    @include flex-center;
+    align-items: center;
+    background-color: var(--prisma-bg-secondary);
+    border: 1px solid var(--prisma-border);
+    border-radius: $radius-lg;
+    padding-inline: $space-3;
+    transition: all $transition-base;
+    width: 180px;
+
+    &--expanded {
+      width: 280px;
+      border-color: var(--prisma-accent);
+      background-color: var(--prisma-bg-elevated);
+      box-shadow: $shadow-sm;
+    }
+
+    input {
+      @include button-reset;
+      padding-block: $space-2;
+      padding-inline: $space-2;
+      font-size: $text-sm;
+      color: var(--prisma-text-primary);
+      width: 100%;
+
+      &::placeholder { color: var(--prisma-text-tertiary); }
+    }
+  }
+
+  // Menús desplegables (Dropdowns)
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 320px;
+    background-color: var(--prisma-bg-elevated);
+    border: 1px solid var(--prisma-border);
+    border-radius: $radius-xl;
+    box-shadow: $shadow-xl;
+    overflow: hidden;
+    animation: slideUp $transition-base;
+
+    @include theme('dark') {
+      @include glow-dark($intensity: 0.05);
+    }
+  }
+}
+
+.breadcrumb {
+  @include flex-center;
+  align-items: center;
+  gap: $space-2;
+  font-size: $text-sm;
+  color: var(--prisma-text-secondary);
+
+  &__item {
+    cursor: pointer;
+    transition: color $transition-base;
+    &:hover { color: var(--prisma-text-primary); }
+    &--active { color: var(--prisma-text-primary); font-weight: $weight-medium; }
+  }
+}

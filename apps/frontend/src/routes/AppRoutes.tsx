@@ -37,8 +37,6 @@ export function AppRoutes({
       />
       <Route path="/auth" element={<AuthPage />} />
       <Route path="/app" element={<AppLayout />}>
-        <Route index element={<AdminDashboard />} />
-        {/* <Route path="datasets" element={<DatasetsPage />} /> */}
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

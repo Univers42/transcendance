@@ -4,32 +4,13 @@
 
 @use '../abstracts' as *;
 
-.app {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-
-  &__header {
-    flex-shrink: 0;
-  }
-
-  &__main {
-    flex: 1;
-    padding: $space-6 0;
-  }
-
-  &__footer {
-    flex-shrink: 0;
-  }
-}
-
 .app-shell {
   display: flex;
   height: 100vh;
   width: 100vw;
   overflow: hidden;
-  background-color: var(--prisma-bg-primary, $noir-900);
-  color: var(--prisma-text-primary, $white);
+  background-color: var(--prisma-bg-primary, $slate-900);
+  color: var(--prisma-text-primary, $slate-50);
 
   &__main {
     flex: 1;
@@ -42,7 +23,7 @@
   &__content {
     flex: 1;
     overflow-y: auto;
-    background-color: var(--prisma-bg-secondary, $noir-800);
+    background-color: var(--prisma-bg-secondary, $slate-800);
     padding: $space-6;
     
     // Aplicamos un scrollbar sutil estilo Noir

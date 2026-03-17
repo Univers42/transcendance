@@ -54,7 +54,6 @@
     flex: 1;
     overflow-y: auto;
     padding: $space-4 $space-3;
-    @include scrollbar-custom;
   }
 
   &__section-title {
@@ -71,7 +70,7 @@
 
   &__item {
     @include button-reset;
-    @include flex;
+    @include flex-center;
     align-items: center;
     gap: $space-3;
     width: 100%;
@@ -102,7 +101,7 @@
   }
 
   &__user {
-    @include flex;
+    @include flex-center;
     align-items: center;
     gap: $space-3;
     overflow: hidden;
@@ -112,9 +111,9 @@
     width: 32px;
     height: 32px;
     border-radius: $radius-full;
-    background: linear-gradient(135deg, $indigo-500, $purple-500);
+    background: linear-gradient(135deg, $blue-500, $blue-700);
     @include flex-center;
-    color: $white;
+    color: $slate-50;
     font-weight: $weight-medium;
     flex-shrink: 0;
   }

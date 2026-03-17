@@ -11,6 +11,7 @@
 @use 'base/typography';
 
 // 2. COMPONENTES
+@use 'components/app-header';
 @use 'components/auth-page';
 @use 'components/authforms';
 @use 'components/badge';
@@ -33,7 +34,7 @@
 @use 'components/theme-toggle';
 
 // 3. LAYOUTS
-@use 'layous/app-shell';
+@use 'layout/app-shell';
 @use 'layout/app';
 @use 'layout/container';
 @use 'layout/header';

@@ -7,7 +7,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { Sidebar } from '@/components/sidebar/Sidebar';
-import { AppHeader } from '../components/header/AppHeader';
+import { AppHeader } from '@/components/header/Header';
 
 export function AppLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
