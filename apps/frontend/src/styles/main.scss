@@ -26,15 +26,17 @@
 @use 'components/language-selector';
 @use 'components/live-badge';
 @use 'components/quickstart';
+@use 'components/sidebar';
 @use 'components/sizing';
 @use 'components/split-layout';
 @use 'components/table';
 @use 'components/theme-toggle';
 
 // 3. LAYOUTS
+@use 'layous/app-shell';
+@use 'layout/app';
 @use 'layout/container';
 @use 'layout/header';
-@use 'layout/app';
 
 // 4. UTILIDADES
 @use 'utilities/animations';

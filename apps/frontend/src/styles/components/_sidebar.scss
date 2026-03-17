@@ -1,0 +1,121 @@
+/**
+ * @file _sidebar.scss
+ * @description Prismatica Sidebar with collapse logic and Noir theme.
+ */
+@use '../abstracts' as *;
+
+.sidebar {
+  @include flex-column;
+  background-color: var(--prisma-bg-primary);
+  border-right: 1px solid var(--prisma-border);
+  transition: width $duration-base $ease-default;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: $z-fixed;
+
+  // Anchos dinámicos
+  width: 64px;
+  &--open { width: 240px; }
+
+  &__header {
+    @include flex-between;
+    height: 64px;
+    padding-inline: $space-4;
+    border-bottom: 1px solid var(--prisma-border);
+    overflow: hidden;
+  }
+
+  &__logo-box {
+    @include flex-center;
+    width: 32px;
+    height: 32px;
+    background-color: var(--prisma-accent);
+    border-radius: $radius-sm;
+    flex-shrink: 0;
+    
+    &-icon {
+      width: 16px;
+      height: 16px;
+      border: 2px solid $slate-50;
+      transform: rotate(45deg);
+    }
+  }
+
+  &__brand-name {
+    @include data-text('md');
+    font-weight: $weight-bold;
+    color: var(--prisma-accent);
+    margin-left: $space-3;
+    white-space: nowrap;
+  }
+
+  &__nav {
+    flex: 1;
+    overflow-y: auto;
+    padding: $space-4 $space-3;
+    @include scrollbar-custom;
+  }
+
+  &__section-title {
+    @include data-text('xs');
+    color: var(--prisma-text-tertiary);
+    text-transform: uppercase;
+    padding: $space-2 $space-3;
+    margin-top: $space-4;
+    cursor: pointer;
+    @include flex-between;
+    
+    &:hover { color: var(--prisma-text-secondary); }
+  }
+
+  &__item {
+    @include button-reset;
+    @include flex;
+    align-items: center;
+    gap: $space-3;
+    width: 100%;
+    padding: $space-2 $space-3;
+    margin-block: 2px;
+    border-radius: $radius-md;
+    color: var(--prisma-text-secondary);
+    transition: $transition-base;
+    border-left: 2px solid transparent;
+
+    &:hover {
+      background-color: var(--prisma-bg-secondary);
+      color: var(--prisma-text-primary);
+    }
+
+    &--active {
+      background-color: var(--prisma-bg-elevated);
+      color: var(--prisma-accent);
+      border-left-color: var(--prisma-accent);
+    }
+  }
+
+  &__footer {
+    padding: $space-4;
+    border-top: 1px solid var(--prisma-border);
+    @include flex-column;
+    gap: $space-4;
+  }
+
+  &__user {
+    @include flex;
+    align-items: center;
+    gap: $space-3;
+    overflow: hidden;
+  }
+
+  &__avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: $radius-full;
+    background: linear-gradient(135deg, $indigo-500, $purple-500);
+    @include flex-center;
+    color: $white;
+    font-weight: $weight-medium;
+    flex-shrink: 0;
+  }
+}

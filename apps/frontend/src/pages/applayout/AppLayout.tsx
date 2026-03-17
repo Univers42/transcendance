@@ -6,7 +6,7 @@
 
 import { useState, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { Sidebar } from '../components/sidebar/Sidebar';
+import { Sidebar } from '@/components/sidebar/Sidebar';
 import { AppHeader } from '../components/header/AppHeader';
 
 export function AppLayout() {
