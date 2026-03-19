@@ -1,0 +1,20 @@
+title = "Transcendence QA Gitleaks Baseline"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated documentation and compiled static assets"
+paths = [
+  '''^docs/''',
+  '''^static_docs/''',
+  '''^apps/frontend/src/styles/main\.css$''',
+  '''^apps/frontend/src/styles/main\.css\.map$'''
+]
+
+[[allowlists]]
+description = "Lockfiles often contain high-entropy false positives"
+paths = [
+  '''(^|/)package-lock\.json$''',
+  '''(^|/)pnpm-lock\.yaml$'''
+]

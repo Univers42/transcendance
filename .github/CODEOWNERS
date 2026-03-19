@@ -37,6 +37,7 @@ Makefile                        @login5 @login3
 # Documentation — anyone can review, PM is default assignee
 *.md                            @login2
 docs/                           @login2
+qa/                             @login2 @login3 @LESdylan
 
 # Environment config — sensitive, restricted
 .env.example                    @login3 @LESdylan

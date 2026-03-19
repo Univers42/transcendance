@@ -106,20 +106,37 @@ check-docker:
 		echo ""; \
 		exit 1; \
 	}
-	@docker info >/dev/null 2>&1 || { \
+	@if docker info >/dev/null 2>&1; then \
+		true; \
+	else \
+		ERR_MSG="$$(docker info 2>&1 >/dev/null || true)"; \
 		echo ""; \
-		echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-		echo -e "$(RED)│  ✗  FAILED: $(BOLD)Docker daemon is not running$(NC)"; \
-		echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
-		echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Docker is installed but the daemon/service is stopped."; \
-		echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  sudo systemctl start docker"; \
-		echo -e "$(RED)│$(NC)        OR open Docker Desktop"; \
-		echo -e "$(RED)│$(NC)"; \
-		echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
-		echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
+		if echo "$$ERR_MSG" | grep -qi "permission denied"; then \
+			echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
+			echo -e "$(RED)│  ✗  FAILED: $(BOLD)Docker socket access denied$(NC)"; \
+			echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
+			echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Docker is installed and the daemon may be running,"; \
+			echo -e "$(RED)│$(NC)        but user '$${USER:-unknown}' cannot access /var/run/docker.sock."; \
+			echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  sudo usermod -aG docker $${USER:-$$LOGNAME}"; \
+			echo -e "$(RED)│$(NC)        Then start a new shell (or run: newgrp docker)"; \
+			echo -e "$(RED)│$(NC)        OR use sudo temporarily to verify Docker access."; \
+			echo -e "$(RED)│$(NC)"; \
+			echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
+			echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
+		else \
+			echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
+			echo -e "$(RED)│  ✗  FAILED: $(BOLD)Docker daemon is not running$(NC)"; \
+			echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
+			echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Docker is installed but the daemon/service is stopped."; \
+			echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  sudo systemctl start docker"; \
+			echo -e "$(RED)│$(NC)        OR open Docker Desktop"; \
+			echo -e "$(RED)│$(NC)"; \
+			echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
+			echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
+		fi; \
 		echo ""; \
 		exit 1; \
-	}
+	fi
 	$(call step,$(GREEN)✓,Docker Engine is running)
 
 # Validates that a compose tool is available.
@@ -199,20 +216,14 @@ preflight: check-docker check-compose check-env check-ports
 
 .PHONY: configure-hooks
 
-HOOKS_DIR := vendor/scripts/hooks
+HOOKS_DIR ?= $(shell if [ -d vendor/scripts/hooks ]; then echo vendor/scripts/hooks; else echo qa/implementation/hooks; fi)
 
 configure-hooks:  ## 🪝 Activate git hooks (auto-runs on make / make dev)
 	@if [ ! -d .git ]; then \
 		echo -e "  $(YELLOW)⚠$(NC)  Not a git repo — skipping hook setup"; \
 	else \
-		CURRENT=$$(git config --local core.hooksPath 2>/dev/null || echo ""); \
-		if [ "$$CURRENT" = "$(HOOKS_DIR)" ]; then \
-			echo -e "  $(GREEN)✓$(NC)  Git hooks active (core.hooksPath → $(HOOKS_DIR))"; \
-		else \
-			git config --local core.hooksPath $(HOOKS_DIR); \
-			chmod +x $(HOOKS_DIR)/*; \
-			echo -e "  $(GREEN)✓$(NC)  Git hooks activated (core.hooksPath → $(HOOKS_DIR))"; \
-		fi; \
+		bash qa/implementation/scripts/activate-hooks.sh >/dev/null; \
+		echo -e "  $(GREEN)✓$(NC)  Git hooks active (core.hooksPath → $(HOOKS_DIR))"; \
 		for old in commit-msg pre-commit pre-push post-checkout pre-merge-commit log_hook log_hook.sh; do \
 			if [ -L ".git/hooks/$$old" ]; then rm -f ".git/hooks/$$old"; fi; \
 		done; \
@@ -257,7 +268,7 @@ bootstrap: docker-up install compile db-migrate  ## Full bootstrap sequence
 
 .PHONY: docker-up docker-down docker-logs docker-clean docker-ps
 
-docker-up: check-compose  ## 🐳 Start all containers (db, redis, dev)
+docker-up: check-docker check-compose check-env  ## 🐳 Start all containers (db, redis, dev)
 	$(call step,$(BLUE)ℹ,Starting containers with $(BOLD)$(COMPOSE_CMD)$(NC)...)
 	@$(COMPOSE_DEV) up -d --build 2>&1 || { \
 		ERR=$$?; \
@@ -285,22 +296,21 @@ docker-up: check-compose  ## 🐳 Start all containers (db, redis, dev)
 	}
 	$(call step,$(GREEN)✓,Containers are running)
 
-docker-down: check-compose  ## 🐳 Stop all containers
+docker-down: check-docker check-compose  ## 🐳 Stop all containers
 	$(call step,$(YELLOW)⚠,Stopping containers...)
 	@$(COMPOSE_DEV) down 2>/dev/null || { \
 		echo -e "$(YELLOW)⚠$(NC)  Compose down failed. Force-removing containers..."; \
 		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
 	}
 	$(call step,$(GREEN)✓,Containers stopped)
-	$(call step,$(GREEN)✓,Containers stopped)
 
-docker-logs: check-compose  ## 🐳 Tail all container logs
+docker-logs: check-docker check-compose  ## 🐳 Tail all container logs
 	@$(COMPOSE_DEV) logs -f
 
-docker-ps: check-compose  ## 🐳 Show running containers
+docker-ps: check-docker check-compose  ## 🐳 Show running containers
 	@$(COMPOSE_DEV) ps
 
-docker-clean: check-compose  ## 🐳 Remove containers + volumes (full reset)
+docker-clean: check-docker check-compose  ## 🐳 Remove containers + volumes (full reset)
 	@echo -e "$(RED)⚠  This will delete all data (database, node_modules, cache)$(NC)"
 	@read -p "Are you sure? [y/N] " confirm && [ "$$confirm" = "y" ] || exit 1
 	@$(COMPOSE_DEV) down -v --remove-orphans 2>/dev/null || { \
@@ -715,7 +725,7 @@ info:  ## 🩺 Show detected environment
 	@echo ""
 	@echo -e "  $(BOLD)Compose tool:$(NC)    $(COMPOSE_CMD)"
 	@echo -e "  $(BOLD)Compose version:$(NC) $(COMPOSE_VERSION)"
-	@echo -e "  $(BOLD)Docker version:$(NC)  $(shell docker version --format '{{.Client.Version}}' 2>/dev/null || echo 'not found')"
+	@echo -e "  $(BOLD)Docker version:$(NC)  $(shell docker version --format '{{.Client.Version}}' 2>/dev/null | head -1 || echo 'not found')"
 	@echo -e "  $(BOLD)OS:$(NC)              $(shell uname -s) $(shell uname -r) ($(shell uname -m))"
 	@echo -e "  $(BOLD)Shell:$(NC)           $(SHELL)"
 	@echo -e "  $(BOLD)Make:$(NC)            $(MAKE_VERSION)"

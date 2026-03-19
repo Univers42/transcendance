@@ -21,6 +21,14 @@ Closes #
 -
 -
 
+## Risk & Security Impact
+
+- [ ] Touches auth, session, cookies, or password flows
+- [ ] Touches WebSocket or real-time behavior
+- [ ] Touches user-controlled rendering or input handling
+- [ ] Touches CI, Docker, scripts, or workflow automation
+- [ ] No security-sensitive surface changed
+
 ## Screenshots / Recordings
 
 <!-- For UI changes: before/after screenshots or a short video. Delete if not applicable. -->
@@ -33,6 +41,7 @@ Closes #
 - [ ] E2E tests pass (`make test-e2e`)
 - [ ] Lint passes (`make lint`)
 - [ ] TypeScript compiles (`make typecheck`)
+- [ ] QA guardrails pass (`QA Guardrails` workflow / local guards)
 - [ ] Manually tested in browser
 
 ## AI Usage Disclosure

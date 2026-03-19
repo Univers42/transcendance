@@ -4,7 +4,7 @@
   "private": true,
   "description": "ft_transcendence monorepo — hooks and workspace root",
   "scripts": {
-    "prepare": "git config --local core.hooksPath vendor/scripts/hooks || true"
+    "prepare": "bash qa/implementation/scripts/activate-hooks.sh || true"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.3",
