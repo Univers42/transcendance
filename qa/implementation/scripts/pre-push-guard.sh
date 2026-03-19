@@ -81,15 +81,34 @@ require_docker_container() {
 }
 
 run_docker_checks() {
+  run_step() {
+    local label="$1"
+    local command="$2"
+    local output=""
+
+    if ! output="$(docker exec "$CONTAINER_NAME" sh -lc "$command" 2>&1)"; then
+      printf '%s\n' "$output" >&2
+
+      if grep -Fq 'ERR_PNPM_RECURSIVE_EXEC_FIRST_FAIL' <<<"$output" || grep -Fq 'Command "prisma" not found' <<<"$output" || grep -Fq 'Command "eslint" not found' <<<"$output" || grep -Fq 'Command "tsc" not found' <<<"$output"; then
+        printf 'Pre-push guard found missing workspace dependencies inside `%s`.\n' "$CONTAINER_NAME" >&2
+        printf 'Run `make install` or full bootstrap with `make`, then retry the push.\n' >&2
+      else
+        printf 'Pre-push guard failed during %s.\n' "$label" >&2
+      fi
+
+      exit 1
+    fi
+  }
+
   printf 'Using Docker dev container `%s` for lint and typecheck.\n' "$CONTAINER_NAME"
-  docker exec "$CONTAINER_NAME" sh -lc 'cd /app/apps/backend && pnpm exec prisma generate --schema=prisma/schema.prisma'
-  docker exec "$CONTAINER_NAME" sh -lc 'cd /app/apps/backend && pnpm exec eslint .'
-  docker exec "$CONTAINER_NAME" sh -lc 'cd /app/apps/frontend && pnpm exec eslint .'
-  docker exec "$CONTAINER_NAME" sh -lc 'cd /app/apps/backend && pnpm exec tsc --noEmit'
-  docker exec "$CONTAINER_NAME" sh -lc 'cd /app/apps/frontend && pnpm exec tsc --noEmit'
+  run_step 'backend Prisma generate' 'cd /app/apps/backend && pnpm exec prisma generate --schema=prisma/schema.prisma'
+  run_step 'backend ESLint' 'cd /app/apps/backend && pnpm exec eslint .'
+  run_step 'frontend ESLint' 'cd /app/apps/frontend && pnpm exec eslint .'
+  run_step 'backend TypeScript' 'cd /app/apps/backend && pnpm exec tsc --noEmit'
+  run_step 'frontend TypeScript' 'cd /app/apps/frontend && pnpm exec tsc --noEmit'
 
   if [[ "$RUN_TESTS" == "1" ]]; then
-    docker exec "$CONTAINER_NAME" sh -lc 'cd /app/apps/backend && pnpm test'
+    run_step 'backend tests' 'cd /app/apps/backend && pnpm test'
   fi
 }
 
