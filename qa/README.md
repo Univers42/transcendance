@@ -26,7 +26,8 @@ bash qa/implementation/scripts/activate-hooks.sh
 bash qa/implementation/scripts/check-frontend-security.sh
 bash qa/implementation/scripts/pre-commit-guard.sh
 bash qa/implementation/scripts/pre-push-guard.sh   # requires transcendence-dev running
-bash qa/implementation/scripts/check-http-surface.sh http://localhost:3000
+make http-surface URL=http://localhost:3000/api/health
+bash qa/implementation/scripts/check-http-surface.sh --cookie-name session http://localhost:3000/api/health
 ```
 
 ## Why This Exists

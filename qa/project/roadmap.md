@@ -36,6 +36,11 @@ Definition of done:
 
 ## P1: Frontend Attack-Oriented Automation
 
+Current progress:
+
+- reusable HTTP header / cookie assertions now exist locally and via a manual
+  GitHub workflow for preview or staging URLs
+
 - Add Playwright smoke tests for login, guarded routes, error screens, and auth
   degradation cases.
 - Add cookie / header assertions against preview or dev environments.

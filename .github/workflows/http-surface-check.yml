@@ -1,0 +1,59 @@
+name: HTTP Surface Check
+
+on:
+  workflow_dispatch:
+    inputs:
+      urls:
+        description: "Space or newline separated URLs to inspect"
+        required: true
+        type: string
+      cookie_names:
+        description: "Optional comma-separated cookie names to validate"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  http-surface:
+    name: Header and Cookie Assertions
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run HTTP surface checks
+        shell: bash
+        env:
+          TARGET_URLS: ${{ github.event.inputs.urls }}
+          COOKIE_NAMES: ${{ github.event.inputs.cookie_names }}
+        run: |
+          set -euo pipefail
+
+          mapfile -t URLS < <(
+            printf '%s\n' "$TARGET_URLS" |
+            tr ' ' '\n' |
+            sed 's/^[[:space:]]*//;s/[[:space:]]*$//' |
+            sed '/^$/d'
+          )
+
+          if ((${#URLS[@]} == 0)); then
+            printf 'No target URLs were provided.\n' >&2
+            exit 1
+          fi
+
+          declare -a ARGS=()
+
+          if [[ -n "${COOKIE_NAMES:-}" ]]; then
+            mapfile -t COOKIES < <(
+              printf '%s\n' "$COOKIE_NAMES" |
+              tr ',' '\n' |
+              sed 's/^[[:space:]]*//;s/[[:space:]]*$//' |
+              sed '/^$/d'
+            )
+
+            for cookie in "${COOKIES[@]}"; do
+              ARGS+=(--cookie-name "$cookie")
+            done
+          fi
+
+          bash qa/implementation/scripts/check-http-surface.sh "${ARGS[@]}" "${URLS[@]}"

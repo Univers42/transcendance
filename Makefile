@@ -596,7 +596,7 @@ typecheck:  ## ✅ TypeScript type checking (no emit)
 #  🧪 TESTING
 # ============================================
 
-.PHONY: test test-unit test-e2e test-watch
+.PHONY: test test-unit test-e2e test-watch http-surface
 
 test: test-unit test-e2e  ## 🧪 Run all tests
 
@@ -612,6 +612,22 @@ test-e2e:  ## 🧪 Run E2E tests
 
 test-watch:  ## 🧪 Run tests in watch mode
 	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run test:watch"
+
+http-surface:  ## 🧪 Check HTTP headers/cookies (URL=http://... or URLS="...")
+	@TARGETS="$${URLS:-$${URL:-}}"; \
+	if [ -z "$$TARGETS" ]; then \
+		echo "Usage: make http-surface URL=http://localhost:3000/api/health [COOKIE_NAMES=\"session refresh_token\"]"; \
+		echo "   or: make http-surface URLS=\"https://preview.example.com https://preview.example.com/api/health\""; \
+		exit 1; \
+	fi; \
+	declare -a ARGS=(); \
+	for cookie in $${COOKIE_NAMES:-}; do \
+		ARGS+=(--cookie-name "$$cookie"); \
+	done; \
+	for url in $$TARGETS; do \
+		ARGS+=("$$url"); \
+	done; \
+	bash qa/implementation/scripts/check-http-surface.sh "$${ARGS[@]}"
 
 # ============================================
 #  🧹 CLEANUP
