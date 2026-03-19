@@ -61,8 +61,15 @@ require_docker_container() {
   fi
 
   if ! docker info >/dev/null 2>&1; then
-    printf 'Pre-push guard requires a running Docker daemon.\n' >&2
-    printf 'Start Docker and retry the push.\n' >&2
+    DOCKER_INFO_ERR="$(docker info 2>&1 >/dev/null || true)"
+    if grep -qi 'permission denied' <<<"$DOCKER_INFO_ERR"; then
+      printf 'Pre-push guard requires Docker socket access.\n' >&2
+      printf 'User `%s` cannot access /var/run/docker.sock.\n' "$(whoami)" >&2
+      printf 'Fix Docker access, then retry the push.\n' >&2
+    else
+      printf 'Pre-push guard requires a running Docker daemon.\n' >&2
+      printf 'Start Docker and retry the push.\n' >&2
+    fi
     exit 1
   fi
 
