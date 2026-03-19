@@ -1,4 +1,6 @@
-// apps/frontend/src/styles/base/_reset.scss
+// ============================================
+// PRISMATICA — CSS Reset
+// ============================================
 
 @use '../abstracts' as *;
 
@@ -19,13 +21,17 @@ html {
 }
 
 body {
-  font-family: $font-family-sans;
-  font-size: $font-size-base;
+  font-family: $font-family-ui;
+  font-size: $text-base;
   line-height: $leading-relaxed;
-  color: var(--prisma-text-primary);
-  background: var(--prisma-bg-primary);
+  color: $text-primary;
+  background: $bg-primary;
   overflow-y: scroll;
-  transition: background-color $duration-slow $ease-default, color $duration-slow $ease-default;
+
+  @include theme('dark') {
+    color: $dark-text-primary;
+    background: $dark-bg-primary;
+  }
 }
 
 img,
@@ -44,11 +50,22 @@ select {
   font: inherit;
 }
 
-// Accesibilidad: evitar focus rings cuando no son necesarios
-:focus:not(:focus-visible) {
-  outline: none;
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
 }
 
-#root {
+#root,
+#__next {
   isolation: isolate;
+}
+
+// Focus visible polyfill
+:focus:not(:focus-visible) {
+  outline: none;
 }

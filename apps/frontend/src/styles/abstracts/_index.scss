@@ -1,11 +1,4 @@
-// ============================================
-// PRISMATICA — Abstracts Index
-// ============================================
-// Re-exports graphical chart + mixins
-// Usage: @use 'abstracts' as *;
-// ============================================
+// apps/frontend/src/styles/abstracts/_index.scss
 
-@forward 'graphical-chart';
-
-// Mixins extend the tokens with reusable patterns
+@forward '../base/graphical-chart';
 @forward 'mixins';

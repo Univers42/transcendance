@@ -1,90 +1,37 @@
-// ============================================
-// PRISMATICA — Base Typography
-// ============================================
+// apps/frontend/src/styles/base/_typography.scss
 
 @use '../abstracts' as *;
 
-// Headings
-h1,
-.h1 {
-  font-family: $font-family-ui;
-  font-size: $text-2xl; // 32px
+h1, .h1 {
+  font-family: $font-family-sans;
+  font-size: $font-size-2xl;
   font-weight: $weight-semibold;
   line-height: $leading-tight;
   letter-spacing: $tracking-tight;
-  color: $text-primary;
-
-  @include theme('dark') {
-    color: $dark-text-primary;
-  }
+  color: var(--prisma-text-primary);
 }
 
-h2,
-.h2 {
-  font-family: $font-family-ui;
-  font-size: $text-xl; // 24px
+h2, .h2 {
+  font-family: $font-family-sans;
+  font-size: $font-size-xl;
   font-weight: $weight-semibold;
   line-height: $leading-snug;
-  color: $text-primary;
-
-  @include theme('dark') {
-    color: $dark-text-primary;
-  }
+  color: var(--prisma-text-primary);
 }
 
-h3,
-.h3 {
-  font-family: $font-family-ui;
-  font-size: $text-lg; // 20px
-  font-weight: $weight-medium;
-  line-height: $leading-normal;
-  color: $text-primary;
-
-  @include theme('dark') {
-    color: $dark-text-primary;
-  }
-}
-
-h4,
-.h4 {
-  font-family: $font-family-ui;
-  font-size: $text-md; // 16px
-  font-weight: $weight-semibold;
-  line-height: $leading-normal;
-  color: $text-primary;
-
-  @include theme('dark') {
-    color: $dark-text-primary;
-  }
-}
-
-// Body text
 p {
-  margin-bottom: $space-4;
-  color: $text-secondary;
-
-  @include theme('dark') {
-    color: $dark-text-secondary;
-  }
+  margin-bottom: $spacing-4;
+  color: var(--prisma-text-secondary);
 }
 
-// Links
 a {
-  color: $accent;
+  color: var(--prisma-accent);
   text-decoration: underline;
-  text-underline-offset: 0.125rem;
-  transition: $transition-colors;
-
-  @include theme('dark') {
-    color: $dark-accent;
-  }
+  text-underline-offset: 2px;
+  transition: all $duration-base $ease-default;
 
   &:hover {
-    color: $accent-hover;
-
-    @include theme('dark') {
-      color: $dark-accent-hover;
-    }
+    color: var(--prisma-accent-hover);
   }
 
   &:focus-visible {
@@ -92,19 +39,9 @@ a {
   }
 }
 
-// Data text utilities
-.data-xl {
-  @include data-text('xl');
-}
-.data-lg {
-  @include data-text('lg');
-}
+// Utilidades para datos tabulares (JetBrains Mono)
 .data-md {
-  @include data-text('md');
-}
-.data-sm {
-  @include data-text('sm');
-}
-.data-xs {
-  @include data-text('xs');
+  font-family: $font-family-mono;
+  font-variant-numeric: tabular-nums;
+  font-size: $font-size-base;
 }

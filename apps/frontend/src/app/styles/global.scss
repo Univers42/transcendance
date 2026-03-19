@@ -1,0 +1,25 @@
+// apps/frontend/src/app/styles/global.scss
+
+@use '../../styles/abstracts' as *;
+@use '../../styles/base/reset';
+@use '../../styles/base/typography';
+
+// ------------------------------------------------------
+// THEME APPLICATION
+// Generamos las variables CSS en la raíz del documento
+// ------------------------------------------------------
+
+:root {
+  @include theme-variables('light');
+}
+
+[data-theme='dark'] {
+  @include theme-variables('dark');
+}
+
+// Respetar la preferencia del sistema si no hay tema explícito
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-variables('dark');
+  }
+}
