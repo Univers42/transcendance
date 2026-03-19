@@ -596,7 +596,7 @@ typecheck:  ## ✅ TypeScript type checking (no emit)
 #  🧪 TESTING
 # ============================================
 
-.PHONY: test test-unit test-e2e test-watch
+.PHONY: test test-unit test-e2e test-watch frontend-smoke
 
 test: test-unit test-e2e  ## 🧪 Run all tests
 
@@ -612,6 +612,14 @@ test-e2e:  ## 🧪 Run E2E tests
 
 test-watch:  ## 🧪 Run tests in watch mode
 	@docker exec -it $(CONTAINER) sh -c "cd $(BACKEND) && pnpm run test:watch"
+
+frontend-smoke:  ## 🧪 Run Playwright smoke tests for landing/auth
+	@pnpm exec playwright --version >/dev/null 2>&1 || { \
+		echo "Playwright is not installed at the repo root."; \
+		echo "Run: pnpm install && pnpm run frontend:smoke:install"; \
+		exit 1; \
+	}
+	@pnpm run frontend:smoke
 
 # ============================================
 #  🧹 CLEANUP

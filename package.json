@@ -4,7 +4,10 @@
   "private": true,
   "description": "ft_transcendence monorepo — hooks and workspace root",
   "scripts": {
-    "prepare": "bash qa/implementation/scripts/activate-hooks.sh || true"
+    "prepare": "bash qa/implementation/scripts/activate-hooks.sh || true",
+    "frontend:smoke": "playwright test qa/implementation/playwright",
+    "frontend:smoke:headed": "playwright test qa/implementation/playwright --headed",
+    "frontend:smoke:install": "playwright install chromium"
   },
   "dependencies": {
     "@nestjs/config": "^4.0.3",
@@ -25,6 +28,7 @@
     "supertest": "^7.2.2"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@types/compression": "^1.8.1",
     "@types/cookie-parser": "^1.4.10",
     "@types/jest": "^30.0.0",

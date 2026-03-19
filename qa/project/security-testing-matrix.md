@@ -4,9 +4,9 @@
 
 | Surface | Primary risks | What should be automated now | Next step |
 |---------|---------------|------------------------------|-----------|
-| Auth forms (`apps/frontend/src/components/login-form`, `register-form`) | weak client validation, reflected messages, unsafe redirects, broken error handling | smoke checks, static sink detection, form abuse checklist | Playwright auth smoke + negative tests |
+| Auth forms (`apps/frontend/src/components/login-form`, `register-form`) | weak client validation, reflected messages, unsafe redirects, broken error handling | Playwright auth smoke, negative validation checks, static sink detection | expand to real backend-auth and degraded-session flows |
 | User-facing rendering | XSS via names, bios, chat-like messages, notifications, query params | static checks for raw HTML sinks and unsafe client APIs | Semgrep rules + Playwright malicious payload fixtures |
-| Route protection | broken protected views, stale auth state, bad 401/403 UX | auth state regression smoke tests | Playwright multi-role flows |
+| Route protection | broken protected views, stale auth state, bad 401/403 UX | pending once protected routes exist in the UI | Playwright multi-role flows |
 | HTTP surface | missing CSP / HSTS / cookie flags / frame protection | header and cookie assertions with `check-http-surface.sh` | CI against preview / staging |
 | Local git workflow | bad commit messages, merge markers, leaked env files, debug leftovers | fallback hooks in `qa/implementation/hooks` | add scanner-backed secret detection |
 | Dependencies | vulnerable packages, drift, stale lockfiles | Dependabot config | scanner + nightly dependency audit |

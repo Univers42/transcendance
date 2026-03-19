@@ -9,7 +9,7 @@ without polluting `apps/`.
 ```text
 qa/
 ├── project/          # Strategy, backlog, matrices, rollout decisions
-└── implementation/   # Executable guards, configs, and hook fallbacks
+└── implementation/   # Executable guards, Playwright smoke, configs, and hooks
 ```
 
 ## Rules
@@ -26,7 +26,8 @@ bash qa/implementation/scripts/activate-hooks.sh
 bash qa/implementation/scripts/check-frontend-security.sh
 bash qa/implementation/scripts/pre-commit-guard.sh
 bash qa/implementation/scripts/pre-push-guard.sh   # requires transcendence-dev running
-bash qa/implementation/scripts/check-http-surface.sh http://localhost:3000
+make http-surface URL=http://localhost:3000/api/health
+pnpm run frontend:smoke                           # requires root + frontend deps installed
 ```
 
 ## Why This Exists
@@ -37,4 +38,4 @@ documentation. This QA layer adds a dedicated place for:
 - attack-oriented test planning
 - human-error guardrails
 - low-dependency security checks that can run locally and in CI
-- future scanner configs for Semgrep, Gitleaks, Trivy, Playwright, and ZAP
+- future scanner configs and deeper automation for Semgrep, Gitleaks, Trivy, and ZAP
