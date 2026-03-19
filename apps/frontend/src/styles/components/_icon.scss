@@ -1,0 +1,14 @@
+// apps/frontend/src/styles/components/_icon.scss
+
+@use '../abstracts' as *;
+
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+  color: currentColor;
+
+  &--sm { width: 1rem; height: 1rem; }
+  &--md { width: 1.25rem; height: 1.25rem; }
+  &--lg { width: 1.5rem; height: 1.5rem; }
+}

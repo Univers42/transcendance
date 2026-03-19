@@ -1,0 +1,20 @@
+// apps/frontend/src/styles/components/_display.scss
+
+@use '../abstracts' as *;
+
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+.block { display: block; }
+.hidden { display: none; }
+
+// Utilidades responsivas
+@include md-up {
+  .md-flex { display: flex; }
+  .md-hidden { display: none; }
+}
+
+@include lg-up {
+  .lg-flex { display: flex; }
+  .lg-hidden { display: none; }
+}

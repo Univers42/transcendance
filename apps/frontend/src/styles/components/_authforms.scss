@@ -1,0 +1,60 @@
+// apps/frontend/src/styles/components/_authforms.scss
+
+@use '../abstracts' as *;
+
+.auth-form {
+  &__card {
+    border-radius: $radius-2xl;
+    border: 1px solid var(--prisma-border);
+    padding: $spacing-6;
+    background: var(--prisma-bg-elevated);
+    box-shadow: var(--prisma-shadow-md);
+    max-width: 420px;
+    width: 100%;
+
+    @include sm-up { padding: $spacing-8; }
+  }
+
+  &__tabs {
+    display: flex;
+    gap: $spacing-1;
+    background: var(--prisma-bg-tertiary);
+    border-radius: $radius-xl;
+    padding: $spacing-1;
+    margin-bottom: $spacing-6;
+  }
+
+  &__tab {
+    flex: 1;
+    padding: $spacing-2 0;
+    border-radius: $radius-lg;
+    background: transparent;
+    border: none;
+    color: var(--prisma-text-tertiary);
+    font-size: $font-size-sm;
+    cursor: pointer;
+    transition: all $duration-base $ease-default;
+
+    &--active {
+      background: var(--prisma-bg-elevated);
+      color: var(--prisma-text-primary);
+      font-weight: $weight-medium;
+      box-shadow: var(--prisma-shadow-sm);
+    }
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+    margin-bottom: $spacing-4;
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $weight-medium;
+    color: var(--prisma-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: $tracking-wide;
+  }
+}

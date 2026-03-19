@@ -1,0 +1,38 @@
+// apps/frontend/src/styles/components/_cards.scss
+
+@use '../abstracts' as *;
+
+.card {
+  @include card($hoverable: false);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $spacing-4 $spacing-6;
+    border-bottom: 1px solid var(--prisma-border);
+  }
+
+  &__body {
+    flex: 1;
+    padding: $spacing-6;
+  }
+
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: $spacing-3;
+    padding: $spacing-4 $spacing-6;
+    border-top: 1px solid var(--prisma-border);
+    background: var(--prisma-bg-secondary);
+  }
+
+  &--interactive {
+    @include card($hoverable: true);
+    cursor: pointer;
+  }
+}

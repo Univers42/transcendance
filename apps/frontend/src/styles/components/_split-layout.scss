@@ -1,0 +1,28 @@
+// apps/frontend/src/styles/components/_split-layout.scss
+
+@use '../abstracts' as *;
+
+.split-layout {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-6;
+  width: 100%;
+
+  @include lg-up {
+    flex-direction: row;
+    align-items: center;
+    gap: $spacing-12;
+  }
+
+  &__left, &__right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  &--centered {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+}

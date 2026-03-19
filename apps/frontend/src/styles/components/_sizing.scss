@@ -1,0 +1,11 @@
+// apps/frontend/src/styles/components/_sizing.scss
+
+@use '../abstracts' as *;
+
+.w-full { width: 100%; }
+.w-auto { width: auto; }
+.h-full { height: 100%; }
+
+.aspect-4-3 { aspect-ratio: 4 / 3; }
+.aspect-16-10 { aspect-ratio: 16 / 10; }
+.aspect-square { aspect-ratio: 1 / 1; }

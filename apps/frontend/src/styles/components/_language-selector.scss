@@ -1,0 +1,54 @@
+// apps/frontend/src/styles/components/_language-selector.scss
+
+@use '../abstracts' as *;
+
+.language-selector {
+  position: relative;
+  display: inline-block;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-2 $spacing-3;
+    background: var(--prisma-bg-primary);
+    border: 1px solid var(--prisma-border);
+    border-radius: $radius-md;
+    color: var(--prisma-text-primary);
+    cursor: pointer;
+    transition: all $duration-fast $ease-default;
+
+    &:hover { background: var(--prisma-bg-hover); border-color: var(--prisma-border-strong); }
+    &:focus-visible { @include focus-ring; }
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + $spacing-2);
+    right: 0;
+    min-width: 12rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--prisma-bg-primary);
+    border: 1px solid var(--prisma-border);
+    border-radius: $radius-lg;
+    box-shadow: var(--prisma-shadow-lg);
+    z-index: $z-dropdown;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    padding: $spacing-3 $spacing-4;
+    border: none;
+    background: transparent;
+    color: var(--prisma-text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition: all $duration-fast $ease-default;
+
+    &:hover { background: var(--prisma-bg-hover); padding-left: $spacing-5; }
+    &.is-active { background: var(--prisma-bg-selected); font-weight: $weight-semibold; }
+  }
+}
