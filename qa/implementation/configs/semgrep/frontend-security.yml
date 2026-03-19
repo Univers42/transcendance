@@ -1,0 +1,52 @@
+rules:
+  - id: transcendence.react.no-dangerously-set-inner-html
+    message: Avoid `dangerouslySetInnerHTML` unless the content is explicitly sanitized and reviewed.
+    severity: ERROR
+    languages:
+      - typescript
+      - javascript
+    pattern-either:
+      - pattern: <... dangerouslySetInnerHTML=... />
+      - pattern: <... dangerouslySetInnerHTML=...>...</...>
+
+  - id: transcendence.browser.no-raw-html-sinks
+    message: Avoid direct DOM HTML sinks such as `innerHTML`, `outerHTML`, or `insertAdjacentHTML`.
+    severity: ERROR
+    languages:
+      - typescript
+      - javascript
+    pattern-either:
+      - pattern: $ELEMENT.innerHTML = $VALUE
+      - pattern: $ELEMENT.outerHTML = $VALUE
+      - pattern: $ELEMENT.insertAdjacentHTML($POSITION, $VALUE)
+
+  - id: transcendence.browser.no-token-storage
+    message: Do not store auth or session tokens in Web Storage.
+    severity: WARNING
+    languages:
+      - typescript
+      - javascript
+    pattern-either:
+      - pattern: localStorage.setItem($KEY, $VALUE)
+      - pattern: sessionStorage.setItem($KEY, $VALUE)
+    metavariable-regex:
+      metavariable: $KEY
+      regex: (?i).*(token|jwt|auth|session|refresh).*
+
+  - id: transcendence.browser.no-wildcard-postmessage
+    message: Avoid wildcard `postMessage` targets.
+    severity: ERROR
+    languages:
+      - typescript
+      - javascript
+    pattern: $TARGET.postMessage($DATA, "*")
+
+  - id: transcendence.react.target-blank-requires-rel
+    message: Links using `target="_blank"` must also set `rel="noopener noreferrer"`.
+    severity: WARNING
+    languages:
+      - typescript
+      - javascript
+    patterns:
+      - pattern: <a ... target="_blank" ...>
+      - pattern-not: <a ... target="_blank" ... rel="noopener noreferrer" ...>

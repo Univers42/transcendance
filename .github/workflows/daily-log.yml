@@ -47,8 +47,7 @@ permissions:
   contents: read
 
 env:
-  # Update when real logins are confirmed
-  TEAM_MENTIONS: "@LESdylan @login2 @login3 @login4 @login5"
+  TEAM_MENTIONS: "@LESdylan @danielfdez17 @serjimen @vjan-nie @esettes"
 
 jobs:
   standup:
@@ -58,21 +57,20 @@ jobs:
       fail-fast: false
       matrix:
         member:
-          # ── Replace login2 … login5 with real GitHub usernames ──────
           - login: "LESdylan"
             name: "Dylan"
             working_days: "1,2,3,4,5"    # Mon–Fri
-          - login: "login2"
-            name: "Teammate 2"
+          - login: "danielfdez17"
+            name: "Daniel"
             working_days: "1,2,3,4,5"    # Mon–Fri
-          - login: "login3"
-            name: "Teammate 3"
+          - login: "serjimen"
+            name: "Sergio"
             working_days: "1,2,3,4,5,6"  # Mon–Sat
-          - login: "login4"
-            name: "Teammate 4"
+          - login: "vjan-nie"
+            name: "Victor"
             working_days: "1,2,3,4,5"    # Mon–Fri
-          - login: "login5"
-            name: "Teammate 5"
+          - login: "esettes"
+            name: "Roxana"
             working_days: "1,2,3,4,5"    # Mon–Fri
 
     steps:

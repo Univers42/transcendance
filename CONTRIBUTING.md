@@ -58,6 +58,8 @@ git checkout -b feature/my-thing
 | `make gen-css` | Compile SASS once |
 | `make gen-css WATCH=1` | SASS in watch mode |
 | `make configure-hooks` | Install git hooks |
+| `bash qa/implementation/scripts/pre-commit-guard.sh` | Run local QA pre-commit checks manually |
+| `bash qa/implementation/scripts/check-http-surface.sh <url>` | Check headers and cookie flags on a running app |
 | `make shell` | Shell into the container |
 | `make help` | List everything |
 
@@ -128,6 +130,7 @@ ft_transcendence/
 │   └── shared/              # Shared types & utils
 ├── docker/                  # Dockerfiles, nginx
 ├── docs/                    # Extra docs
+├── qa/                      # QA strategy, pentest backlog, guard scripts
 ├── scripts/                 # Helper scripts
 └── vendor/                  # Third-party & 42 tools
 ```
@@ -141,6 +144,7 @@ ft_transcendence/
 | Shared types | `packages/shared/src/types/` |
 | Styles | `apps/frontend/src/styles/` |
 | DB model | `apps/backend/prisma/schema.prisma` |
+| QA automation / pentest config | `qa/` |
 | Docker config | `docker/` |
 
 ---
@@ -799,23 +803,25 @@ Hooks activate **automatically** — you don't have to do anything. There are th
 
 | Trigger | When it fires | How it activates hooks |
 |---------|--------------|----------------------|
-| `make` / `make dev` | First build or any dev session | Makefile runs `configure-hooks` as a dependency |
-| `pnpm install` / `npm install` | Installing deps | Root `package.json` has a `prepare` script |
-| `git checkout` | Switching branches (if hooks are already active) | `post-checkout` hook warns if `core.hooksPath` is missing |
+| `make` / `make dev` | First build or any dev session | Makefile runs `configure-hooks`, preferring vendor hooks and falling back to `qa/implementation/hooks` |
+| `pnpm install` / `npm install` | Installing deps | Root `package.json` runs `qa/implementation/scripts/activate-hooks.sh` |
+| Manual | Any time | `bash qa/implementation/scripts/activate-hooks.sh` |
 
 Under the hood it's one git setting:
 
 ```
-git config --local core.hooksPath vendor/scripts/hooks
+git config --local core.hooksPath qa/implementation/hooks
 ```
 
-This tells git "look in `vendor/scripts/hooks/` for hooks instead of `.git/hooks/`". The hooks are versioned files in the repo — no symlinks, no copying, nothing to install. Every `git pull` that updates a hook script takes effect immediately for everyone.
+The activation script prefers `vendor/scripts/hooks` when the submodule is
+available and falls back to `qa/implementation/hooks` when it is not. This
+keeps hook automation working even in lightweight checkouts.
 
 If for some reason they're not active:
 
 ```bash
 make configure-hooks    # or manually:
-git config --local core.hooksPath vendor/scripts/hooks
+bash qa/implementation/scripts/activate-hooks.sh
 ```
 
 ### What each hook does
@@ -846,9 +852,9 @@ graph LR
 |------|---------|---------------|
 | `pre-commit` | Before commit is created | Merge conflict markers, `debugger` statements, `.env` files, large files (>500 KB), trailing whitespace |
 | `commit-msg` | After you write the message | Conventional commit format, description 25–170 chars, uppercase start, no trailing period, no forbidden words |
-| `pre-push` | Before push reaches remote | All commits match format, tiered branch protection (see below) |
-| `post-checkout` | After switching branch | Auto-pulls with `--ff-only` from upstream, warns if hooks are not active |
-| `pre-merge-commit` | Before merge commit is created | Auto-pulls from upstream, asks confirmation if pull fails |
+| `pre-push` | Before push reaches remote | Outgoing commit subjects, frontend security guard, and Docker-based lint/typecheck inside `transcendence-dev` |
+| `post-checkout` | After switching branch | Vendor hook only when the `vendor/scripts` submodule is initialized |
+| `pre-merge-commit` | Before merge commit is created | Vendor hook only when the `vendor/scripts` submodule is initialized |
 
 ### Bypassing hooks
 
@@ -866,52 +872,39 @@ You can also use `git commit --no-verify` to skip `pre-commit` and `commit-msg` 
 
 ### Protected branches (tiered)
 
-Not all branches get the same level of protection. Feature branches flow freely — the friction scales with the risk:
+Use GitHub branch protection for the real barrier:
 
-| Branch | Protection | What happens on `git push` |
-|--------|-----------|---------------------------|
-| `main` / `master` | **Hard gate** — password required | Must have `.git/allow_push` file with a password. The hook prompts for it. No password = push blocked. |
-| `develop` | **Soft gate** — confirmation prompt | Y/n interactive prompt. Press Enter to confirm, `n` to cancel. |
-| Feature branches | **None** | Push goes through. Commit messages are still validated. |
-
-Setting up the password for `main`:
-
-```bash
-echo 'your-team-secret' > .git/allow_push    # local only, never committed
-```
-
-In CI or scripts, bypass interactively:
-
-```bash
-GIT_PUSH_OVERRIDE=your-team-secret git push origin main   # password match
-GIT_CONFIRM_PUSH=yes git push origin develop               # auto-confirm
-```
+- protect `main` and `develop`
+- require pull requests before merge
+- require code owner review
+- require the CI and QA status checks before merge
+- dismiss stale approvals when new commits land
 
 ### Publish mode
 
-For release commits that need a long description but not strict format:
+The repo-owned QA fallback keeps the scope intentionally small:
 
-```bash
-GIT_PUBLISH=1 git commit -m "Release v1.2.0 — adds tournament mode with bracket generation, spectator view, real-time score updates, and admin dashboard for match management"
-```
+- `pre-commit`
+- `commit-msg`
+- `pre-push`
 
-This only enforces a 25-word minimum.
+If the vendor hook submodule is initialized later, the team can reintroduce more
+advanced hook behavior there without losing the fallback path.
 
 ### Hook logs
 
-All hooks log to `.git/hook-logs/hook.log`. Check it when something goes wrong:
-
-```bash
-cat .git/hook-logs/hook.log
-tail -20 .git/hook-logs/hook.log
-```
+The QA fallback hooks print directly to stdout / stderr and fail fast. Keep them
+small enough that developers do not need a separate hook log to understand what
+went wrong.
 
 ### Debug mode
 
-For verbose output from all hooks:
+Emergency bypass remains available:
 
 ```bash
-GIT_HOOK_DEBUG=1 git commit -m "feat(auth): Add session timeout handling for inactive users"
+SKIP_PRE_COMMIT=1 git commit -m "chore(hooks): Temporary local bypass for debugging only"
+SKIP_COMMIT_MSG=1 git commit -m "temporary message"
+SKIP_PRE_PUSH=1 git push origin feature/my-branch
 ```
 
 ---

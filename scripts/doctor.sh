@@ -61,7 +61,11 @@ echo -e "  ${DIM}Shell:     ${SHELL:-unknown} ($(bash --version 2>/dev/null | he
 section "Docker Engine"
 
 if command -v docker >/dev/null 2>&1; then
-    DOCKER_VERSION=$(docker version --format '{{.Client.Version}}' 2>/dev/null || echo "unknown")
+    DOCKER_VERSION="$(docker version --format '{{.Client.Version}}' 2>/dev/null | head -1)"
+    if [[ -z "$DOCKER_VERSION" ]]; then
+        DOCKER_VERSION="$(docker --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)"
+    fi
+    DOCKER_VERSION="${DOCKER_VERSION:-unknown}"
     DOCKER_MAJOR=$(echo "$DOCKER_VERSION" | cut -d. -f1 2>/dev/null || echo "0")
     # Ensure DOCKER_MAJOR is numeric
     case "$DOCKER_MAJOR" in
@@ -82,12 +86,18 @@ else
                "Install: https://docs.docker.com/get-docker/"
 fi
 
-# ── Docker daemon running? ──
+# ── Docker daemon running / accessible? ──
 if docker info >/dev/null 2>&1; then
     check_pass "Docker daemon is running"
 else
-    check_fail "Docker daemon is NOT running" \
-               "Start it: sudo systemctl start docker  OR  open Docker Desktop"
+    DOCKER_INFO_ERR="$(docker info 2>&1 >/dev/null || true)"
+    if printf '%s' "$DOCKER_INFO_ERR" | grep -qi "permission denied"; then
+        check_fail "Docker socket access is denied" \
+                   "Fix: sudo usermod -aG docker $(whoami) && newgrp docker  OR  use sudo temporarily"
+    else
+        check_fail "Docker daemon is NOT running" \
+                   "Start it: sudo systemctl start docker  OR  open Docker Desktop"
+    fi
 fi
 
 # ── User in docker group? (Linux only) ──
@@ -373,7 +383,8 @@ if [[ -n "$DOCKER_DISK" ]]; then
 fi
 
 # Dangling images
-DANGLING=$(docker images -f "dangling=true" -q 2>/dev/null | wc -l || echo 0)
+DANGLING="$(docker images -f "dangling=true" -q 2>/dev/null | wc -l | tr -d '[:space:]')"
+DANGLING="${DANGLING:-0}"
 if [[ "$DANGLING" -gt 5 ]]; then
     check_warn "$DANGLING dangling Docker images (wasting space)" \
                "Clean up: docker image prune"

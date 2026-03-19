@@ -26,7 +26,7 @@ ft_transcendence · 42 Common Core · 2026
 | [dlesieur](https://profile.intra.42.fr/users/dlesieur) | Dylan Lesieur | ALL | ALL | [@LESdylan](https://github.com/LESdylan) | Auth, OAuth 2.0 |
 | [danfern3](https://profile.intra.42.fr/users/danfern3) | Daniel Fernández | PO | PM | [@danielfdez17](https://github.com/danielfdez17) | Game engine, WebSockets |
 | [serjimen](https://profile.intra.42.fr/users/serjimen) | Sergio Jiménez | PM | TL | [@DJSurgeon](https://github.com/DJSurgeon) | Backend architecture, CI |
-| [alcacere](https://profile.intra.42.fr/users/alcacere) | Alex Cáceres | TL | PM | [@alcacere](https://github.com/alcacere) | Frontend, SCSS design system |
+| [rstancu](https://profile.intra.42.fr/users/rstancu) | Roxana Stancu | TL | PM | [@esettes](https://github.com/esettes) | Frontend, SCSS design system |
 | [vjan-nie](https://profile.intra.42.fr/users/vjan-nie) | Vadim Jan Nieto | TL | ALL | [@vjan-nie](https://github.com/vjan-nie) | Database, Prisma, Docker |
 
 :information_source: Notes about roles

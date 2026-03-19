@@ -7,36 +7,36 @@
 # Rules are evaluated top-to-bottom. The last matching rule wins.
 # Owners are @github-username.
 #
-# Update login2 … login5 with real GitHub usernames.
 # ================================================================
 
 # Default — every file requires review from the Tech Lead and LESdylan
-*                               @LESdylan @login3
+*                               @LESdylan @serjimen
 
 # Backend — NestJS, Prisma, API
-apps/backend/                   @LESdylan @login2 @login3
+apps/backend/                   @LESdylan @danielfdez17 @serjimen
 
 # Frontend — React, Vite, SCSS
-apps/frontend/                  @login4 @LESdylan
+apps/frontend/                  @vjan-nie @LESdylan
 
 # Shared types package
-packages/                       @login3 @LESdylan
+packages/                       @serjimen @LESdylan
 
 # Database schema — high-risk changes require extra eyes
-apps/backend/prisma/            @login5 @login3 @LESdylan
+apps/backend/prisma/            @esettes @serjimen @LESdylan
 
 # Infrastructure — Docker, nginx, Compose
-docker/                         @login5 @login3
-docker-compose*.yml             @login5 @login3
-Makefile                        @login5 @login3
+docker/                         @esettes @serjimen
+docker-compose*.yml             @esettes @serjimen
+Makefile                        @esettes @serjimen
 
 # CI/CD — any change here affects every developer
-.github/                        @login3 @LESdylan
-.github/workflows/              @login3 @LESdylan
+.github/                        @serjimen @LESdylan
+.github/workflows/              @serjimen @LESdylan
 
 # Documentation — anyone can review, PM is default assignee
-*.md                            @login2
-docs/                           @login2
+*.md                            @danielfdez17
+docs/                           @danielfdez17
+qa/                             @danielfdez17 @serjimen @LESdylan
 
 # Environment config — sensitive, restricted
-.env.example                    @login3 @LESdylan
+.env.example                    @serjimen @LESdylan

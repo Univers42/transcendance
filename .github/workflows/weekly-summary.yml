@@ -30,8 +30,7 @@ permissions:
   pull-requests: read
 
 env:
-  # Update to the Project Manager's real GitHub login
-  PM_LOGIN: "login2"
+  PM_LOGIN: "danielfdez17"
 
 jobs:
   weekly-summary:
