@@ -16,7 +16,7 @@ assignees: []
 
 ## Blockers
 
-<!-- Need help? Tag someone: @LESdylan @login2 @login3 @login4 @login5 -->
+<!-- Need help? Tag someone: @LESdylan @danielfdez17 @serjimen @vjan-nie @esettes -->
 
 - None
 
