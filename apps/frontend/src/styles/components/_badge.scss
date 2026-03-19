@@ -26,20 +26,22 @@
   }
 
   &--success {
-    background: rgba($emerald-500, 0.1);
-    color: $emerald-500;
-    [data-theme='dark'] & { background: rgba($emerald-400, 0.2); color: $emerald-400; }
+    background: color-mix(in srgb, var(--prisma-data-success), transparent 90%);
+    color: var(--prisma-data-success);
   }
 
   &--error {
-    background: rgba($red-500, 0.1);
-    color: $red-500;
-    [data-theme='dark'] & { background: rgba($red-400, 0.2); color: $red-400; }
+    background: color-mix(in srgb, var(--prisma-data-error), transparent 90%);
+    color: var(--prisma-data-error);
   }
 
   &--warning {
-    background: rgba($amber-500, 0.1);
-    color: $amber-500;
-    [data-theme='dark'] & { background: rgba($amber-400, 0.2); color: $amber-400; }
+    background: color-mix(in srgb, var(--prisma-data-warning), transparent 90%);
+    color: var(--prisma-data-warning);
+  }
+
+  &--info {
+    background: color-mix(in srgb, var(--prisma-data-info), transparent 90%);
+    color: var(--prisma-data-info);
   }
 }

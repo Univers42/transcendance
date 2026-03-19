@@ -52,4 +52,10 @@
       text-align: right;
     }
   }
+
+  &__data {
+    &--positive { color: var(--prisma-data-success); }
+    &--negative { color: var(--prisma-data-error); }
+    &--warning  { color: var(--prisma-data-warning); }
+  }
 }

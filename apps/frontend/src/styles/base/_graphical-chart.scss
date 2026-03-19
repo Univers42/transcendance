@@ -1,16 +1,17 @@
 // apps/frontend/src/styles/base/_graphical-chart.scss
 
 @forward 'tokens/colors';
+@forward 'tokens/theme';
 @forward 'tokens/spacing';
 @forward 'tokens/typography';
 
 @use 'tokens/colors' as *;
+@use 'tokens/theme' as *;
 @use 'tokens/spacing' as *;
 @use 'tokens/typography' as *;
 
 // ------------------------------------------------------
 // THEME VARIABLES GENERATOR
-// Transformamos los tokens de Sass en variables CSS
 // ------------------------------------------------------
 
 @mixin theme-variables($theme: 'light') {
@@ -24,9 +25,15 @@
     --prisma-text-primary:   #{$text-primary};
     --prisma-text-secondary: #{$text-secondary};
     --prisma-text-tertiary:  #{$text-tertiary};
+    --prisma-text-error:     #{$text-error};
 
     --prisma-accent:        #{$accent};
     --prisma-accent-hover:  #{$accent-hover};
+
+    --prisma-data-success: #{$data-success};
+    --prisma-data-warning: #{$data-warning};
+    --prisma-data-error:   #{$data-error};
+    --prisma-data-info:    #{$data-info};
 
     --prisma-border:        #{$border-default};
     --prisma-border-strong: #{$border-strong};
@@ -44,9 +51,15 @@
     --prisma-text-primary:   #{$dark-text-primary};
     --prisma-text-secondary: #{$dark-text-secondary};
     --prisma-text-tertiary:  #{$dark-text-tertiary};
+    --prisma-text-error:     #{$dark-data-error};
 
     --prisma-accent:        #{$dark-accent};
     --prisma-accent-hover:  #{$dark-accent-hover};
+
+    --prisma-data-success: #{$dark-data-success};
+    --prisma-data-warning: #{$dark-data-warning};
+    --prisma-data-error:   #{$dark-data-error};
+    --prisma-data-info:    #{$dark-data-info};
 
     --prisma-border:        #{$dark-border-default};
     --prisma-border-strong: #{$dark-border-strong};

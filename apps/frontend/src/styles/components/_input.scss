@@ -21,6 +21,16 @@
   }
 }
 
+.input-hint {
+  font-family: $font-family-sans;
+  font-size: $font-size-xs;
+  color: var(--prisma-text-tertiary);
+
+  &--error {
+    color: var(--prisma-text-error);
+  }
+}
+
 .input {
   width: 100%;
   min-height: 2.75rem; // 44px
@@ -45,7 +55,7 @@
   &:focus {
     outline: none;
     border-color: var(--prisma-accent);
-    box-shadow: 0 0 0 3px rgba($accent, 0.1);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--prisma-accent), transparent 90%);
   }
 
   &:disabled {
@@ -55,8 +65,12 @@
   }
 
   &--error, &[aria-invalid='true'] {
-    border-color: $red-500;
-    background: rgba($red-500, 0.05);
+    border-color: var(--prisma-data-error);
+    background: color-mix(in srgb, var(--prisma-data-error), transparent 95%);
+
+    &:focus {
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--prisma-data-error), transparent 90%);
+    }
   }
 }
 
