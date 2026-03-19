@@ -24,6 +24,24 @@ qa/implementation/
 The fallback `pre-push` guard is Docker-dependent by design. It requires the
 `transcendence-dev` container to be running and fails closed otherwise.
 
+## HTTP Surface Checks
+
+Use the HTTP surface checker as the first P1 reusable security probe for local
+dev, preview, or staging URLs.
+
+Local examples:
+
+```bash
+make http-surface URL=http://localhost:3000/api/health
+make http-surface URLS="https://preview.example.com https://preview.example.com/api/health" COOKIE_NAMES="session refresh_token"
+```
+
+GitHub example:
+
+- run the `HTTP Surface Check` workflow manually
+- pass one or more target URLs
+- optionally pass cookie names if the environment should set auth cookies
+
 ## Activation Order
 
 1. Run `bash qa/implementation/scripts/activate-hooks.sh`
