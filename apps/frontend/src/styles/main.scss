@@ -1,0 +1,57 @@
+// ============================================
+// PRISMATICA — Main Stylesheet
+// ============================================
+
+// Ya NO necesitas importar abstracts o graphical-chart aquí arriba,
+// porque no vas a escribir CSS directamente en el main.scss.
+// Cada archivo de abajo ya importa lo que necesita.
+
+// 1. BASE
+@use 'base/reset';
+@use 'base/typography';
+
+// 2. COMPONENTES
+@use 'components/auth-page';
+@use 'components/authforms';
+@use 'components/badge';
+@use 'components/brand-logo';
+@use 'components/button';
+@use 'components/cards';
+@use 'components/display';
+@use 'components/footer';
+@use 'components/hero-slider';
+@use 'components/hero';
+@use 'components/icon';
+@use 'components/input';
+@use 'components/language-selector';
+@use 'components/live-badge';
+@use 'components/quickstart';
+@use 'components/sizing';
+@use 'components/split-layout';
+@use 'components/table';
+@use 'components/theme-toggle';
+
+// 3. LAYOUTS
+@use 'layout/container';
+@use 'layout/header';
+@use 'layout/app';
+
+// 4. UTILIDADES
+@use 'utilities/animations';
+
+// 5. CSS CUSTOM PROPERTIES PARA THEMING
+@use 'abstracts' as *; // Lo importamos aquí SOLO para usar el mixin de abajo
+
+:root {
+  @include theme-variables('light');
+}
+
+[data-theme='dark'] {
+  @include theme-variables('dark');
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-variables('dark');
+  }
+}
