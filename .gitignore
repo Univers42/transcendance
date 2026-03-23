@@ -87,7 +87,11 @@ tmp/
 packages/*
 packages
 packages/.*
-static_docs/docusaurus/*.json
+
+# Docusaurus (managed by static_docs/docusaurus/.gitignore)
+static_docs/docusaurus/node_modules/
+static_docs/docusaurus/.docusaurus/
+static_docs/docusaurus/.cache-loader/
 
 # ── Gitflow --------------------------────────────────
 gitflow/

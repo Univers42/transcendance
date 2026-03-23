@@ -1,0 +1,9 @@
+{
+  "label": "Fixes & Workarounds",
+  "position": 5,
+  "collapsed": true,
+  "link": {
+    "type": "generated-index",
+    "description": "Known issues and their resolutions."
+  }
+}

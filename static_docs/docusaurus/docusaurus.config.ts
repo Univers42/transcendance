@@ -2,34 +2,23 @@ import {themes as prismThemes} from 'prism-react-renderer';
 import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
-// This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
-
 const config: Config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'Prismatica',
+  tagline: 'Polymorphic Data Platform — Documentation',
   favicon: 'img/favicon.ico',
 
-  // Future flags, see https://docusaurus.io/docs/api/docusaurus-config#future
-  future: {
-    v4: true, // Improve compatibility with the upcoming Docusaurus v4
-  },
-
-  // Set the production url of your site here
   url: 'https://univers42.github.io',
-  // Set the /<baseUrl>/ pathname under which your site is served
-  // For GitHub pages deployment, it is often '/<projectName>/'
   baseUrl: '/transcendance/',
 
-  // GitHub pages deployment config.
-  // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'univers42', // Usually your GitHub org/user name.
-  projectName: 'transcendance', // Usually your repo name.
+  organizationName: 'univers42',
+  projectName: 'transcendance',
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn',
 
-  // Even if you don't use internationalization, you can use this field to set
-  // useful metadata like html lang. For example, if your site is Chinese, you
-  // may want to replace "en" with "zh-Hans".
+  markdown: {
+    format: 'md',
+  },
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],
@@ -41,10 +30,8 @@ const config: Config = {
       {
         docs: {
           sidebarPath: './sidebars.ts',
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/univers42/transcendance/tree/main/static_docs/docusaurus/',
+            'https://github.com/Univers42/ft_transcendence/tree/develop/static_docs/docusaurus/',
         },
         blog: {
           showReadingTime: true,
@@ -52,11 +39,8 @@ const config: Config = {
             type: ['rss', 'atom'],
             xslt: true,
           },
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl:
-            'https://github.com/univers42/transcendance/tree/main/static_docs/docusaurus/',
-          // Useful options to enforce blogging best practices
+            'https://github.com/Univers42/ft_transcendence/tree/develop/static_docs/docusaurus/',
           onInlineTags: 'warn',
           onInlineAuthors: 'warn',
           onUntruncatedBlogPosts: 'warn',
@@ -69,27 +53,27 @@ const config: Config = {
   ],
 
   themeConfig: {
-    // Replace with your project's social card
     image: 'img/docusaurus-social-card.jpg',
     colorMode: {
+      defaultMode: 'dark',
       respectPrefersColorScheme: true,
     },
     navbar: {
-      title: 'My Site',
+      title: 'Prismatica',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Prismatica Logo',
         src: 'img/logo.svg',
       },
       items: [
         {
           type: 'docSidebar',
-          sidebarId: 'tutorialSidebar',
+          sidebarId: 'docsSidebar',
           position: 'left',
-          label: 'Tutorial',
+          label: 'Docs',
         },
         {to: '/blog', label: 'Blog', position: 'left'},
         {
-          href: 'https://github.com/univers42/transcendance',
+          href: 'https://github.com/Univers42/ft_transcendence',
           label: 'GitHub',
           position: 'right',
         },
@@ -99,50 +83,39 @@ const config: Config = {
       style: 'dark',
       links: [
         {
-          title: 'Docs',
+          title: 'Documentation',
           items: [
-            {
-              label: 'Tutorial',
-              to: '/docs/intro',
-            },
+            {label: 'Getting Started', to: '/docs/intro'},
+            {label: 'Architecture', to: '/docs/architecture'},
+            {label: 'API Reference', to: '/docs/api'},
+            {label: 'Setup Guide', to: '/docs/setup'},
           ],
         },
         {
-          title: 'Community',
+          title: 'Project',
           items: [
-            {
-              label: 'Stack Overflow',
-              href: 'https://stackoverflow.com/questions/tagged/docusaurus',
-            },
-            {
-              label: 'Discord',
-              href: 'https://discordapp.com/invite/docusaurus',
-            },
-            {
-              label: 'X',
-              href: 'https://x.com/docusaurus',
-            },
+            {label: 'Contributing', to: '/docs/contributing'},
+            {label: 'Changelog', to: '/docs/changelog'},
+            {label: 'FAQ', to: '/docs/faq'},
           ],
         },
         {
-          title: 'More',
+          title: 'Links',
           items: [
-            {
-              label: 'Blog',
-              to: '/blog',
-            },
+            {label: 'Blog', to: '/blog'},
             {
               label: 'GitHub',
-              href: 'https://github.com/univers42/transcendance',
+              href: 'https://github.com/Univers42/ft_transcendence',
             },
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Univers42 — Prismatica. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,
       darkTheme: prismThemes.dracula,
+      additionalLanguages: ['bash', 'sql', 'json', 'typescript', 'scss'],
     },
   } satisfies Preset.ThemeConfig,
 };
