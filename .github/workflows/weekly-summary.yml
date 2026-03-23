@@ -38,7 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Generate and post summary
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           PM_LOGIN: ${{ env.PM_LOGIN }}
         with:

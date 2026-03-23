@@ -75,7 +75,7 @@ jobs:
 
     steps:
       - name: Create standup issue
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           MEMBER_LOGIN:   ${{ matrix.member.login }}
           MEMBER_NAME:    ${{ matrix.member.name }}

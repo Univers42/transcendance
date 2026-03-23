@@ -31,7 +31,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Find PRs and notify
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           PROJECT_NUMBER: ${{ vars.PROJECT_NUMBER }}
         with:
