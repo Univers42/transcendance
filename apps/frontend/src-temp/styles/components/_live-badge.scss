@@ -1,0 +1,26 @@
+// ============================================
+// PRISMATICA — Live Badge Component
+// ============================================
+
+@use '../abstracts' as *;
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  padding: $space-1 $space-3;
+  border: 1px solid $accent;
+  border-radius: $radius-full;
+  font-size: $text-xs;
+  font-weight: $weight-medium;
+  color: $accent;
+  letter-spacing: 0.01em;
+
+  &__dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: $radius-full;
+    background: $accent;
+    animation: pulse 1.8s infinite;
+  }
+}

@@ -1,15 +1,14 @@
-// ============================================
-// PRISMATICA — Brand Logo Component
-// ============================================
+// apps/frontend/src/styles/components/_brand-logo.scss
 
 @use '../abstracts' as *;
 
 .brand-logo {
   display: flex;
   align-items: center;
-  gap: $space-3;
+  gap: $spacing-3;
   text-decoration: none;
   color: inherit;
+  transition: opacity $duration-fast $ease-default;
 
   &:hover {
     opacity: 0.9;
@@ -21,29 +20,22 @@
   }
 
   &__icon {
+    @include flex-center;
     width: 2rem;
     height: 2rem;
     border-radius: $radius-md;
     flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     background: var(--prisma-accent);
-    color: white; // Para el stroke="currentColor" del SVG
-  }
+    color: white;
 
-  &__svg {
-    display: block;
+    svg { display: block; }
   }
 
   &__title {
-    font-family: $font-family-ui;
-    font-size: $text-lg;
+    font-family: $font-family-sans;
+    font-size: $font-size-lg;
     font-weight: $weight-semibold;
-    color: $text-primary;
-
-    @include theme('dark') {
-      color: $dark-text-primary;
-    }
+    color: var(--prisma-text-primary);
+    letter-spacing: $tracking-tight;
   }
 }

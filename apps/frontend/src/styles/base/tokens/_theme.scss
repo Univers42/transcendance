@@ -1,0 +1,64 @@
+// apps/frontend/src/styles/base/tokens/_theme.scss
+@use 'colors' as *;
+
+// ------------------------------------------------------
+// 1) SEMANTIC COLORS — LIGHT THEME
+// ------------------------------------------------------
+
+$bg-primary:   $slate-50;
+$bg-secondary: $slate-100;
+$bg-tertiary:  $slate-200;
+$bg-elevated:  #ffffff;
+$bg-hover:     $slate-100;
+$bg-selected:  $indigo-50;
+$bg-active:    $slate-200;
+$bg-subtle:    $slate-50;
+$bg-masked:    rgba($slate-950, 0.5);
+
+$text-primary:   $slate-900;
+$text-secondary: $slate-600;
+$text-tertiary:  $slate-400;
+$text-inverse:   #ffffff;
+$text-disabled:  $slate-300;
+$text-error:     $red-600;
+
+$accent:         $indigo-600;
+$accent-hover:   $indigo-700;
+$accent-pressed: $indigo-800;
+
+$data-success: $emerald-600;
+$data-warning: $amber-600;
+$data-error:   $red-600;
+$data-info:    $blue-600;
+
+$border-default: $slate-200;
+$border-strong:  $slate-300;
+$border-accent:  $indigo-600;
+
+// ------------------------------------------------------
+// 2) SEMANTIC COLORS — DARK THEME
+// ------------------------------------------------------
+
+$dark-bg-primary:   $slate-950;
+$dark-bg-secondary: $slate-900;
+$dark-bg-tertiary:  $slate-800;
+$dark-bg-elevated:  $slate-900;
+$dark-bg-hover:     $slate-800;
+$dark-bg-selected:  $indigo-950;
+
+$dark-text-primary:   $slate-50;
+$dark-text-secondary: $slate-400;
+$dark-text-tertiary:  $slate-500;
+$dark-text-inverse:   $slate-950;
+
+$dark-accent:       $indigo-400;
+$dark-accent-hover: $indigo-300;
+
+$dark-data-success: $emerald-400;
+$dark-data-warning: $amber-400;
+$dark-data-error:   $red-400;
+$dark-data-info:    $blue-400;
+
+$dark-border-default: $slate-800;
+$dark-border-strong:  $slate-700;
+$dark-border-accent:  $indigo-400;

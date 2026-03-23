@@ -1,6 +1,4 @@
-// ============================================
-// PRISMATICA — App Layout
-// ============================================
+// apps/frontend/src/styles/layout/_app.scss
 
 @use '../abstracts' as *;
 
@@ -9,16 +7,9 @@
   flex-direction: column;
   min-height: 100vh;
 
-  &__header {
-    flex-shrink: 0;
-  }
-
   &__main {
     flex: 1;
-    padding: $space-6 0;
-  }
-
-  &__footer {
-    flex-shrink: 0;
+    padding-top: $spacing-24; // Espacio para el header fijo
+    padding-bottom: $spacing-12;
   }
 }

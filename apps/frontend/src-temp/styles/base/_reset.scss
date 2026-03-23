@@ -1,0 +1,71 @@
+// ============================================
+// PRISMATICA — CSS Reset
+// ============================================
+
+@use '../abstracts' as *;
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scrollbar-gutter: stable;
+}
+
+body {
+  font-family: $font-family-ui;
+  font-size: $text-base;
+  line-height: $leading-relaxed;
+  color: $text-primary;
+  background: $bg-primary;
+  overflow-y: scroll;
+
+  @include theme('dark') {
+    color: $dark-text-primary;
+    background: $dark-bg-primary;
+  }
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+}
+
+#root,
+#__next {
+  isolation: isolate;
+}
+
+// Focus visible polyfill
+:focus:not(:focus-visible) {
+  outline: none;
+}

@@ -1,450 +1,60 @@
-/**
- * @file _authforms.scss
- * @description Styles for AuthForms component (Login & Register forms)
- */
+// apps/frontend/src/styles/components/_authforms.scss
+
 @use '../abstracts' as *;
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* FORM CARD                                                                   */
-/* ─────────────────────────────────────────────────────────────────────────── */
+.auth-form {
+  &__card {
+    border-radius: $radius-2xl;
+    border: 1px solid var(--prisma-border);
+    padding: $spacing-6;
+    background: var(--prisma-bg-elevated);
+    box-shadow: var(--prisma-shadow-md);
+    max-width: 420px;
+    width: 100%;
 
-.auth-form__card {
-  border-radius: $radius-2xl;
-  border: 1px solid var(--border-default);
-  padding: $space-6;
-  background-color: var(--bg-elevated);
-  box-shadow: $shadow-md;
-  max-width: 420px;
-  width: 100%;
-
-  @include sm-up {
-    padding: $space-8;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* TAB SWITCHER                                                                */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__tabs {
-  display: flex;
-  gap: $space-1;
-  background-color: var(--bg-tertiary);
-  border-radius: $radius-xl;
-  padding: $space-1;
-  margin-bottom: $space-6;
-}
-
-.auth-form__tab {
-  flex: 1;
-  padding: $space-2 0;
-  border-radius: $radius-lg;
-  background-color: transparent;
-  border: none;
-  color: var(--text-tertiary);
-  font-size: $text-sm;
-  font-weight: $weight-normal;
-  transition: $transition-base;
-  cursor: pointer;
-
-  &.auth-form__tab--active {
-    background-color: var(--bg-elevated);
-    color: var(--text-primary);
-    font-weight: $weight-medium;
-    box-shadow: $shadow-sm;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* FORM TITLE & DESCRIPTION                                                    */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__title {
-  font-size: $text-xl;
-  font-weight: $weight-semibold;
-  letter-spacing: -0.01em;
-  color: var(--text-primary);
-  line-height: 1.3;
-  margin-bottom: $space-1;
-}
-
-.auth-form__description {
-  font-size: $text-sm;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* FIELD WRAPPER & LABEL                                                       */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__field {
-  display: flex;
-  flex-direction: column;
-  gap: $space-1;
-}
-
-.auth-form__label {
-  font-size: $text-xs;
-  font-weight: $weight-medium;
-  color: var(--text-secondary);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.auth-form__error {
-  display: flex;
-  align-items: center;
-  gap: $space-1;
-
-  svg {
-    width: 0.875rem;
-    height: 0.875rem;
-    flex-shrink: 0;
-    color: var(--color-error);
+    @include sm-up { padding: $spacing-8; }
   }
 
-  span {
-    font-size: $text-xs;
-    color: var(--color-error);
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* INPUT FIELD                                                                 */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__input-wrapper {
-  position: relative;
-}
-
-.auth-form__input {
-  width: 100%;
-  height: 2.75rem;
-  padding: 0 $space-3;
-  border-radius: $radius-lg;
-  border: 1px solid var(--border-default);
-  background-color: var(--bg-secondary);
-  color: var(--text-primary);
-  font-size: $text-sm;
-  font-family: var(--font-sans);
-  outline: none;
-  box-shadow: none;
-  transition: $transition-colors;
-
-  &:focus {
-    border-color: var(--accent-default);
-    box-shadow: $shadow-md;
+  &__tabs {
+    display: flex;
+    gap: $spacing-1;
+    background: var(--prisma-bg-tertiary);
+    border-radius: $radius-xl;
+    padding: $spacing-1;
+    margin-bottom: $spacing-6;
   }
 
-  &.auth-form__input--error {
-    border-color: var(--color-error);
-
-    &:focus {
-      box-shadow: $shadow-xl;
-    }
-  }
-
-  &.auth-form__input--with-icon {
-    padding-right: 2.75rem;
-  }
-}
-
-.auth-form__input-action {
-  position: absolute;
-  right: $space-3;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-tertiary);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: $transition-colors;
-
-  &:hover {
-    color: var(--text-secondary);
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* PASSWORD STRENGTH BAR                                                       */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__strength-bar {
-  display: flex;
-  flex-direction: column;
-  gap: $space-1;
-  margin-top: $space-0;
-}
-
-.auth-form__strength-bars {
-  display: flex;
-  gap: $space-1;
-}
-
-.auth-form__strength-bar-item {
-  flex: 1;
-  height: 4px;
-  border-radius: $radius-full;
-  background-color: var(--border-strong);
-  transition: background-color 0.3s;
-}
-
-.auth-form__strength-label {
-  font-size: $text-xs;
-  font-weight: $weight-medium;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* SOCIAL BUTTONS                                                              */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__socials {
-  display: flex;
-  gap: $space-3;
-}
-
-.auth-form__social-btn {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-2;
-  height: 2.75rem;
-  border-radius: $radius-xl;
-  border: 1px solid var(--border-default);
-  background-color: var(--bg-elevated);
-  color: var(--text-primary);
-  font-size: $text-sm;
-  font-weight: $weight-normal;
-  transition: $transition-base;
-  cursor: pointer;
-
-  &:hover {
-    border-color: var(--border-strong);
-    background-color: var(--bg-secondary);
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* DIVIDER WITH TEXT                                                           */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__divider {
-  display: flex;
-  align-items: center;
-  gap: $space-3;
-}
-
-.auth-form__divider-line {
-  flex: 1;
-  height: 1px;
-  background-color: var(--border-default);
-}
-
-.auth-form__divider-text {
-  font-size: $text-xs;
-  color: var(--text-tertiary);
-  white-space: nowrap;
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* REMEMBER & FORGOT                                                           */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.auth-form__remember {
-  display: flex;
-  align-items: center;
-  gap: $space-2;
-  cursor: pointer;
-  user-select: none;
-
-  input {
-    accent-color: var(--accent-default);
-  }
-
-  span {
-    font-size: $text-sm;
-    color: var(--text-secondary);
-  }
-}
-
-.auth-form__forgot-btn {
-  font-size: $text-sm;
-  color: var(--accent-default);
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: $transition-colors;
-
-  &:hover {
-    color: var(--accent-hover);
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* SUBMIT BUTTON                                                               */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__submit {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-2;
-  width: 100%;
-  height: 2.75rem;
-  border-radius: $radius-xl;
-  border: none;
-  background-color: var(--accent-default);
-  color: var(--color-white);
-  font-size: $text-sm;
-  font-weight: $weight-medium;
-  box-shadow: $shadow-md;
-  transition: $transition-base;
-  cursor: pointer;
-
-  &:hover:not(:disabled) {
-    background-color: var(--accent-hover);
-  }
-
-  &:disabled {
-    background-color: var(--accent-hover);
-    opacity: 0.85;
-    cursor: not-allowed;
-  }
-
-  svg {
-    width: 1rem;
-    height: 1rem;
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* TERMS & CONDITIONS                                                          */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__terms {
-  display: flex;
-  flex-direction: column;
-  gap: $space-1;
-}
-
-.auth-form__terms-label {
-  display: flex;
-  align-items: flex-start;
-  gap: $space-2;
-  cursor: pointer;
-
-  input {
-    accent-color: var(--accent-default);
-    margin-top: 0.125rem;
-    flex-shrink: 0;
-  }
-
-  span {
-    font-size: $text-xs;
-    color: var(--text-secondary);
-    line-height: 1.5;
-
-    a {
-      color: var(--accent-default);
-      text-decoration: none;
-
-      &:hover {
-        text-decoration: underline;
-      }
-    }
-  }
-}
-
-.auth-form__terms-error {
-  display: flex;
-  align-items: center;
-  gap: $space-1;
-  margin-left: $space-6;
-
-  svg {
-    width: 0.875rem;
-    height: 0.875rem;
-    flex-shrink: 0;
-    color: var(--color-error);
-  }
-
-  span {
-    font-size: $text-xs;
-    color: var(--color-error);
-  }
-}
-
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* SWITCH & FOOTER TEXT                                                        */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__switch {
-  text-align: center;
-  font-size: $text-sm;
-  color: var(--text-secondary);
-
-  button {
-    color: var(--accent-default);
-    font-weight: $weight-medium;
-    background: none;
+  &__tab {
+    flex: 1;
+    padding: $spacing-2 0;
+    border-radius: $radius-lg;
+    background: transparent;
     border: none;
+    color: var(--prisma-text-tertiary);
+    font-size: $font-size-sm;
     cursor: pointer;
-    padding: 0;
-    transition: $transition-colors;
+    transition: all $duration-base $ease-default;
 
-    &:hover {
-      color: var(--accent-hover);
+    &--active {
+      background: var(--prisma-bg-elevated);
+      color: var(--prisma-text-primary);
+      font-weight: $weight-medium;
+      box-shadow: var(--prisma-shadow-sm);
     }
   }
-}
 
-.auth-form__footer {
-  text-align: center;
-  font-size: $text-xs;
-  color: var(--text-tertiary);
-  line-height: 1.6;
-  margin-top: $space-6;
-
-  a {
-    color: var(--text-secondary);
-    text-decoration: none;
-
-    &:hover {
-      text-decoration: underline;
-    }
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+    margin-bottom: $spacing-4;
   }
-}
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-/* CHECKBOX                                                                    */
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-.auth-form__checkbox {
-  width: 1rem;
-  height: 1rem;
-  border-radius: $radius-sm;
-  accent-color: var(--accent-default);
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $weight-medium;
+    color: var(--prisma-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: $tracking-wide;
+  }
 }

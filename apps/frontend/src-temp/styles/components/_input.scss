@@ -1,0 +1,240 @@
+// ============================================
+// PRISMATICA — Input Component
+// ============================================
+// Types: text, number, password, search, textarea
+// Features: Prefix/suffix, validation states, icons
+// ============================================
+
+@use '../abstracts' as *;
+
+.input-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  width: 100%;
+}
+
+.input-label {
+  font-family: $font-family-ui;
+  font-size: $text-sm;
+  font-weight: $weight-medium;
+  color: $text-primary;
+
+  @include theme('dark') {
+    color: $dark-text-primary;
+  }
+
+  &__required {
+    color: $data-error;
+    margin-left: $space-1;
+
+    @include theme('dark') {
+      color: $dark-data-error;
+    }
+  }
+}
+
+.input-hint {
+  font-family: $font-family-ui;
+  font-size: $text-xs;
+  color: $text-tertiary;
+
+  @include theme('dark') {
+    color: $dark-text-tertiary;
+  }
+
+  &--error {
+    color: $data-error;
+
+    @include theme('dark') {
+      color: $dark-data-error;
+    }
+  }
+}
+
+.input-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  &__prefix,
+  &__suffix {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0 $input-padding-x;
+    font-family: $font-family-data;
+    font-size: $data-md;
+    color: $text-tertiary;
+    pointer-events: none;
+
+    @include theme('dark') {
+      color: $dark-text-tertiary;
+    }
+  }
+
+  &__prefix {
+    left: 0;
+  }
+
+  &__suffix {
+    right: 0;
+  }
+
+  &__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    color: currentColor;
+  }
+}
+
+.input {
+  @include font-smooth;
+
+  width: 100%;
+  min-height: 2.75rem; // 44px target size
+  padding: $input-padding-y $input-padding-x;
+  font-family: $font-family-ui;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $text-primary;
+  background: $bg-primary;
+  border: 1px solid $border-default;
+  border-radius: $radius-md;
+  transition:
+    $transition-colors,
+    box-shadow $duration-fast $ease-out;
+
+  @include theme('dark') {
+    color: $dark-text-primary;
+    background: $dark-bg-primary;
+    border-color: $dark-border-default;
+  }
+
+  // Placeholder
+  &::placeholder {
+    color: $text-tertiary;
+
+    @include theme('dark') {
+      color: $dark-text-tertiary;
+    }
+  }
+
+  // Hover
+  &:hover:not(:disabled):not([aria-invalid='true']) {
+    border-color: $border-strong;
+
+    @include theme('dark') {
+      border-color: $dark-border-strong;
+    }
+  }
+
+  // Focus
+  &:focus {
+    outline: none;
+    border-color: $border-accent;
+    box-shadow: 0 0 0 3px rgba($accent, 0.1);
+
+    @include theme('dark') {
+      border-color: $dark-border-accent;
+      box-shadow: 0 0 0 3px rgba($dark-accent, 0.2);
+    }
+  }
+
+  // Disabled
+  &:disabled {
+    background: $bg-secondary;
+    color: $text-disabled;
+    cursor: not-allowed;
+
+    @include theme('dark') {
+      background: $dark-bg-secondary;
+      color: $dark-text-disabled;
+    }
+  }
+
+  // Error state
+  &[aria-invalid='true'],
+  &--error {
+    border-color: $data-error;
+    background: #fef2f2;
+
+    @include theme('dark') {
+      border-color: $dark-data-error;
+      background: rgba($dark-data-error, 0.1);
+    }
+
+    &:focus {
+      box-shadow: 0 0 0 3px rgba($data-error, 0.1);
+
+      @include theme('dark') {
+        box-shadow: 0 0 0 3px rgba($dark-data-error, 0.2);
+      }
+    }
+  }
+
+  // With prefix
+  &--with-prefix {
+    padding-left: 2.5rem;
+  }
+
+  // With suffix
+  &--with-suffix {
+    padding-right: 2.5rem;
+  }
+
+  // Number input (data)
+  &--number {
+    font-family: $font-family-data;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  // Search input
+  &--search {
+    padding-left: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: $input-padding-x center;
+    background-size: 1.25rem;
+
+    @include theme('dark') {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.3-4.3'/%3E%3C/svg%3E");
+    }
+  }
+}
+
+// Textarea variant
+.textarea {
+  @extend .input;
+  min-height: 6rem; // 96px
+  resize: vertical;
+  line-height: $leading-relaxed;
+}
+
+// Select dropdown
+.select {
+  @extend .input;
+  appearance: none;
+  padding-right: 2.5rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2364748B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right $input-padding-x center;
+  background-size: 1.25rem;
+  cursor: pointer;
+
+  @include theme('dark') {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  &:focus {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%233B82F6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+
+    @include theme('dark') {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2360A5FA' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    }
+  }
+}

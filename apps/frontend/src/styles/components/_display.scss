@@ -1,59 +1,20 @@
-// ============================================
-// PRISMATICA — Display Utilities
-// ============================================
+// apps/frontend/src/styles/components/_display.scss
 
 @use '../abstracts' as *;
 
-// Block
-.block {
-  display: block;
-}
-.inline {
-  display: inline;
-}
-.inline-block {
-  display: inline-block;
+.flex { display: flex; }
+.inline-flex { display: inline-flex; }
+.grid { display: grid; }
+.block { display: block; }
+.hidden { display: none; }
+
+// Utilidades responsivas
+@include md-up {
+  .md-flex { display: flex; }
+  .md-hidden { display: none; }
 }
 
-// Flex
-.flex {
-  display: flex;
-}
-.inline-flex {
-  display: inline-flex;
-}
-
-// Grid
-.grid {
-  display: grid;
-}
-
-// Hidden
-.hidden {
-  display: none;
-}
-
-// Responsive display
-@media (min-width: 1024px) {
-  .lg\:block {
-    display: block;
-  }
-  .lg\:hidden {
-    display: none;
-  }
-  .lg\:grid {
-    display: grid;
-  }
-  .lg\:flex {
-    display: flex;
-  }
-}
-
-@media (max-width: 1023px) {
-  .mobile-only {
-    display: block;
-  }
-  .desktop-only {
-    display: none;
-  }
+@include lg-up {
+  .lg-flex { display: flex; }
+  .lg-hidden { display: none; }
 }

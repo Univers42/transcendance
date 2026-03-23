@@ -1,0 +1,179 @@
+// ============================================
+// PRISMATICA — Theme Toggle Component
+// ============================================
+// Responsive: Hidden on mobile, visible tablet+
+// Behavior: Toggle between light/dark/system
+// ============================================
+
+@use '../abstracts' as *;
+
+.theme-toggle {
+  display: none; // Hidden by default (mobile)
+
+  @include md-up {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__button {
+    @include button-reset;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem; // 44px
+    height: 2.75rem;
+    border-radius: $radius-md;
+    color: $text-secondary;
+    background: transparent;
+    border: 1px solid transparent;
+    transition: $transition-colors;
+
+    @include theme('dark') {
+      color: $dark-text-secondary;
+    }
+
+    &:hover {
+      background: $bg-hover;
+      color: $text-primary;
+
+      @include theme('dark') {
+        background: $dark-bg-hover;
+        color: $dark-text-primary;
+      }
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+
+    &--active {
+      background: $bg-selected;
+      color: $accent;
+      border-color: $border-accent;
+
+      @include theme('dark') {
+        background: $dark-bg-selected;
+        color: $dark-accent;
+        border-color: $dark-border-accent;
+      }
+    }
+  }
+
+  &__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  // Dropdown variant for desktop
+  &--dropdown {
+    position: relative;
+
+    .theme-toggle__menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: $space-2;
+      min-width: 12rem;
+      background: $bg-elevated;
+      border: 1px solid $border-default;
+      border-radius: $radius-lg;
+      box-shadow: $shadow-lg;
+      padding: $space-2;
+      z-index: $z-dropdown;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-$space-2);
+      transition:
+        $transition-opacity,
+        transform $duration-fast $ease-out,
+        visibility $duration-fast;
+
+      @include theme('dark') {
+        background: $dark-bg-elevated;
+        border-color: $dark-border-default;
+        box-shadow: none;
+      }
+
+      &.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+    }
+
+    .theme-toggle__option {
+      display: flex;
+      align-items: center;
+      gap: $space-3;
+      width: 100%;
+      padding: $space-3 $space-4;
+      font-family: $font-family-ui;
+      font-size: $text-sm;
+      color: $text-secondary;
+      background: transparent;
+      border: none;
+      border-radius: $radius-md;
+      cursor: pointer;
+      transition: $transition-colors;
+
+      @include theme('dark') {
+        color: $dark-text-secondary;
+      }
+
+      &:hover {
+        background: $bg-hover;
+        color: $text-primary;
+
+        @include theme('dark') {
+          background: $dark-bg-hover;
+          color: $dark-text-primary;
+        }
+      }
+
+      &--active {
+        color: $accent;
+        background: $bg-selected;
+
+        @include theme('dark') {
+          color: $dark-accent;
+          background: $dark-bg-selected;
+        }
+      }
+    }
+  }
+}
+
+// Mobile: Theme in settings only
+.theme-setting {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-4;
+  border-bottom: 1px solid $border-divider;
+
+  @include theme('dark') {
+    border-color: $dark-border-divider;
+  }
+
+  &__label {
+    font-family: $font-family-ui;
+    font-size: $text-base;
+    color: $text-primary;
+
+    @include theme('dark') {
+      color: $dark-text-primary;
+    }
+  }
+
+  &__value {
+    font-family: $font-family-ui;
+    font-size: $text-sm;
+    color: $text-secondary;
+
+    @include theme('dark') {
+      color: $dark-text-secondary;
+    }
+  }
+}

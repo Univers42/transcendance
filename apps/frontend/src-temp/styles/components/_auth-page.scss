@@ -1,0 +1,133 @@
+/**
+ * @file _auth-page.scss
+ * @description Styles for AuthPage component
+ */
+@use '../abstracts' as *;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* MAIN SECTION                                                                */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+.auth-page__section {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding-top: $space-24;
+  padding-bottom: $space-12;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* INFO PANEL (Left content)                                                   */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+.auth-page__info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  max-width: 500px;
+  padding: $space-10;
+  background-color: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: $radius-2xl;
+  box-shadow: $shadow-sm;
+}
+
+.auth-page__info-header {
+  margin-bottom: $space-10;
+}
+
+.auth-page__title {
+  font-size: $text-3xl;
+  font-weight: $weight-semibold;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  margin-bottom: $space-4;
+  color: var(--text-primary);
+}
+
+.auth-page__title-accent {
+  color: var(--accent-default);
+}
+
+.auth-page__subtitle {
+  color: var(--text-secondary);
+  font-size: $text-sm;
+  line-height: 1.6;
+  max-width: 320px;
+}
+
+/* Features List */
+
+.auth-page__features {
+  display: flex;
+  flex-direction: column;
+  gap: $space-4;
+  margin-top: $space-8;
+}
+
+.auth-page__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+}
+
+.auth-page__feature-icon {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: $radius-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+  background-color: var(--bg-subtle);
+  border: 1px solid var(--border-strong);
+
+  svg {
+    width: 0.75rem;
+    height: 0.75rem;
+    color: var(--accent-default);
+    stroke-width: 2.5;
+  }
+}
+
+.auth-page__feature-text {
+  color: var(--text-primary);
+  font-size: $text-sm;
+  line-height: 1.55;
+}
+
+/* Stats Section */
+
+.auth-page__stats-divider {
+  height: 1px;
+  margin: $space-12 0 $space-6;
+  background-color: var(--border-subtle);
+}
+
+.auth-page__stats {
+  display: flex;
+  align-items: center;
+  gap: $space-8;
+}
+
+.auth-page__stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-page__stat-value {
+  font-family: var(--font-mono);
+  font-size: $text-lg;
+  font-weight: $weight-semibold;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.auth-page__stat-label {
+  font-size: $text-xs;
+  color: var(--text-secondary);
+  margin-top: 0.125rem;
+  letter-spacing: 0.01em;
+}
