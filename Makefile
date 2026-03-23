@@ -51,16 +51,22 @@ up:  ## 🐳 Start the full stack
 	@$(COMPOSE) up -d
 	@echo -e "  $(G)✓$(N)  Stack running"
 
-kill-ports:  ## 🔫 Kill processes holding stack ports (3001 8080 5432 27017)
+kill-ports:  ## 🔫 Kill any container or process holding stack ports (3001 8080 5432 27017)
 	@echo -e "  $(C)ℹ$(N)  Releasing ports 3001 8080 5432 27017..."
 	@for port in 3001 8080 5432 27017; do \
-		pids=$$(ss -tlnp "sport = :$$port" 2>/dev/null | awk 'NR>1{match($$6,/pid=([0-9]+)/,a); if(a[1]) print a[1]}'); \
+		ctrs=$$(docker ps --format '{{.Names}}\t{{.Ports}}' 2>/dev/null \
+			| awk -v p=":$$port->" '$$0 ~ p {print $$1}'); \
+		if [ -n "$$ctrs" ]; then \
+			echo -e "  $(R)→$(N)  port $$port — stopping containers: $$ctrs"; \
+			echo $$ctrs | xargs -r docker stop 2>/dev/null || true; \
+		fi; \
+		pids=$$(ss -tlnp "sport = :$$port" 2>/dev/null \
+			| awk 'NR>1{match($$6,/pid=([0-9]+)/,a); if(a[1]) print a[1]}'); \
 		if [ -n "$$pids" ]; then \
 			echo -e "  $(R)→$(N)  port $$port — killing PIDs $$pids"; \
 			echo $$pids | xargs -r kill -9 2>/dev/null || true; \
-		else \
-			echo -e "  $(D)✓$(N)  port $$port — free"; \
 		fi; \
+		[ -z "$$ctrs" ] && [ -z "$$pids" ] && echo -e "  $(D)✓$(N)  port $$port — free" || true; \
 	done
 	@echo -e "  $(G)✓$(N)  Ports released"
 
