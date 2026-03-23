@@ -42,7 +42,7 @@ make
 | Swagger | http://localhost:3000/api/docs |
 | Prisma Studio | http://localhost:5555 |
 
-For everything else — branch workflow, commit conventions, testing, SCSS — read [CONTRIBUTING.md](CONTRIBUTING.md).
+For everything else — branch workflow, commit conventions, testing, SCSS — read [CONTRIBUTING.md](contributing).
 
 ---
 
@@ -159,7 +159,7 @@ The teamwork part is underrated. Five people on one codebase forced us to write 
 
 ---
 
-*Detailed contribution guidelines, commit conventions, testing, and SCSS documentation: [CONTRIBUTING.md](CONTRIBUTING.md)*
-*Team, roles, and module ownership: [TEAM.md](TEAM.md)*
-*Security policy and vulnerability reporting: [SECURITY.md](SECURITY.md)*
+*Detailed contribution guidelines, commit conventions, testing, and SCSS documentation: [CONTRIBUTING.md](contributing)*
+*Team, roles, and module ownership: [TEAM.md](contributors)*
+*Security policy and vulnerability reporting: [SECURITY.md](security)*
 hola

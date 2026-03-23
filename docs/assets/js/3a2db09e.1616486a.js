@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkprismatica_docs=globalThis.webpackChunkprismatica_docs||[]).push([[8121],{8070(a){a.exports=JSON.parse('{"tags":[{"label":"Prismatica","permalink":"/blog/tags/prismatica","description":"Prismatica platform updates","count":1},{"label":"Release","permalink":"/blog/tags/release","description":"Release announcements","count":1}]}')}}]);
