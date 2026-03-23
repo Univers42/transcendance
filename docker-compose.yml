@@ -1,11 +1,8 @@
 # ============================================
 # Transcendence — Production Stack
 # ============================================
-# Pulls Prismatica images from ghcr.io (public) and adds
+# Pulls Prismatica images from Docker Hub and adds
 # database services. One `docker compose up` runs everything.
-#
-# For development, use:
-#   docker compose -f docker-compose.dev.yml up
 # ============================================
 
 services:
@@ -42,7 +39,7 @@ services:
   # ── Prismatica Data API ─────────────────────────
   data-api:
     container_name: transcendence-api
-    image: ghcr.io/univers42/prismatica-api:latest
+    image: dlesieur/prismatica-api:latest
     restart: unless-stopped
     ports:
       - "${DATA_API_PORT:-3001}:3001"
@@ -61,7 +58,7 @@ services:
   # ── Prismatica Frontend ─────────────────────────
   frontend:
     container_name: transcendence-frontend
-    image: ghcr.io/univers42/prismatica-frontend:latest
+    image: dlesieur/prismatica-frontend:latest
     restart: unless-stopped
     ports:
       - "${FRONTEND_PORT:-8080}:80"

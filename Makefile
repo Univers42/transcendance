@@ -1,748 +1,107 @@
-# ============================================
-# TRANSCENDENCE — MAKEFILE
-# ============================================
-# Usage: make <target>
-# Run 'make help' to see all available targets
-#
-# 🐳 FULLY CONTAINERIZED: Only Docker required!
-#    Running `make` bootstraps everything inside Docker containers.
-#    No Node.js, pnpm, PostgreSQL, or Redis needed on your host.
-#
-# 🛡️ RESILIENT: Auto-detects docker compose v2 / docker-compose v1 /
-#    podman-compose — works on any team member's machine.
-# ============================================
-
 SHELL := /bin/bash
 .SHELLFLAGS := -ec
-
-# ── BuildKit auto-detection ──────────────────────────
-# Only enable BuildKit if buildx is available.
-# Falls back to legacy builder if buildx is missing.
-BUILDX_AVAILABLE := $(shell docker buildx version >/dev/null 2>&1 && echo 1 || echo 0)
-ifeq ($(BUILDX_AVAILABLE),1)
-export DOCKER_BUILDKIT := 1
-export COMPOSE_DOCKER_CLI_BUILD := 1
-else
-export DOCKER_BUILDKIT := 0
-export COMPOSE_DOCKER_CLI_BUILD := 0
-endif
-.PHONY: help
 .DEFAULT_GOAL := all
+.PHONY: all up down logs ps pull db-init db-seed db-reset db-status \
+        clean fclean re help
 
-# ── Compose auto-detection (v2 plugin → v1 standalone → podman) ──
-# We test each variant and lock in the first one that works.
-# This runs ONCE at Makefile parse time.
+# ── Docker Hub ───────────────────────────────────────
+DOCKER_USER  ?= dlesieur
+IMAGE_API    := $(DOCKER_USER)/prismatica-api
+IMAGE_FRONT  := $(DOCKER_USER)/prismatica-frontend
+TAG          ?= latest
+
+# ── Compose ──────────────────────────────────────────
 COMPOSE_CMD := $(shell \
-	if docker compose version >/dev/null 2>&1; then \
-		echo 'docker compose'; \
-	elif command -v docker-compose >/dev/null 2>&1; then \
-		echo 'docker-compose'; \
-	elif command -v podman-compose >/dev/null 2>&1; then \
-		echo 'podman-compose'; \
-	else \
-		echo '__NONE__'; \
-	fi \
-)
+	if docker compose version >/dev/null 2>&1; then echo 'docker compose'; \
+	elif command -v docker-compose >/dev/null 2>&1; then echo 'docker-compose'; \
+	else echo '__NONE__'; fi)
+COMPOSE := $(COMPOSE_CMD) -f docker-compose.yml
 
-COMPOSE_VERSION := $(shell \
-	if docker compose version --short 2>/dev/null; then true; \
-	elif docker-compose version --short 2>/dev/null; then true; \
-	elif podman-compose version 2>/dev/null | grep -oP '[\d]+\.[\d]+' | head -1; then true; \
-	else echo 'unknown'; \
-	fi \
-)
+# ── Containers ───────────────────────────────────────
+API_CTR := transcendence-api
+DB_CTR  := transcendence-db
 
-# ── Variables ────────────────────────────────────────
-COMPOSE_DEV  := $(COMPOSE_CMD) -f docker-compose.dev.yml
-COMPOSE_PROD := $(COMPOSE_CMD) -f docker-compose.yml
-API_CTR      := transcendence-api
-DB_CTR       := transcendence-db
-MONGO_CTR    := transcendence-mongo
-# Prismatica lives in its own repo (nested or submodule)
-PRISMATICA   := prismatica
-FRONTEND     := $(PRISMATICA)/apps/frontend
-DATA_API     := $(PRISMATICA)/apps/data-api
+# ── Colors ───────────────────────────────────────────
+B := \033[1m
+G := \033[0;32m
+C := \033[0;36m
+R := \033[0;31m
+D := \033[2m
+N := \033[0m
 
-# Colors
-BLUE    := \033[0;34m
-GREEN   := \033[0;32m
-YELLOW  := \033[1;33m
-RED     := \033[0;31m
-CYAN    := \033[0;36m
-NC      := \033[0m
-BOLD    := \033[1m
-DIM     := \033[2m
 
-# Box drawing
-define BANNER
+all: pull up  ## 🚀 Pull images and start the stack
 	@echo ""
-	@echo -e "$(BLUE)╔══════════════════════════════════════════════════════════╗$(NC)"
-	@echo -e "$(BLUE)║$(NC)  ⚡  $(BOLD)Transcendence$(NC) — Full-Stack Platform                   $(BLUE)║$(NC)"
-	@echo -e "$(BLUE)╚══════════════════════════════════════════════════════════╝$(NC)"
-	@echo ""
-endef
-
-# ── Step decorator ───────────────────────────────────
-# Usage: $(call step,emoji,message)
-define step
-	echo -e "  $(1)  $(2)"
-endef
-
-# ============================================
-#  🛡️ PREFLIGHT CHECKS
-# ============================================
-
-.PHONY: check-docker check-compose check-env preflight
-
-# Validates that Docker engine is installed and running.
-check-docker:
-	@command -v docker >/dev/null 2>&1 || { \
-		echo ""; \
-		echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-		echo -e "$(RED)│  ✗  FAILED: $(BOLD)Docker Engine not found$(NC)"; \
-		echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
-		echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  'docker' command is not in PATH."; \
-		echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  Install Docker: https://docs.docker.com/get-docker/"; \
-		echo -e "$(RED)│$(NC)"; \
-		echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
-		echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
-		echo ""; \
-		exit 1; \
-	}
-	@if docker info >/dev/null 2>&1; then \
-		true; \
-	else \
-		ERR_MSG="$$(docker info 2>&1 >/dev/null || true)"; \
-		echo ""; \
-		if echo "$$ERR_MSG" | grep -qi "permission denied"; then \
-			echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-			echo -e "$(RED)│  ✗  FAILED: $(BOLD)Docker socket access denied$(NC)"; \
-			echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Docker is installed and the daemon may be running,"; \
-			echo -e "$(RED)│$(NC)        but user '$${USER:-unknown}' cannot access /var/run/docker.sock."; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  sudo usermod -aG docker $${USER:-$$LOGNAME}"; \
-			echo -e "$(RED)│$(NC)        Then start a new shell (or run: newgrp docker)"; \
-			echo -e "$(RED)│$(NC)        OR use sudo temporarily to verify Docker access."; \
-			echo -e "$(RED)│$(NC)"; \
-			echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
-			echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
-		else \
-			echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-			echo -e "$(RED)│  ✗  FAILED: $(BOLD)Docker daemon is not running$(NC)"; \
-			echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Docker is installed but the daemon/service is stopped."; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  sudo systemctl start docker"; \
-			echo -e "$(RED)│$(NC)        OR open Docker Desktop"; \
-			echo -e "$(RED)│$(NC)"; \
-			echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
-			echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
-		fi; \
-		echo ""; \
-		exit 1; \
-	fi
-	$(call step,$(GREEN)✓,Docker Engine is running)
-
-# Validates that a compose tool is available.
-check-compose:
-ifeq ($(COMPOSE_CMD),__NONE__)
-	@echo ""
-	@echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"
-	@echo -e "$(RED)│  ✗  FAILED: $(BOLD)No Docker Compose tool found$(NC)"
-	@echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"
-	@echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  None of these were found on this system:"
-	@echo -e "$(RED)│$(NC)        • docker compose  (v2 plugin — preferred)"
-	@echo -e "$(RED)│$(NC)        • docker-compose  (v1 standalone)"
-	@echo -e "$(RED)│$(NC)        • podman-compose  (Podman alternative)"
-	@echo -e "$(RED)│$(NC)"
-	@echo -e "$(RED)│$(NC)  $(BOLD)Fix (pick one):$(NC)"
-	@echo -e "$(RED)│$(NC)        • Install Docker Desktop (includes compose v2)"
-	@echo -e "$(RED)│$(NC)        • sudo apt install docker-compose-plugin"
-	@echo -e "$(RED)│$(NC)        • pip install docker-compose"
-	@echo -e "$(RED)│$(NC)"
-	@echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."
-	@echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"
-	@echo ""
-	@exit 1
-else
-	$(call step,$(GREEN)✓,Compose tool: $(BOLD)$(COMPOSE_CMD)$(NC) $(DIM)($(COMPOSE_VERSION))$(NC))
-endif
-
-# Validates .env exists (creates from .env.example if needed).
-check-env:
-	@if [ ! -f .env ]; then \
-		if [ -f .env.example ]; then \
-			echo -e "  $(YELLOW)⚠$(NC)  .env not found — creating from .env.example"; \
-			cp .env.example .env; \
-			echo -e "  $(GREEN)✓$(NC)  .env created — $(BOLD)review it and update secrets$(NC)"; \
-		else \
-			echo ""; \
-			echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-			echo -e "$(RED)│  ✗  FAILED: $(BOLD).env file is missing$(NC)"; \
-			echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  No .env or .env.example file found."; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)  Copy the example: cp .env.example .env"; \
-			echo -e "$(RED)│$(NC)        Then edit it with your local settings."; \
-			echo -e "$(RED)│$(NC)"; \
-			echo -e "$(RED)│$(NC)  Run $(BOLD)make doctor$(NC) for a full environment diagnostic."; \
-			echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
-			echo ""; \
-			exit 1; \
-		fi; \
-	else \
-		echo -e "  $(GREEN)✓$(NC)  .env file loaded"; \
-	fi
-
-# Checks for port conflicts and offers to kill them.
-check-ports:
-	@PORTS="$${FRONTEND_PORT:-5173} $${DATA_API_PORT:-3001} $${DB_PORT:-5432} $${MONGO_PORT:-27017}"; \
-	BLOCKED=""; \
-	for p in $$PORTS; do \
-		if ss -tlnp 2>/dev/null | grep -q ":$$p "; then \
-			PROC=$$(ss -tlnp 2>/dev/null | grep ":$$p " | sed -n 's/.*users:(("\([^"]*\)".*/\1/p' | head -1); \
-			BLOCKED="$$BLOCKED $$p($$PROC)"; \
-		fi; \
-	done; \
-	if [ -n "$$BLOCKED" ]; then \
-		echo -e "  $(YELLOW)⚠$(NC)  Ports in use:$(BOLD)$$BLOCKED$(NC)"; \
-		echo -e "     Run $(BOLD)make kill-ports$(NC) to free them, or change ports in .env"; \
-	else \
-		echo -e "  $(GREEN)✓$(NC)  All ports available"; \
-	fi
-
-# Full preflight — runs all checks in order.
-preflight: check-docker check-compose check-env check-ports
-	$(call step,$(GREEN)✓,$(BOLD)All preflight checks passed$(NC))
-
-# ============================================
-#  🪝 GIT HOOKS
-# ============================================
-
-.PHONY: configure-hooks
-
-HOOKS_DIR ?= vendor/scripts/hooks
-
-configure-hooks:  ## 🪝 Activate git hooks
-	@if [ ! -d .git ]; then \
-		echo -e "  $(YELLOW)⚠$(NC)  Not a git repo — skipping hook setup"; \
-	elif [ -d $(HOOKS_DIR) ]; then \
-		git config core.hooksPath $(HOOKS_DIR) 2>/dev/null || true; \
-		echo -e "  $(GREEN)✓$(NC)  Git hooks active (core.hooksPath → $(HOOKS_DIR))"; \
-	else \
-		echo -e "  $(YELLOW)⚠$(NC)  Hook directory $(HOOKS_DIR) not found — skipping"; \
-	fi
-
-# ============================================
-#  ⚡ BOOTSTRAP (default target)
-# ============================================
-
-.PHONY: all bootstrap banner
-
-all: update configure-hooks banner preflight bootstrap dev  ## 🚀 Full setup (default — Docker only)
-	
-
-update:
-	@git submodule update --init --recursive --remote --merge 2>/dev/null || true
-
-banner:
-	$(BANNER)
-
-bootstrap: docker-up db-init  ## Full bootstrap sequence
-	@echo ""
-	@echo -e "$(GREEN)╔══════════════════════════════════════════════════════════╗$(NC)"
-	@echo -e "$(GREEN)║$(NC)  ✅  $(BOLD)Setup complete!$(NC)                                       $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)╠══════════════════════════════════════════════════════════╣$(NC)"
-	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Frontend  →  http://localhost:$${FRONTEND_PORT:-8080}                      $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  data-api  →  http://localhost:$${DATA_API_PORT:-3001}                      $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Mailpit   →  http://localhost:$${MAILPIT_UI_PORT:-8025}                      $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Run $(BOLD)make dev$(NC) to start dev servers                        $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Run $(BOLD)make help$(NC) to see all commands                        $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)╚══════════════════════════════════════════════════════════╝$(NC)"
+	@echo -e "$(G)╔══════════════════════════════════════════╗$(N)"
+	@echo -e "$(G)║$(N)  ✅  $(B)Transcendence is running!$(N)          $(G)║$(N)"
+	@echo -e "$(G)╠══════════════════════════════════════════╣$(N)"
+	@echo -e "$(G)║$(N)  Frontend → http://localhost:8080        $(G)║$(N)"
+	@echo -e "$(G)║$(N)  API      → http://localhost:3001        $(G)║$(N)"
+	@echo -e "$(G)╚══════════════════════════════════════════╝$(N)"
 	@echo ""
 
-# ============================================
-#  🐳 DOCKER
-# ============================================
+pull:  ## 🐳 Pull latest images from Docker Hub
+	@echo -e "  $(C)ℹ$(N)  Pulling latest images..."
+	@docker pull $(IMAGE_API):$(TAG)
+	@docker pull $(IMAGE_FRONT):$(TAG)
+	@echo -e "  $(G)✓$(N)  Images up to date"
 
-.PHONY: docker-up docker-down docker-logs docker-clean docker-ps
+up:  ## 🐳 Start the full stack
+	@echo -e "  $(C)ℹ$(N)  Starting containers..."
+	@$(COMPOSE) up -d
+	@echo -e "  $(G)✓$(N)  Stack running"
 
-docker-up: check-docker check-compose check-env  ## 🐳 Start all containers (db, redis, dev)
-	$(call step,$(BLUE)ℹ,Starting containers with $(BOLD)$(COMPOSE_CMD)$(NC)...)
-	@$(COMPOSE_DEV) up -d --build 2>&1 || { \
-		ERR=$$?; \
-		echo -e "$(YELLOW)⚠$(NC)  First attempt failed. Cleaning stuck containers..."; \
-		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
-		$(COMPOSE_DEV) up -d --build 2>&1 || { \
-			echo ""; \
-			echo -e "$(RED)┌─────────────────────────────────────────────────────────┐$(NC)"; \
-			echo -e "$(RED)│  ✗  FAILED: $(BOLD)Container startup$(NC)"; \
-			echo -e "$(RED)├─────────────────────────────────────────────────────────┤$(NC)"; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Why:$(NC)  Container build or startup failed."; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Common causes:$(NC)"; \
-			echo -e "$(RED)│$(NC)    • Port already in use (run $(BOLD)make kill-ports$(NC))"; \
-			echo -e "$(RED)│$(NC)    • Dockerfile syntax error"; \
-			echo -e "$(RED)│$(NC)    • Stale containers (AppArmor / permission denied)"; \
-			echo -e "$(RED)│$(NC)    • Missing .env file"; \
-			echo -e "$(RED)│$(NC)  $(BOLD)Fix:$(NC)"; \
-			echo -e "$(RED)│$(NC)    1. make kill-ports     (free stuck ports)"; \
-			echo -e "$(RED)│$(NC)    2. make docker-clean   (nuke old state)"; \
-			echo -e "$(RED)│$(NC)    3. make                (try again)"; \
-			echo -e "$(RED)└─────────────────────────────────────────────────────────┘$(NC)"; \
-			echo ""; \
-			exit 1; \
-		}; \
-	}
-	$(call step,$(GREEN)✓,Containers are running)
+down:  ## 🐳 Stop all containers
+	@$(COMPOSE) down
+	@echo -e "  $(G)✓$(N)  Stack stopped"
 
-docker-down: check-docker check-compose  ## 🐳 Stop all containers
-	$(call step,$(YELLOW)⚠,Stopping containers...)
-	@$(COMPOSE_DEV) down 2>/dev/null || { \
-		echo -e "$(YELLOW)⚠$(NC)  Compose down failed. Force-removing containers..."; \
-		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
-	}
-	$(call step,$(GREEN)✓,Containers stopped)
+logs:  ## 🐳 Tail all container logs
+	@$(COMPOSE) logs -f
 
-docker-logs: check-docker check-compose  ## 🐳 Tail all container logs
-	@$(COMPOSE_DEV) logs -f
-
-docker-ps: check-docker check-compose  ## 🐳 Show running containers
-	@$(COMPOSE_DEV) ps
-
-docker-clean: check-docker check-compose  ## 🐳 Remove containers + volumes (full reset)
-	@echo -e "$(RED)⚠  This will delete all data (database, node_modules, cache)$(NC)"
-	@read -p "Are you sure? [y/N] " confirm && [ "$$confirm" = "y" ] || exit 1
-	@$(COMPOSE_DEV) down -v --remove-orphans 2>/dev/null || { \
-		echo -e "$(YELLOW)⚠$(NC)  Compose down failed (AppArmor?). Force-removing containers..."; \
-		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
-		docker volume rm $$(docker volume ls -q --filter "name=transcendance") 2>/dev/null || true; \
-	}
-	$(call step,$(GREEN)✓,Full cleanup done)
-
-# ============================================
-#  📦 DEPENDENCIES
-# ============================================
-
-.PHONY: install install-frontend
-
-install: install-frontend  ## 📦 Install local dependencies (requires prismatica/)
-	$(call step,$(GREEN)✓,All dependencies installed)
-
-install-frontend:
-	@if [ ! -d $(FRONTEND) ]; then \
-		echo -e "  $(YELLOW)⚠$(NC)  $(FRONTEND) not found — skip (clone prismatica/ first)"; \
-	else \
-		$(call step,$(BLUE)ℹ,Installing frontend dependencies...); \
-		cd $(FRONTEND) && pnpm install 2>&1 || { \
-			echo -e "$(RED)│  ✗  FAILED: pnpm install (frontend)$(NC)"; exit 1; \
-		}; \
-	fi
-
-# ============================================
-#  🎨 CSS / SASS
-# ============================================
-
-.PHONY: gen-css
-
-# ── make gen-css ──────────────────────────────────────
-# Usage:
-#   make gen-css           → compile SASS to CSS once
-#   make gen-css WATCH=1   → watch mode (auto-recompile)
-gen-css:  ## 🎨 Compile SASS → CSS (WATCH=1 for watch mode)
-	@if [ -n "${WATCH:-}" ]; then \
-		$(call step,$(BLUE)ℹ,Starting SASS watcher...);\
-		cd $(FRONTEND) && pnpm exec sass --watch src/styles:src/styles; \
-	else \
-		$(call step,$(BLUE)ℹ,Compiling SASS...); \
-		cd $(FRONTEND) && pnpm exec sass src/styles:src/styles --style=compressed --source-map; \
-		$(call step,$(GREEN)✓,SASS compiled); \
-	fi
-
-# ============================================
-#  🔧 COMPILE & BUILD
-# ============================================
-
-.PHONY: compile build build-frontend
-
-compile:  ## 🔧 Compile TypeScript (type check)
-	$(call step,$(BLUE)ℹ,Compiling TypeScript...)
-	@cd $(FRONTEND) && pnpm exec tsc --noEmit 2>/dev/null || true
-	$(call step,$(GREEN)✓,Compilation done)
-
-build: build-frontend  ## 🏗️ Production build
-
-build-frontend:  ## 🏗️ Build frontend
-	$(call step,$(BLUE)ℹ,Building frontend...)
-	@cd $(FRONTEND) && pnpm run build
-	$(call step,$(GREEN)✓,Frontend built)
-
-# ============================================
-#  🚀 DEVELOPMENT
-# ============================================
-
-.PHONY: dev dev-frontend shell
-
-dev: configure-hooks docker-up  ## 🚀 Start dev stack (Docker)
-	$(call step,$(GREEN)✓,Dev stack running)
-	@echo -e "  Frontend  → http://localhost:$${FRONTEND_PORT:-8080}"
-	@echo -e "  data-api  → http://localhost:$${DATA_API_PORT:-3001}"
-
-dev-frontend:  ## 🚀 Start frontend locally (Vite HMR — requires prismatica/)
-	@if [ ! -d $(FRONTEND) ]; then \
-		echo -e "  $(RED)✗$(NC)  $(FRONTEND) not found — clone prismatica/ first"; exit 1; \
-	fi
-	@cd $(FRONTEND) && pnpm run dev
-
-shell:  ## 🐚 Interactive shell in data-api container
-	@docker exec -it $(API_CTR) sh
-
-# ============================================
-#  ⚡ QUICK START
-# ============================================
-
-.PHONY: turn-on turn-off
-
-turn-on: docker-up  ## ⚡ Start dev stack + open browser
-	$(call step,$(GREEN)✓,Dev stack running)
-	@echo ""
-	@echo -e "  Frontend  → http://localhost:$${FRONTEND_PORT:-8080}"
-	@echo -e "  data-api  → http://localhost:$${DATA_API_PORT:-3001}"
-	@echo ""
-	@URL="http://localhost:$${FRONTEND_PORT:-8080}"; \
-	if command -v xdg-open >/dev/null 2>&1; then \
-		xdg-open "$$URL" 2>/dev/null & disown; \
-	elif command -v open >/dev/null 2>&1; then \
-		open "$$URL" 2>/dev/null & disown; \
-	else \
-		echo -e "  $(DIM)→ Open $$URL in your browser$(NC)"; \
-	fi
-
-turn-off:  ## 🔌 Stop everything (containers + ports)
-	$(call step,$(YELLOW)⚠,Shutting everything down...)
-	@$(COMPOSE_DEV) down 2>/dev/null || { \
-		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
-	}
-	@PORTS="$${FRONTEND_PORT:-5173} $${DATA_API_PORT:-3001} $${DB_PORT:-5432} $${MONGO_PORT:-27017}"; \
-	for p in $$PORTS; do \
-		PIDS=$$(ss -tlnp 2>/dev/null | grep ":$$p " | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | sort -u); \
-		if [ -n "$$PIDS" ]; then \
-			for pid in $$PIDS; do \
-				kill $$pid 2>/dev/null || true; \
-			done; \
-		fi; \
-	done
-	@sleep 1
-	$(call step,$(GREEN)✓,Everything stopped — all ports freed)
+ps:  ## 🐳 Show running containers
+	@$(COMPOSE) ps
 
 # ============================================
 #  🗄️ DATABASE
 # ============================================
 
-.PHONY: db-init db-seed db-reset db-verify db-status
-
-db-init:  ## 🗄️ Apply PG schemas + seeds + Mongo setup + seeds
-	$(call step,$(BLUE)ℹ,Initializing PostgreSQL schemas...)
+db-init:  ## 🗄️ Apply schemas + seeds (PG + Mongo)
+	@echo -e "  $(C)ℹ$(N)  Initializing databases..."
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/apply_schema.sh" 2>/dev/null || true
-	$(call step,$(BLUE)ℹ,Seeding PostgreSQL...)
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/apply_seeds.sh" 2>/dev/null || true
-	$(call step,$(BLUE)ℹ,Setting up MongoDB collections...)
-	@docker exec $(MONGO_CTR) mongosh --quiet --eval "db.adminCommand('ping')" >/dev/null 2>&1 && \
-		docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_setup.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
-	$(call step,$(BLUE)ℹ,Seeding MongoDB...)
+	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_setup.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_seed.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
-	$(call step,$(GREEN)✓,Databases initialized)
+	@echo -e "  $(G)✓$(N)  Databases initialized"
 
-db-seed:  ## 🗄️ Seed databases (PG + Mongo)
-	$(call step,$(BLUE)ℹ,Seeding databases...)
+db-seed:  ## 🗄️ Re-seed databases
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/apply_seeds.sh" 2>/dev/null || true
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_seed.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
-	$(call step,$(GREEN)✓,Databases seeded)
+	@echo -e "  $(G)✓$(N)  Databases seeded"
 
 db-reset:  ## 🗄️ Reset databases (drop + reinit)
-	@echo -e "$(RED)⚠  This will DROP all data in PostgreSQL and MongoDB$(NC)"
-	@read -p "Are you sure? [y/N] " confirm && [ "$$confirm" = "y" ] || exit 1
+	@echo -e "$(R)⚠  This will DROP all data$(N)"
+	@read -p "Are you sure? [y/N] " c && [ "$$c" = "y" ] || exit 1
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/reset.sh" 2>/dev/null || true
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_reset.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
-	$(call step,$(BLUE)ℹ,Re-initializing...)
 	@$(MAKE) db-init
-	$(call step,$(GREEN)✓,Databases reset)
-
-db-verify:  ## 🗄️ Verify database state (tables + data)
-	$(call step,$(BLUE)ℹ,Verifying databases...)
-	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/verify.sh" 2>/dev/null || true
-	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_verify.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
-	$(call step,$(GREEN)✓,Verification complete)
 
 db-status:  ## 🗄️ Show database status
 	@docker exec $(DB_CTR) psql -U transcendence -c "SELECT count(*) AS tables FROM information_schema.tables WHERE table_schema='public';" 2>/dev/null || echo "PostgreSQL: not running"
-	@docker exec $(MONGO_CTR) mongosh --quiet --eval "db.getCollectionNames().length + ' collections'" transcendence 2>/dev/null || echo "MongoDB: not running"
 
-# ============================================
-#  ✅ QUALITY
-# ============================================
+clean:  ## 🧹 Stop stack and remove containers + volumes
+	@$(COMPOSE) down -v --remove-orphans 2>/dev/null || true
+	@echo -e "  $(G)✓$(N)  Clean"
 
-.PHONY: lint format prettier typecheck audit
-
-lint:  ## ✅ Run ESLint on all workspaces
-	$(call step,$(BLUE)ℹ,Running linter...)
-	@cd $(FRONTEND) && pnpm exec eslint . 2>/dev/null || true
-	$(call step,$(GREEN)✓,Lint complete)
-
-format:  ## ✅ Run Prettier on all workspaces
-	$(call step,$(BLUE)ℹ,Formatting code...)
-	@cd $(FRONTEND) && pnpm exec prettier --write 'src/**/*.{ts,tsx,css}' 2>/dev/null || true
-	$(call step,$(GREEN)✓,Formatting complete)
-
-# ── make prettier ─────────────────────────────────────
-# Usage:
-#   make prettier              → check all files (no changes)
-#   make prettier FIX=1        → auto-fix all files
-#   make prettier PATH=src/    → check specific path
-prettier:  ## ✅ Prettier — check / fix code formatting
-	$(call step,$(BLUE)ℹ,Running Prettier...)
-	@if [ -n "$${FIX:-}" ]; then \
-		cd $(FRONTEND) && pnpm exec prettier --write 'src/**/*.{ts,tsx,css}' 2>/dev/null || true; \
-		echo -e "  $(GREEN)✓$(NC)  Files formatted"; \
-	else \
-		cd $(FRONTEND) && pnpm exec prettier --check 'src/**/*.{ts,tsx,css}' 2>&1 || true; \
-		echo -e "  $(CYAN)ℹ$(NC)  Run $(BOLD)make prettier FIX=1$(NC) to auto-format"; \
-	fi
-
-# ── make audit ────────────────────────────────────────
-# Usage:
-#   make audit                          → audit backend (10 errors at a time)
-#   make audit PATH=apps/frontend       → audit a specific workspace
-#   make audit VERBOSE=1                → show full verbose output
-#   make audit PATH=apps/frontend VERBOSE=1
-AUDIT_PATH ?= prismatica/apps/frontend
-audit:  ## ✅ Security & lint audit (strict mode)
-	@_PATH="$${PATH:-$(AUDIT_PATH)}"; \
-	_VERBOSE="$${VERBOSE:-0}"; \
-	echo -e "  $(BLUE)ℹ$(NC)  Auditing: $(BOLD)$$_PATH$(NC)"; \
-	echo ""; \
-	echo -e "  $(BOLD)── ESLint (strict) ──$(NC)"; \
-	if [ "$$_VERBOSE" = "1" ]; then \
-		cd $$_PATH && pnpm exec eslint . --max-warnings 0 2>&1 || true; \
-	else \
-		cd $$_PATH && pnpm exec eslint . --max-warnings 0 -f compact 2>&1 \
-			| head -n 10 || true; \
-		echo -e "  $(DIM)… showing first 10 lines. Use $(BOLD)VERBOSE=1$(NC)$(DIM) for full output$(NC)"; \
-	fi; \
-	echo ""; \
-	echo -e "  $(BOLD)── Prettier (check) ──$(NC)"; \
-	if [ "$$_VERBOSE" = "1" ]; then \
-		cd $$_PATH && pnpm exec prettier --check 'src/**/*.{ts,tsx,css}' 2>&1 || true; \
-	else \
-		cd $$_PATH && pnpm exec prettier --check 'src/**/*.{ts,tsx,css}' 2>&1 \
-			| head -n 10 || true; \
-		echo -e "  $(DIM)… showing first 10 lines. Use $(BOLD)VERBOSE=1$(NC)$(DIM) for full output$(NC)"; \
-	fi; \
-	echo ""; \
-	echo -e "  $(BOLD)── pnpm audit (security) ──$(NC)"; \
-	if [ "$$_VERBOSE" = "1" ]; then \
-		cd $$_PATH && pnpm audit 2>&1 || true; \
-	else \
-		cd $$_PATH && pnpm audit 2>&1 \
-			| head -n 10 || true; \
-		echo -e "  $(DIM)… showing first 10 lines. Use $(BOLD)VERBOSE=1$(NC)$(DIM) for full output$(NC)"; \
-	fi; \
-	echo ""; \
-	echo -e "  $(CYAN)ℹ$(NC)  Full verbose: $(BOLD)make audit PATH=$$_PATH VERBOSE=1$(NC)"
-
-typecheck:  ## ✅ TypeScript type checking (no emit)
-	$(call step,$(BLUE)ℹ,Type checking...)
-	@cd $(FRONTEND) && pnpm exec tsc --noEmit
-	$(call step,$(GREEN)✓,No type errors)
-
-# ============================================
-#  🧪 TESTING
-# ============================================
-
-.PHONY: test test-unit test-e2e test-watch http-surface
-
-test:  ## 🧪 Run tests
-	$(call step,$(BLUE)ℹ,Running tests...)
-	@cd $(FRONTEND) && pnpm test 2>/dev/null || echo "No tests configured yet"
-	$(call step,$(GREEN)✓,Tests done)
-
-http-surface:  ## 🧪 Check HTTP headers/cookies (URL=http://... or URLS="...")
-	@TARGETS="$${URLS:-$${URL:-}}"; \
-	if [ -z "$$TARGETS" ]; then \
-		echo "Usage: make http-surface URL=http://localhost:3000/api/health [COOKIE_NAMES=\"session refresh_token\"]"; \
-		echo "   or: make http-surface URLS=\"https://preview.example.com https://preview.example.com/api/health\""; \
-		exit 1; \
-	fi; \
-	declare -a ARGS=(); \
-	for cookie in $${COOKIE_NAMES:-}; do \
-		ARGS+=(--cookie-name "$$cookie"); \
-	done; \
-	for url in $$TARGETS; do \
-		ARGS+=("$$url"); \
-	done; \
-	bash qa/implementation/scripts/check-http-surface.sh "$${ARGS[@]}"
-
-# ============================================
-#  🧹 CLEANUP
-# ============================================
-
-.PHONY: clean fclean re
-
-clean:  ## 🧹 Remove build artifacts
-	$(call step,$(YELLOW)⚠,Cleaning build artifacts...)
-	@rm -rf $(FRONTEND)/dist $(FRONTEND)/node_modules/.vite 2>/dev/null || true
-	$(call step,$(GREEN)✓,Clean)
-
-fclean: clean  ## 🧹 Full clean (artifacts + modules + volumes)
-	@echo -e "$(RED)⚠  Full cleanup — this removes EVERYTHING$(NC)"
-	@read -p "Are you sure? [y/N] " confirm && [ "$$confirm" = "y" ] || exit 1
-	@$(COMPOSE_DEV) down -v --remove-orphans 2>/dev/null || true
-	@$(COMPOSE_PROD) down -v --remove-orphans 2>/dev/null || true
-	$(call step,$(GREEN)✓,Full cleanup done)
+fclean: clean  ## 🧹 Full clean (+ remove pulled images)
+	@docker rmi $(IMAGE_API):$(TAG) $(IMAGE_FRONT):$(TAG) 2>/dev/null || true
+	@echo -e "  $(G)✓$(N)  Images removed"
 
 re: fclean all  ## 🔄 Full rebuild from scratch
 
-# ============================================
-#  🏭 PRODUCTION
-# ============================================
-
-.PHONY: prod prod-down prod-logs
-
-prod: check-compose  ## 🏭 Build & start production stack
-	$(call step,$(BLUE)ℹ,Building production images...)
-	@$(COMPOSE_PROD) up -d --build
-	$(call step,$(GREEN)✓,Production stack running)
-	@echo -e "  Frontend → http://localhost:8080"
-	@echo -e "  data-api → http://localhost:3001"
-
-prod-down:  ## 🏭 Stop production stack
-	@$(COMPOSE_PROD) down
-
-prod-logs:  ## 🏭 Tail production logs
-	@$(COMPOSE_PROD) logs -f
-
-# ============================================
-#  💻 LOCAL (no Docker — requires Node.js on host)
-# ============================================
-
-.PHONY: local local-install local-dev
-
-local: local-install  ## 💻 Setup using host Node.js (no Docker) — requires prismatica/
-	$(call step,$(GREEN)✓,Local setup complete. Run: make local-dev)
-
-local-install:
-	@if [ ! -d $(PRISMATICA) ]; then \
-		echo -e "  $(RED)✗$(NC)  prismatica/ not found — clone it first"; exit 1; \
-	fi
-	$(call step,$(BLUE)ℹ,Installing dependencies locally...)
-	@cd $(FRONTEND) && pnpm install
-	@cd $(DATA_API) && pnpm install
-	$(call step,$(GREEN)✓,Dependencies installed)
-
-local-dev:  ## 💻 Start dev servers locally (requires prismatica/ + host DBs)
-	@if [ ! -d $(PRISMATICA) ]; then \
-		echo -e "  $(RED)✗$(NC)  prismatica/ not found — clone it first"; exit 1; \
-	fi
-	$(call step,$(BLUE)ℹ,Starting local dev servers...)
-	@cd $(DATA_API) && pnpm run dev &
-	@cd $(FRONTEND) && pnpm run dev &
-	$(call step,$(GREEN)✓,Dev servers starting...)
-	@echo -e "  Frontend → http://localhost:5173"
-	@echo -e "  data-api → http://localhost:3001"
-
-# ============================================
-#  🔌 PORT MANAGEMENT
-# ============================================
-
-.PHONY: kill-ports
-
-kill-ports:  ## 🔌 Kill processes + containers on all project ports
-	@echo -e "$(YELLOW)⚠$(NC)  Freeing project ports..."
-	@# Stop any Docker containers using our ports (from other projects)
-	@for p in 3001 5173 5432 27017; do \
-		CONTAINER=$$(docker ps -q --filter "publish=$$p" 2>/dev/null | head -1); \
-		if [ -n "$$CONTAINER" ]; then \
-			NAME=$$(docker inspect --format '{{.Name}}' $$CONTAINER 2>/dev/null | sed 's/^\///'); \
-			echo -e "  Stopping container $(BOLD)$$NAME$(NC) on port $$p"; \
-			docker stop $$CONTAINER >/dev/null 2>&1 || true; \
-		fi; \
-	done
-	@# Kill host processes on our ports
-	@PORTS="$${FRONTEND_PORT:-5173} $${DATA_API_PORT:-3001} $${DB_PORT:-5432} $${MONGO_PORT:-27017}"; \
-	for p in $$PORTS; do \
-		PIDS=$$(ss -tlnp 2>/dev/null | grep ":$$p " | sed -n 's/.*pid=\([0-9]*\).*/\1/p' | sort -u); \
-		if [ -n "$$PIDS" ]; then \
-			for pid in $$PIDS; do \
-				NAME=$$(ps -p $$pid -o comm= 2>/dev/null || echo unknown); \
-				echo -e "  Killing $$NAME (PID $$pid) on port $$p"; \
-				kill $$pid 2>/dev/null || true; \
-			done; \
-		fi; \
-	done
-	@$(COMPOSE_DEV) down 2>/dev/null || true
-	@sleep 1
-	$(call step,$(GREEN)✓,All project ports freed)
-
-# ============================================
-#  🩺 DIAGNOSTICS
-# ============================================
-
-.PHONY: doctor info
-
-doctor:  ## 🩺 Full environment diagnostic (run this first!)
-	@bash scripts/doctor.sh
-
-info:  ## 🩺 Show detected environment
+help:  ## ❓ Show this help
 	@echo ""
-	@echo -e "$(BOLD)Transcendence — Environment Info$(NC)"
-	@echo ""
-	@echo -e "  $(BOLD)Compose tool:$(NC)    $(COMPOSE_CMD)"
-	@echo -e "  $(BOLD)Compose version:$(NC) $(COMPOSE_VERSION)"
-	@echo -e "  $(BOLD)Docker version:$(NC)  $(shell docker version --format '{{.Client.Version}}' 2>/dev/null | head -1 || echo 'not found')"
-	@echo -e "  $(BOLD)OS:$(NC)              $(shell uname -s) $(shell uname -r) ($(shell uname -m))"
-	@echo -e "  $(BOLD)Shell:$(NC)           $(SHELL)"
-	@echo -e "  $(BOLD)Make:$(NC)            $(MAKE_VERSION)"
-	@echo -e "  $(BOLD)User:$(NC)            $(shell whoami)"
-	@echo -e "  $(BOLD).env:$(NC)            $(shell [ -f .env ] && echo 'present' || echo 'MISSING')"
-	@echo ""
-	@echo -e "  $(DIM)Compose dev cmd:$(NC)  $(COMPOSE_DEV)"
-	@echo -e "  $(DIM)Compose prod cmd:$(NC) $(COMPOSE_PROD)"
-	@echo ""
-
-# ============================================
-#  ❓ HELP
-# ============================================
-
-help:  ## ❓ Show this help message
-	@echo ""
-	@echo -e "$(BOLD)Transcendence — Available Commands$(NC)"
-	@echo -e "$(DIM)Compose: $(COMPOSE_CMD) $(COMPOSE_VERSION)$(NC)"
+	@echo -e "$(B)Transcendence — Available Commands$(N)"
 	@echo ""
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | \
-		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(GREEN)%-20s$(NC) %s\n", $$1, $$2}'
+		awk 'BEGIN {FS = ":.*?## "}; {printf "  $(G)%-18s$(N) %s\n", $$1, $$2}'
 	@echo ""
-	@echo -e "  $(DIM)First time? Run: make doctor$(NC)"
-	@echo ""
-
-# ============================================
-#  📄 Documentation
-# ============================================
-
-DOCUSAURUS_DIR = static_docs/docusaurus
-
-.PHONY: docs docs-dev docs-sync convert_subject_pdf
-
-docs-sync:  ## Sync project markdown files into Docusaurus
-	@bash $(DOCUSAURUS_DIR)/sync-docs.sh
-
-docs:  ## Build Docusaurus documentation → docs/
-	@echo "Building documentation..."
-	@cd $(DOCUSAURUS_DIR) && npm run build
-	@echo "$(GREEN)✅ Documentation built → docs/$(NC)"
-
-docs-dev:  ## Start Docusaurus dev server (hot reload)
-	@cd $(DOCUSAURUS_DIR) && npm run start
-
-convert_subject_pdf:  ## Convert static_docs/subject.md → static_docs/subject.pdf using md-to-pdf
-	@echo "Converting static_docs/subject.md → static_docs/subject.pdf"
-	@bash vendor/scripts/md-to-pdf/convert.sh static_docs/subject.md static_docs/subject.pdf
