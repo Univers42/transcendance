@@ -724,10 +724,24 @@ help:  ## ❓ Show this help message
 	@echo ""
 
 # ============================================
-#  📄 Static docs PDF conversion
+#  📄 Documentation
 # ============================================
 
-.PHONY: convert_subject_pdf
+DOCUSAURUS_DIR = static_docs/docusaurus
+
+.PHONY: docs docs-dev docs-sync convert_subject_pdf
+
+docs-sync:  ## Sync project markdown files into Docusaurus
+	@bash $(DOCUSAURUS_DIR)/sync-docs.sh
+
+docs:  ## Build Docusaurus documentation → docs/
+	@echo "Building documentation..."
+	@cd $(DOCUSAURUS_DIR) && npm run build
+	@echo "$(GREEN)✅ Documentation built → docs/$(NC)"
+
+docs-dev:  ## Start Docusaurus dev server (hot reload)
+	@cd $(DOCUSAURUS_DIR) && npm run start
+
 convert_subject_pdf:  ## Convert static_docs/subject.md → static_docs/subject.pdf using md-to-pdf
 	@echo "Converting static_docs/subject.md → static_docs/subject.pdf"
 	@bash vendor/scripts/md-to-pdf/convert.sh static_docs/subject.md static_docs/subject.pdf
