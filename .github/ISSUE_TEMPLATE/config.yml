@@ -4,5 +4,5 @@ contact_links:
     url: https://discord.gg/your-server
     about: For quick questions and discussions, use our Discord channel
   - name: 📖 Documentation
-    url: https://github.com/Univers42/ft_transcendence/tree/main/docs
-    about: Check the docs before opening an issue
+    url: https://univers42.github.io
+    about: Check the Prismatica docs before opening an issue

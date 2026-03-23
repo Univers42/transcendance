@@ -1,0 +1,76 @@
+# ================================================================
+# Deploy Documentation to GitHub Pages
+# ================================================================
+# Builds the Docusaurus site and deploys to GitHub Pages.
+# Triggers on pushes to main that change docs-related files.
+#
+# Prerequisites:
+#   Settings > Pages > Source: "GitHub Actions"
+# ================================================================
+
+name: Deploy Docs
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "static_docs/**"
+      - "docs/**"
+      - "*.md"
+      - "Model/**/*.md"
+      - "CONTRIBUTING.md"
+      - "SECURITY.md"
+      - "CODE_OF_CONDUCT.md"
+      - "TROUBLESHOOTING.md"
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+env:
+  NODE_VERSION: "22"
+
+jobs:
+  build:
+    name: 📚 Build docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Install Docusaurus dependencies
+        run: cd static_docs/docusaurus && npm ci
+
+      - name: Sync documentation
+        run: cd static_docs/docusaurus && bash sync-docs.sh
+
+      - name: Build docs site
+        run: cd static_docs/docusaurus && npx docusaurus build --out-dir ../../docs
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+
+  deploy:
+    name: 🚀 Deploy to Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
