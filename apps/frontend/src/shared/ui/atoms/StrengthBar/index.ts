@@ -1,2 +1,2 @@
-export { StrengthBar } from './StrengthBar';
-export type { StrengthBarProps } from './StrengthBar.types';
+export { StrengthBar } from './ui/StrengthBar';
+export type { StrengthBarProps } from './model/StrengthBar.types';

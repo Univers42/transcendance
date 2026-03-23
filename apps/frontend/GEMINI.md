@@ -38,3 +38,23 @@ When moving code from `src-temp/` to the FSD structure in `src/`:
 - **TDD is Mandatory:** Write the test before the implementation for any logic (Red -> Green -> Refactor).
 - **Test Location:** Tests must live next to the code they test (e.g., `useAuth.spec.ts` inside `features/auth/model/`).
 - **Safety Net:** No Pull Request will be accepted without 100% passing tests and verified layer integrity.
+
+## 6. Documentation & Metadata Standards
+Every single file (.tsx, .ts, .scss) created or refactored MUST start with a standardized JSDoc header. This ensures traceability and immediate context for any developer.
+
+Mandatory Header Block:
+
+```TypeScript
+/**
+ * @file [FileName.ext]
+ * @description [Brief and clear explanation of the file's responsibility].
+ * [Optionally: Mention key compositions or dependencies].
+ * @author [author_username]
+ * @date [YYYY-MM-DD]
+ * @version [X.Y.Z]
+ */
+```
+
+- Version Control: Use Semantic Versioning (SemVer) for versioning individual complex components or logic hooks.
+
+- Description Quality: Don't just repeat the filename. Explain why the file exists or how it fits into the FSD layer (e.g., "Composes the SplitLayout with specific landing copy").

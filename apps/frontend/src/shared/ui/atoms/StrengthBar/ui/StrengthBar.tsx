@@ -1,21 +1,17 @@
-/**
- * @file StrengthBar.tsx
- * @description Generic visual indicator of strength/level following FSD Shared Layer rules.
- * @author serjimen
- * @date 2026-03-05
- * @version 2.1.1
- */
 import type { JSX } from 'react';
-import type { StrengthBarProps } from './StrengthBar.types';
-import styles from './StrengthBar.module.scss';
+import { StrengthBarSegment } from './StrengthBarSegment';
+import { DEFAULT_MAX_LEVEL } from '../model/StrengthBar.constants';
+import type { StrengthBarProps } from '../model/StrengthBar.types';
+import styles from '../StrengthBar.module.scss';
 
 export function StrengthBar({
   level,
-  maxLevel = 3,
+  maxLevel = DEFAULT_MAX_LEVEL,
   label,
   className = '',
 }: StrengthBarProps): JSX.Element {
   const segments = Array.from({ length: maxLevel }, (_, i) => i + 1);
+  const colorLevel = Math.min(level, 3);
 
   return (
     <div 
@@ -28,19 +24,18 @@ export function StrengthBar({
     >
       <div className={styles['strength-bar__indicators']}>
         {segments.map((i) => (
-          <div
-            key={i}
-            className={[
-              styles['strength-bar__item'],
-              i <= level && styles[`strength-bar__item--active-${Math.min(level, 3)}`]
-            ].filter(Boolean).join(' ')}
+          <StrengthBarSegment 
+            key={i} 
+            isActive={i <= level} 
+            level={level} 
           />
         ))}
       </div>
+
       {label && (
         <span className={[
           styles['strength-bar__label'], 
-          level > 0 && styles[`strength-bar__label--${Math.min(level, 3)}`]
+          level > 0 && styles[`strength-bar__label--${colorLevel}`]
         ].filter(Boolean).join(' ')}>
           {label}
         </span>
