@@ -14,7 +14,7 @@
   }
 
   &__item {
-    height: 0.25rem;
+    height: $spacing-1;
     flex: 1;
     border-radius: $radius-full;
     background: var(--prisma-border-strong);

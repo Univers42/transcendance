@@ -31,7 +31,7 @@
 
   &__flag {
     font-size: $font-size-lg;
-    line-height: 1;
+    line-height: $line-height-none;
   }
 
   &__code {
@@ -75,7 +75,7 @@
     }
 
     &--active {
-      background: rgba($accent, 0.08);
+      background: var(--prisma-bg-accent-subtle);
       color: var(--prisma-accent);
       font-weight: $weight-semibold;
     }
