@@ -4,3 +4,4 @@ export * from './Icon';
 export * from './SocialButton';
 export * from './ThemeToggle';
 export * from './LanguageSelector';
+export * from './StrengthBar';
