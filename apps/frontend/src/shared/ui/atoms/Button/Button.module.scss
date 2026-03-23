@@ -1,0 +1,146 @@
+@use '@/styles/abstracts' as *;
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-2;
+  min-height: 2.75rem; // 44px min target size (WCAG 2.5.5)
+  min-width: 2.75rem;
+  padding: $spacing-3 $spacing-5;
+  border-radius: $radius-md;
+  font-family: $font-family-sans;
+  font-size: $font-size-base;
+  font-weight: $weight-medium;
+  line-height: $leading-normal;
+  letter-spacing: $tracking-wide;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all $duration-fast $ease-default;
+  border: 1px solid transparent;
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex-shrink: 0;
+
+    &--left {
+      margin-left: -$spacing-1;
+    }
+
+    &--right {
+      margin-right: -$spacing-1;
+    }
+  }
+
+  &--loading {
+    position: relative;
+    color: transparent !important;
+    pointer-events: none;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 1.25rem;
+      height: 1.25rem;
+      border: 2px solid currentColor;
+      border-right-color: transparent;
+      border-radius: $radius-full;
+      animation: spin 1s linear infinite;
+    }
+  }
+
+  // Variants
+  &--primary {
+    background: var(--prisma-accent);
+    color: var(--prisma-bg-primary);
+    border-color: var(--prisma-accent);
+
+    &:hover:not(:disabled) {
+      background: var(--prisma-accent-hover);
+      border-color: var(--prisma-accent-hover);
+    }
+  }
+
+  &--secondary {
+    background: var(--prisma-bg-secondary);
+    color: var(--prisma-text-primary);
+    border-color: var(--prisma-border-strong);
+
+    &:hover:not(:disabled) {
+      background: var(--prisma-bg-hover);
+      border-color: var(--prisma-accent);
+      color: var(--prisma-accent);
+    }
+  }
+
+  &--ghost {
+    background: transparent;
+    color: var(--prisma-text-secondary);
+
+    &:hover:not(:disabled) {
+      background: var(--prisma-bg-hover);
+      color: var(--prisma-text-primary);
+    }
+  }
+
+  &--danger {
+    background: var(--prisma-data-error);
+    color: white;
+    border-color: var(--prisma-data-error);
+
+    &:hover:not(:disabled) {
+      opacity: 0.9;
+    }
+  }
+
+  // Sizes
+  &--sm {
+    min-height: 2.25rem;
+    min-width: 2.25rem;
+    padding: $spacing-2 $spacing-4;
+    font-size: $font-size-sm;
+    border-radius: $radius-sm;
+
+    .btn__icon {
+      width: 1rem;
+      height: 1rem;
+    }
+  }
+
+  &--lg {
+    min-height: 3.5rem;
+    min-width: 3.5rem;
+    padding: $spacing-4 $spacing-8;
+    font-size: $font-size-lg;
+  }
+
+  &--icon {
+    padding: $spacing-3;
+    aspect-ratio: 1;
+  }
+
+  &--block {
+    width: 100%;
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
