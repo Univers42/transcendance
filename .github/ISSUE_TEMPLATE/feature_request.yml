@@ -42,9 +42,9 @@ body:
     attributes:
       label: Area
       options:
-        - Frontend (React)
-        - Backend (NestJS)
-        - Database
+        - Frontend (React / Vite)
+        - Data API (Express)
+        - Database (PostgreSQL / MongoDB)
         - DevOps / Infrastructure
         - Documentation
         - Other

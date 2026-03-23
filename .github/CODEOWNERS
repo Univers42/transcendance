@@ -1,31 +1,29 @@
 # ================================================================
-# CODEOWNERS
+# CODEOWNERS — Prismatica
 # ================================================================
 # Defines who is automatically requested for review when a PR
 # changes files in specific paths.
 #
 # Rules are evaluated top-to-bottom. The last matching rule wins.
 # Owners are @github-username.
-#
 # ================================================================
 
-# Default — every file requires review from the Tech Lead and LESdylan
+# Default — every file requires review from the Tech Lead
 *                               @LESdylan @serjimen
 
-# Backend — NestJS, Prisma, API
-apps/backend/                   @LESdylan @danielfdez17 @serjimen
+# Data API — Express + pg + mongodb
+apps/data-api/                  @LESdylan @danielfdez17 @serjimen
 
-# Frontend — React, Vite, SCSS
+# Frontend — React 19, Vite 6
 apps/frontend/                  @vjan-nie @LESdylan
 
-# Shared types package
-packages/                       @serjimen @LESdylan
+# Database schemas — SQL + NoSQL models (high-risk)
+Model/                          @esettes @serjimen @LESdylan
+Model/sql/                      @esettes @serjimen @LESdylan
+Model/nosql/                    @esettes @serjimen @LESdylan
 
-# Database schema — high-risk changes require extra eyes
-apps/backend/prisma/            @esettes @serjimen @LESdylan
-
-# Infrastructure — Docker, nginx, Compose
-docker/                         @esettes @serjimen
+# Infrastructure — Docker, Compose, Makefile
+apps/data-api/Dockerfile*       @esettes @serjimen
 docker-compose*.yml             @esettes @serjimen
 Makefile                        @esettes @serjimen
 
@@ -33,10 +31,13 @@ Makefile                        @esettes @serjimen
 .github/                        @serjimen @LESdylan
 .github/workflows/              @serjimen @LESdylan
 
-# Documentation — anyone can review, PM is default assignee
+# Documentation — Docusaurus, markdown, docs build output
 *.md                            @danielfdez17
 docs/                           @danielfdez17
-qa/                             @danielfdez17 @serjimen @LESdylan
+static_docs/                    @danielfdez17 @LESdylan
+
+# Scripts — utility and automation
+scripts/                        @serjimen @LESdylan
 
 # Environment config — sensitive, restricted
 .env.example                    @serjimen @LESdylan
