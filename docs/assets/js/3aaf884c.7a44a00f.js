@@ -1,1 +1,0 @@
-"use strict";(globalThis.webpackChunkprismatica_docs=globalThis.webpackChunkprismatica_docs||[]).push([[5601],{6021(a){a.exports=JSON.parse('{"metadata":{"permalink":"/transcendance/blog","page":1,"postsPerPage":10,"totalPages":1,"totalCount":4,"blogDescription":"Blog","blogTitle":"Blog"}}')}}]);

@@ -8,7 +8,7 @@ const config: Config = {
   favicon: 'img/favicon.ico',
 
   url: 'https://univers42.github.io',
-  baseUrl: '/transcendance/',
+  baseUrl: '/',
 
   organizationName: 'univers42',
   projectName: 'transcendance',
