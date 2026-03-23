@@ -6,7 +6,7 @@
 # After initial build (~30s), rebuilds are instant (cached layers).
 # ============================================
 
-FROM node:22-alpine
+FROM node:25-alpine
 
 # Install pnpm + bash + psql client + mongosh build deps
 RUN corepack enable && corepack prepare pnpm@latest --activate \
