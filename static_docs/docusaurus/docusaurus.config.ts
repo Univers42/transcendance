@@ -23,9 +23,14 @@ const config: Config = {
     function enableHMR() {
       return {
         name: 'enable-hmr',
-        configureWebpack(_config, isServer) {
+        configureWebpack(config, isServer) {
           if (isServer) return {};
-          return { devServer: { hot: true } };
+          // Docusaurus 3.x + Node 25: webpack-dev-server may not inject
+          // HotModuleReplacementPlugin automatically. Force it via plugins.
+          const webpack = require('webpack');
+          return {
+            plugins: [new webpack.HotModuleReplacementPlugin()],
+          };
         },
       };
     },
