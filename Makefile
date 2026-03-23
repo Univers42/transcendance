@@ -40,10 +40,9 @@ all: pull up  ## 🚀 Pull images and start the stack
 	@echo -e "$(G)╚══════════════════════════════════════════╝$(N)"
 	@echo ""
 
-pull:  ## 🐳 Pull latest images from Docker Hub
+pull:  ## 🐳 Pull latest images from Docker Hub (parallel)
 	@echo -e "  $(C)ℹ$(N)  Pulling latest images..."
-	@docker pull $(IMAGE_API):$(TAG)
-	@docker pull $(IMAGE_FRONT):$(TAG)
+	@docker pull $(IMAGE_API):$(TAG) & docker pull $(IMAGE_FRONT):$(TAG) & wait
 	@echo -e "  $(G)✓$(N)  Images up to date"
 
 up:  ## 🐳 Start the full stack
