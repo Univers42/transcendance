@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # Root workspace
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -14,6 +15,7 @@ updates:
       prefix: "chore(deps)"
     open-pull-requests-limit: 5
 
+  # Frontend — React 19 + Vite 6
   - package-ecosystem: "npm"
     directory: "/apps/frontend"
     schedule:
@@ -29,8 +31,9 @@ updates:
       prefix: "chore(frontend-deps)"
     open-pull-requests-limit: 5
 
+  # Data API — Express + pg + mongodb
   - package-ecosystem: "npm"
-    directory: "/apps/backend"
+    directory: "/apps/data-api"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -38,14 +41,15 @@ updates:
       timezone: "Europe/Madrid"
     labels:
       - "dependencies"
-      - "backend"
+      - "data-api"
       - "security"
     commit-message:
-      prefix: "chore(backend-deps)"
+      prefix: "chore(data-api-deps)"
     open-pull-requests-limit: 5
 
-  - package-ecosystem: "docker"
-    directory: "/"
+  # Docusaurus documentation site
+  - package-ecosystem: "npm"
+    directory: "/static_docs/docusaurus"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -53,8 +57,38 @@ updates:
       timezone: "Europe/Madrid"
     labels:
       - "dependencies"
+      - "docs"
+    commit-message:
+      prefix: "chore(docs-deps)"
+    open-pull-requests-limit: 3
+
+  # Docker — data-api Dockerfiles
+  - package-ecosystem: "docker"
+    directory: "/apps/data-api"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Madrid"
+    labels:
+      - "dependencies"
       - "docker"
       - "security"
     commit-message:
       prefix: "chore(docker-deps)"
+    open-pull-requests-limit: 3
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:15"
+      timezone: "Europe/Madrid"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "chore(actions)"
     open-pull-requests-limit: 3

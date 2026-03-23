@@ -42,10 +42,12 @@ body:
     attributes:
       label: Affected Area
       options:
-        - Frontend (React)
-        - Backend (NestJS)
-        - Database (PostgreSQL)
+        - Frontend (React / Vite)
+        - Data API (Express)
+        - Database — PostgreSQL
+        - Database — MongoDB
         - Docker / Infrastructure
+        - Documentation (Docusaurus)
         - CI/CD
         - Other
     validations:
