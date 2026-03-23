@@ -19,8 +19,8 @@
 
   &__icon {
     @include flex-center;
-    width: 2rem;
-    height: 2rem;
+    width: $spacing-8;
+    height: $spacing-8;
     border-radius: $radius-md;
     flex-shrink: 0;
     background: var(--prisma-accent);

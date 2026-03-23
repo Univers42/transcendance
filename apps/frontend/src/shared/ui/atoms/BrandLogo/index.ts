@@ -1,2 +1,2 @@
-export { BrandLogo } from './BrandLogo';
-export type { BrandLogoProps } from './BrandLogo.types';
+export { BrandLogo } from './ui/BrandLogo';
+export type { BrandLogoProps } from './model/BrandLogo.types';

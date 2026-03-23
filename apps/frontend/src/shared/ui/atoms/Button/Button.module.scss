@@ -5,8 +5,8 @@
   align-items: center;
   justify-content: center;
   gap: $spacing-2;
-  min-height: 2.75rem; // 44px min target size (WCAG 2.5.5)
-  min-width: 2.75rem;
+  min-height: $spacing-11; // 44px min target size (WCAG 2.5.5)
+  min-width: $spacing-11;
   padding: $spacing-3 $spacing-5;
   border-radius: $radius-md;
   font-family: $font-family-sans;
@@ -18,7 +18,7 @@
   white-space: nowrap;
   cursor: pointer;
   transition: all $duration-fast $ease-default;
-  border: 1px solid transparent;
+  border: $border-width-thin solid transparent;
 
   &:focus-visible {
     @include focus-ring;
@@ -34,8 +34,8 @@
   }
 
   &__icon {
-    width: 1.25rem;
-    height: 1.25rem;
+    width: $spacing-5;
+    height: $spacing-5;
     flex-shrink: 0;
 
     &--left {
@@ -55,9 +55,9 @@
     &::after {
       content: '';
       position: absolute;
-      width: 1.25rem;
-      height: 1.25rem;
-      border: 2px solid currentColor;
+      width: $spacing-5;
+      height: $spacing-5;
+      border: $border-width-medium solid currentColor;
       border-right-color: transparent;
       border-radius: $radius-full;
       animation: spin 1s linear infinite;
@@ -110,21 +110,21 @@
 
   // Sizes
   &--sm {
-    min-height: 2.25rem;
-    min-width: 2.25rem;
+    min-height: $spacing-9;
+    min-width: $spacing-9;
     padding: $spacing-2 $spacing-4;
     font-size: $font-size-sm;
     border-radius: $radius-sm;
 
     .btn__icon {
-      width: 1rem;
-      height: 1rem;
+      width: $spacing-4;
+      height: $spacing-4;
     }
   }
 
   &--lg {
-    min-height: 3.5rem;
-    min-width: 3.5rem;
+    min-height: $spacing-14;
+    min-width: $spacing-14;
     padding: $spacing-4 $spacing-8;
     font-size: $font-size-lg;
   }
