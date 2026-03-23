@@ -18,8 +18,9 @@ COMPOSE_CMD := $(shell \
 COMPOSE := $(COMPOSE_CMD) -f docker-compose.yml
 
 # ── Containers ───────────────────────────────────────
-API_CTR := transcendence-api
-DB_CTR  := transcendence-db
+API_CTR   := transcendence-api
+DB_CTR    := transcendence-db
+MONGO_CTR := transcendence-mongo
 
 # ── Colors ───────────────────────────────────────────
 B := \033[1m
@@ -86,6 +87,7 @@ db-reset:  ## 🗄️ Reset databases (drop + reinit)
 
 db-status:  ## 🗄️ Show database status
 	@docker exec $(DB_CTR) psql -U transcendence -c "SELECT count(*) AS tables FROM information_schema.tables WHERE table_schema='public';" 2>/dev/null || echo "PostgreSQL: not running"
+	@docker exec $(MONGO_CTR) mongosh --quiet --eval "db.getCollectionNames().length + ' collections'" transcendence 2>/dev/null || echo "MongoDB: not running"
 
 clean:  ## 🧹 Stop stack and remove containers + volumes
 	@$(COMPOSE) down -v --remove-orphans 2>/dev/null || true

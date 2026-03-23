@@ -67,7 +67,7 @@ services:
     image: dlesieur/prismatica-frontend:latest
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT:-8080}:80"
+      - "${FRONTEND_PORT:-8080}:8080"
     depends_on:
       data-api:
         condition: service_healthy
