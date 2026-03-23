@@ -1,0 +1,546 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="docs-wrapper plugin-docs plugin-id-default docs-version-current docs-doc-page docs-doc-id-strategy/infrastructure" data-has-hydrated="false">
+<head>
+<meta charset="UTF-8">
+<meta name="generator" content="Docusaurus v3.9.2">
+<title data-rh="true">Infrastructure Strategy | Prismatica</title><meta data-rh="true" name="viewport" content="width=device-width,initial-scale=1"><meta data-rh="true" name="twitter:card" content="summary_large_image"><meta data-rh="true" property="og:image" content="https://univers42.github.io/transcendance/img/docusaurus-social-card.jpg"><meta data-rh="true" name="twitter:image" content="https://univers42.github.io/transcendance/img/docusaurus-social-card.jpg"><meta data-rh="true" property="og:url" content="https://univers42.github.io/transcendance/docs/strategy/infrastructure"><meta data-rh="true" property="og:locale" content="en"><meta data-rh="true" name="docusaurus_locale" content="en"><meta data-rh="true" name="docsearch:language" content="en"><meta data-rh="true" name="docusaurus_version" content="current"><meta data-rh="true" name="docusaurus_tag" content="docs-default-current"><meta data-rh="true" name="docsearch:version" content="current"><meta data-rh="true" name="docsearch:docusaurus_tag" content="docs-default-current"><meta data-rh="true" property="og:title" content="Infrastructure Strategy | Prismatica"><meta data-rh="true" name="description" content="What this document is: The canonical reference for what mini-baas is, why it is built the way it is, and how every part connects — from raw infrastructure to a working product with a frontend and a business model on top."><meta data-rh="true" property="og:description" content="What this document is: The canonical reference for what mini-baas is, why it is built the way it is, and how every part connects — from raw infrastructure to a working product with a frontend and a business model on top."><link data-rh="true" rel="icon" href="/transcendance/img/favicon.ico"><link data-rh="true" rel="canonical" href="https://univers42.github.io/transcendance/docs/strategy/infrastructure"><link data-rh="true" rel="alternate" href="https://univers42.github.io/transcendance/docs/strategy/infrastructure" hreflang="en"><link data-rh="true" rel="alternate" href="https://univers42.github.io/transcendance/docs/strategy/infrastructure" hreflang="x-default"><script data-rh="true" type="application/ld+json">{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"Infrastructure Strategy","item":"https://univers42.github.io/transcendance/docs/strategy/infrastructure"}]}</script><link rel="alternate" type="application/rss+xml" href="/transcendance/blog/rss.xml" title="Prismatica RSS Feed">
+<link rel="alternate" type="application/atom+xml" href="/transcendance/blog/atom.xml" title="Prismatica Atom Feed"><link rel="stylesheet" href="/transcendance/assets/css/styles.1a7b775f.css">
+<script src="/transcendance/assets/js/runtime~main.9b169194.js" defer="defer"></script>
+<script src="/transcendance/assets/js/main.946baf15.js" defer="defer"></script>
+</head>
+<body class="navigation-with-keyboard">
+<svg style="display: none;"><defs>
+<symbol id="theme-svg-external-link" viewBox="0 0 24 24"><path fill="currentColor" d="M21 13v10h-21v-19h12v2h-10v15h17v-8h2zm3-12h-10.988l4.035 4-6.977 7.07 2.828 2.828 6.977-7.07 4.125 4.172v-11z"/></symbol>
+</defs></svg>
+<script>!function(){var t=function(){try{return new URLSearchParams(window.location.search).get("docusaurus-theme")}catch(t){}}()||function(){try{return window.localStorage.getItem("theme")}catch(t){}}();document.documentElement.setAttribute("data-theme",t||(window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light")),document.documentElement.setAttribute("data-theme-choice",t||"system")}(),function(){try{const c=new URLSearchParams(window.location.search).entries();for(var[t,e]of c)if(t.startsWith("docusaurus-data-")){var a=t.replace("docusaurus-data-","data-");document.documentElement.setAttribute(a,e)}}catch(t){}}()</script><div id="__docusaurus"><link rel="preload" as="image" href="/transcendance/img/logo.svg"><div role="region" aria-label="Skip to main content"><a class="skipToContent_fXgn" href="#__docusaurus_skipToContent_fallback">Skip to main content</a></div><nav aria-label="Main" class="theme-layout-navbar navbar navbar--fixed-top"><div class="navbar__inner"><div class="theme-layout-navbar-left navbar__items"><button aria-label="Toggle navigation bar" aria-expanded="false" class="navbar__toggle clean-btn" type="button"><svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path stroke="currentColor" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="M4 7h22M4 15h22M4 23h22"></path></svg></button><a class="navbar__brand" href="/transcendance/"><div class="navbar__logo"><img src="/transcendance/img/logo.svg" alt="Prismatica Logo" class="themedComponent_mlkZ themedComponent--light_NVdE"><img src="/transcendance/img/logo.svg" alt="Prismatica Logo" class="themedComponent_mlkZ themedComponent--dark_xIcU"></div><b class="navbar__title text--truncate">Prismatica</b></a><a aria-current="page" class="navbar__item navbar__link navbar__link--active" href="/transcendance/docs/intro">Docs</a><a class="navbar__item navbar__link" href="/transcendance/blog">Blog</a></div><div class="theme-layout-navbar-right navbar__items navbar__items--right"><a href="https://github.com/Univers42/ft_transcendence" target="_blank" rel="noopener noreferrer" class="navbar__item navbar__link">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a><div class="toggle_vylO colorModeToggle_DEke"><button class="clean-btn toggleButton_gllP toggleButtonDisabled_aARS" type="button" disabled="" title="system mode" aria-label="Switch between dark and light mode (currently system mode)"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP lightToggleIcon_pyhR"><path fill="currentColor" d="M12,9c1.65,0,3,1.35,3,3s-1.35,3-3,3s-3-1.35-3-3S10.35,9,12,9 M12,7c-2.76,0-5,2.24-5,5s2.24,5,5,5s5-2.24,5-5 S14.76,7,12,7L12,7z M2,13l2,0c0.55,0,1-0.45,1-1s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S1.45,13,2,13z M20,13l2,0c0.55,0,1-0.45,1-1 s-0.45-1-1-1l-2,0c-0.55,0-1,0.45-1,1S19.45,13,20,13z M11,2v2c0,0.55,0.45,1,1,1s1-0.45,1-1V2c0-0.55-0.45-1-1-1S11,1.45,11,2z M11,20v2c0,0.55,0.45,1,1,1s1-0.45,1-1v-2c0-0.55-0.45-1-1-1C11.45,19,11,19.45,11,20z M5.99,4.58c-0.39-0.39-1.03-0.39-1.41,0 c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0s0.39-1.03,0-1.41L5.99,4.58z M18.36,16.95 c-0.39-0.39-1.03-0.39-1.41,0c-0.39,0.39-0.39,1.03,0,1.41l1.06,1.06c0.39,0.39,1.03,0.39,1.41,0c0.39-0.39,0.39-1.03,0-1.41 L18.36,16.95z M19.42,5.99c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06c-0.39,0.39-0.39,1.03,0,1.41 s1.03,0.39,1.41,0L19.42,5.99z M7.05,18.36c0.39-0.39,0.39-1.03,0-1.41c-0.39-0.39-1.03-0.39-1.41,0l-1.06,1.06 c-0.39,0.39-0.39,1.03,0,1.41s1.03,0.39,1.41,0L7.05,18.36z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP darkToggleIcon_wfgR"><path fill="currentColor" d="M9.37,5.51C9.19,6.15,9.1,6.82,9.1,7.5c0,4.08,3.32,7.4,7.4,7.4c0.68,0,1.35-0.09,1.99-0.27C17.45,17.19,14.93,19,12,19 c-3.86,0-7-3.14-7-7C5,9.07,6.81,6.55,9.37,5.51z M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.1-1.36 c-0.98,1.37-2.58,2.26-4.4,2.26c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.4C12.92,3.04,12.46,3,12,3L12,3z"></path></svg><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="toggleIcon_g3eP systemToggleIcon_QzmC"><path fill="currentColor" d="m12 21c4.971 0 9-4.029 9-9s-4.029-9-9-9-9 4.029-9 9 4.029 9 9 9zm4.95-13.95c1.313 1.313 2.05 3.093 2.05 4.95s-0.738 3.637-2.05 4.95c-1.313 1.313-3.093 2.05-4.95 2.05v-14c1.857 0 3.637 0.737 4.95 2.05z"></path></svg></button></div><div class="navbarSearchContainer_Bca1"></div></div></div><div role="presentation" class="navbar-sidebar__backdrop"></div></nav><div id="__docusaurus_skipToContent_fallback" class="theme-layout-main main-wrapper mainWrapper_z2l0"><div class="docsWrapper_hBAB"><button aria-label="Scroll back to top" class="clean-btn theme-back-to-top-button backToTopButton_sjWU" type="button"></button><div class="docRoot_UBD9"><aside class="theme-doc-sidebar-container docSidebarContainer_YfHR"><div class="sidebarViewport_aRkj"><div class="sidebar_njMd"><nav aria-label="Docs sidebar" class="menu thin-scrollbar menu_SIkG"><ul class="theme-doc-sidebar-menu menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-1 menu__list-item"><a class="menu__link" href="/transcendance/docs/intro"><span title="Introduction" class="linkLabel_WmDU">Introduction</span></a></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/transcendance/docs/setup"><span title="Getting Started" class="categoryLinkLabel_W154">Getting Started</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret menu__link--active" role="button" aria-expanded="true" href="/transcendance/docs/strategy/mini-baas"><span title="Strategy" class="categoryLinkLabel_W154">Strategy</span></a></div><ul class="menu__list"><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/transcendance/docs/strategy/mini-baas"><span title="Mini-BaaS Strategy" class="linkLabel_WmDU">Mini-BaaS Strategy</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link menu__link--active" aria-current="page" tabindex="0" href="/transcendance/docs/strategy/infrastructure"><span title="Infrastructure Strategy" class="linkLabel_WmDU">Infrastructure Strategy</span></a></li><li class="theme-doc-sidebar-item-link theme-doc-sidebar-item-link-level-2 menu__list-item"><a class="menu__link" tabindex="0" href="/transcendance/docs/strategy/refactoring-plan"><span title="Refactoring Plan" class="linkLabel_WmDU">Refactoring Plan</span></a></li></ul></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/transcendance/docs/design/design-system"><span title="Design" class="categoryLinkLabel_W154">Design</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/transcendance/docs/database/sql-diagram"><span title="Database" class="categoryLinkLabel_W154">Database</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/transcendance/docs/faq"><span title="Reference" class="categoryLinkLabel_W154">Reference</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/transcendance/docs/contributing"><span title="Community" class="categoryLinkLabel_W154">Community</span></a></div></li><li class="theme-doc-sidebar-item-category theme-doc-sidebar-item-category-level-1 menu__list-item menu__list-item--collapsed"><div class="menu__list-item-collapsible"><a class="categoryLink_byQd menu__link menu__link--sublist menu__link--sublist-caret" role="button" aria-expanded="false" href="/transcendance/docs/fixes/prisma-datasource"><span title="Fixes &amp; Workarounds" class="categoryLinkLabel_W154">Fixes &amp; Workarounds</span></a></div></li></ul></nav></div></div></aside><main class="docMainContainer_TBSr"><div class="container padding-top--md padding-bottom--lg"><div class="row"><div class="col docItemCol_VOVn"><div class="docItemContainer_Djhp"><article><nav class="theme-doc-breadcrumbs breadcrumbsContainer_Z_bl" aria-label="Breadcrumbs"><ul class="breadcrumbs"><li class="breadcrumbs__item"><a aria-label="Home page" class="breadcrumbs__link" href="/transcendance/"><svg viewBox="0 0 24 24" class="breadcrumbHomeIcon_YNFT"><path d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1z" fill="currentColor"></path></svg></a></li><li class="breadcrumbs__item"><span class="breadcrumbs__link">Strategy</span></li><li class="breadcrumbs__item breadcrumbs__item--active"><span class="breadcrumbs__link">Infrastructure Strategy</span></li></ul></nav><div class="tocCollapsible_ETCw theme-doc-toc-mobile tocMobile_ITEo"><button type="button" class="clean-btn tocCollapsibleButton_TO0P">On this page</button></div><div class="theme-doc-markdown markdown"><header><h1>Mini-BaaS — Platform Strategy</h1></header>
+<blockquote>
+<p><strong>What this document is</strong>: The canonical reference for what mini-baas is, why it is built the way it is, and how every part connects — from raw infrastructure to a working product with a frontend and a business model on top.</p>
+</blockquote>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="table-of-contents">Table of Contents<a href="#table-of-contents" class="hash-link" aria-label="Direct link to Table of Contents" title="Direct link to Table of Contents" translate="no">​</a></h2>
+<ol>
+<li class=""><a href="#1-what-is-mini-baas" class="">What Is Mini-BaaS</a></li>
+<li class=""><a href="#2-the-core-bet" class="">The Core Bet</a></li>
+<li class=""><a href="#3-architecture-in-plain-language" class="">Architecture in Plain Language</a></li>
+<li class=""><a href="#4-the-two-layer-entry-system" class="">The Two-Layer Entry System</a></li>
+<li class=""><a href="#5-service-catalog" class="">Service Catalog</a></li>
+<li class=""><a href="#6-multi-tenancy-models" class="">Multi-Tenancy Models</a></li>
+<li class=""><a href="#7-infrastructure--deployment-strategy" class="">Infrastructure &amp; Deployment Strategy</a></li>
+<li class=""><a href="#8-the-70--30-rule" class="">The 70 / 30 Rule</a></li>
+<li class=""><a href="#9-connecting-a-frontend" class="">Connecting a Frontend</a></li>
+<li class=""><a href="#10-connecting-a-business-model" class="">Connecting a Business Model</a></li>
+<li class=""><a href="#11-how-to-use-this-repo-independently" class="">How to Use This Repo Independently</a></li>
+<li class=""><a href="#12-workflow--from-zero-to-live-product" class="">Workflow — From Zero to Live Product</a></li>
+<li class=""><a href="#13-development-conventions" class="">Development Conventions</a></li>
+<li class=""><a href="#14-decision-log" class="">Decision Log</a></li>
+<li class=""><a href="#15-what-you-still-have-to-build" class="">What You Still Have to Build</a></li>
+<li class=""><a href="#16-next-steps" class="">Next Steps</a></li>
+</ol>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="1-what-is-mini-baas">1. What Is Mini-BaaS<a href="#1-what-is-mini-baas" class="hash-link" aria-label="Direct link to 1. What Is Mini-BaaS" title="Direct link to 1. What Is Mini-BaaS" translate="no">​</a></h2>
+<p>Mini-BaaS is a <strong>self-hosted, composable Backend-as-a-Service platform</strong> built from proven open-source components.</p>
+<p>It gives any product team — or any developer building their own SaaS — a complete, production-ready backend out of the box:</p>
+<ul>
+<li class="">User authentication</li>
+<li class="">Auto-generated REST APIs from any database schema</li>
+<li class="">Real-time WebSocket subscriptions</li>
+<li class="">File storage (S3-compatible)</li>
+<li class="">SQL federation across multiple database engines</li>
+<li class="">Connection pooling</li>
+<li class="">A visual admin interface</li>
+</ul>
+<p>The purpose is not to reinvent these primitives. Every one of them is already solved by a battle-tested open-source project. The purpose is to <strong>compose them correctly, containerize them cleanly, and expose them in a way that a frontend and a business model can sit on top without friction</strong>.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="2-the-core-bet">2. The Core Bet<a href="#2-the-core-bet" class="hash-link" aria-label="Direct link to 2. The Core Bet" title="Direct link to 2. The Core Bet" translate="no">​</a></h2>
+<blockquote>
+<p>&quot;We assemble the 70% that is already solved. We only write the 30% that is specific to our platform.&quot;</p>
+</blockquote>
+<p>Every serious backend needs auth, storage, a database, a REST layer, and real-time. Those are commodity. The value mini-baas adds is:</p>
+<ul>
+<li class="">Correct wiring between components</li>
+<li class="">Multi-tenancy at the infrastructure level (not the application level)</li>
+<li class="">Clean environment promotion (local → staging → production) out of the box</li>
+<li class="">A Makefile-driven workflow so no institutional knowledge lives in someone&#x27;s head</li>
+<li class="">Ports that a frontend can talk to immediately</li>
+</ul>
+<p>The 30% you write is the <strong>control plane</strong>: provisioning new tenants, routing requests to the right backend, managing lifecycle, and enforcing quotas. Everything else is delegated to the docker images listed in this repo.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="3-architecture-in-plain-language">3. Architecture in Plain Language<a href="#3-architecture-in-plain-language" class="hash-link" aria-label="Direct link to 3. Architecture in Plain Language" title="Direct link to 3. Architecture in Plain Language" translate="no">​</a></h2>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">Browser / Mobile App / Third-Party Client</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">            │</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">            ▼</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">┌───────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│         Layer 1 — HTTP Gateway        │  Kong  (routing, rate limiting, JWT)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">└───────────────────────────────────────┘</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">            │</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">            ▼</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">┌───────────────────────────────────────┐</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│       Layer 2 — SQL Federation        │  Trino  (universal SQL → any DB dialect)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">└───────────────────────────────────────┘</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">            │</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">     ┌──────┴───────────────────────────────────┐</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">     ▼                                          ▼</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">Auth (GoTrue)              API Translators (PostgREST / RESTHeart / NocoDB …)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">     │                                          │</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">     └──────────────────────┬───────────────────┘</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">                            ▼</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">              Database Layer (PostgreSQL primary)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">              + Redis (cache / queues)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">              + MinIO (object storage)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">              + Realtime (WebSocket CDC)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">              + Supavisor (connection pooling)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">                            │</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">                            ▼</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">                 Supabase Studio (admin UI)</span><br></span></code></pre></div></div>
+<p>Each layer has exactly one job. Nothing bleeds into the next.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="4-the-two-layer-entry-system">4. The Two-Layer Entry System<a href="#4-the-two-layer-entry-system" class="hash-link" aria-label="Direct link to 4. The Two-Layer Entry System" title="Direct link to 4. The Two-Layer Entry System" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-1--kong-http">Layer 1 — Kong (HTTP)<a href="#layer-1--kong-http" class="hash-link" aria-label="Direct link to Layer 1 — Kong (HTTP)" title="Direct link to Layer 1 — Kong (HTTP)" translate="no">​</a></h3>
+<p>Every HTTP request from any client hits Kong first. Kong does not know about databases. It knows about:</p>
+<ul>
+<li class="">Routes (which service handles which path)</li>
+<li class="">Rate limits per tenant or per API key</li>
+<li class="">JWT verification (tokens issued by GoTrue)</li>
+<li class="">Plugin middleware (transformations, logging, CORS, etc.)</li>
+</ul>
+<p>Kong is configured declaratively via <code>deck</code> (declarative config sync). Adding a new tenant means registering a new route in Kong&#x27;s config — no code change.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="layer-2--trino-sql-federation">Layer 2 — Trino (SQL Federation)<a href="#layer-2--trino-sql-federation" class="hash-link" aria-label="Direct link to Layer 2 — Trino (SQL Federation)" title="Direct link to Layer 2 — Trino (SQL Federation)" translate="no">​</a></h3>
+<p>Trino is the universal SQL layer. Its job is to translate queries across different database engines so that the API layer above it never has to care whether the data lives in PostgreSQL, MySQL, MongoDB, or Elasticsearch.</p>
+<p>Without Trino, you need a separate REST translator per database type. With Trino, you have one SQL interface that handles all of them. This is the architectural leverage that makes multi-database tenants possible without an explosion of custom code.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="5-service-catalog">5. Service Catalog<a href="#5-service-catalog" class="hash-link" aria-label="Direct link to 5. Service Catalog" title="Direct link to 5. Service Catalog" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="infrastructure-services-pre-built-images-no-custom-code">Infrastructure Services (pre-built images, no custom code)<a href="#infrastructure-services-pre-built-images-no-custom-code" class="hash-link" aria-label="Direct link to Infrastructure Services (pre-built images, no custom code)" title="Direct link to Infrastructure Services (pre-built images, no custom code)" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Service</th><th>Image</th><th>Port</th><th>Purpose</th></tr></thead><tbody><tr><td><strong>Kong</strong></td><td><code>kong</code></td><td>8000 / 8443</td><td>HTTP gateway, routing, plugins</td></tr><tr><td><strong>Trino</strong></td><td><code>trinodb/trino</code></td><td>8080</td><td>SQL federation across DB engines</td></tr><tr><td><strong>GoTrue</strong></td><td><code>supabase/gotrue:v2.188.1</code></td><td>9999</td><td>Auth — JWT, OAuth, MFA, sessions</td></tr><tr><td><strong>PostgREST</strong></td><td><code>postgrest/postgrest:devel</code></td><td>3000</td><td>Auto-REST from PostgreSQL schema</td></tr><tr><td><strong>Realtime</strong></td><td><code>supabase/realtime</code></td><td>4000</td><td>WebSocket subscriptions (CDC)</td></tr><tr><td><strong>MinIO</strong></td><td><code>minio/minio</code></td><td>9000 / 9001</td><td>S3-compatible file storage</td></tr><tr><td><strong>Redis</strong></td><td><code>redis:trixie</code></td><td>6379</td><td>Cache, queues, rate counters</td></tr><tr><td><strong>Supavisor</strong></td><td><code>supabase/supavisor:2.7.4</code></td><td>6543</td><td>PostgreSQL connection pooler</td></tr><tr><td><strong>PostgreSQL</strong></td><td><code>postgres:16-alpine</code></td><td>5432</td><td>Primary relational database</td></tr><tr><td><strong>Studio</strong></td><td><code>supabase/studio</code></td><td>3001</td><td>Admin UI</td></tr></tbody></table>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="custom-services-this-repo-owns-these">Custom Services (this repo owns these)<a href="#custom-services-this-repo-owns-these" class="hash-link" aria-label="Direct link to Custom Services (this repo owns these)" title="Direct link to Custom Services (this repo owns these)" translate="no">​</a></h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Service</th><th>Language</th><th>Port</th><th>Purpose</th></tr></thead><tbody><tr><td><strong>api-gateway</strong></td><td>Node.js / Express</td><td>3000</td><td>Custom gateway logic, middleware</td></tr><tr><td><strong>auth-service</strong></td><td>Python / FastAPI</td><td>8000</td><td>Auth extensions, user management</td></tr><tr><td><strong>dynamic-api</strong></td><td>Go</td><td>8080</td><td>High-performance dynamic endpoints</td></tr><tr><td><strong>schema-service</strong></td><td>TypeScript / Express</td><td>3001</td><td>Schema introspection, API generation</td></tr></tbody></table>
+<p>Each custom service has a multistage Dockerfile, a Kubernetes <code>Deployment + Service</code> manifest, health probes, non-root users, and an <code>.dockerignore</code>. They are scaffolds — the interfaces are defined, the business logic is yours to fill in.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="6-multi-tenancy-models">6. Multi-Tenancy Models<a href="#6-multi-tenancy-models" class="hash-link" aria-label="Direct link to 6. Multi-Tenancy Models" title="Direct link to 6. Multi-Tenancy Models" translate="no">​</a></h2>
+<p>The choice of isolation model is the single most important architectural decision for a BaaS product. It determines cost, security posture, and scalability ceiling. Three models are supported:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="silo--one-stack-per-tenant">Silo — One stack per tenant<a href="#silo--one-stack-per-tenant" class="hash-link" aria-label="Direct link to Silo — One stack per tenant" title="Direct link to Silo — One stack per tenant" translate="no">​</a></h3>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">Tenant A: [Kong route] → [own PostgREST] → [own PostgreSQL]</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">Tenant B: [Kong route] → [own PostgREST] → [own PostgreSQL]</span><br></span></code></pre></div></div>
+<ul>
+<li class=""><strong>Isolation</strong>: Complete. No shared data plane.</li>
+<li class=""><strong>Cost</strong>: Highest. Every tenant pays for a full stack.</li>
+<li class=""><strong>Best for</strong>: Enterprise customers, HIPAA / FedRAMP regulated workloads, high-value accounts that require contractual data isolation.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="bridge--shared-cluster-isolated-namespaces">Bridge — Shared cluster, isolated namespaces<a href="#bridge--shared-cluster-isolated-namespaces" class="hash-link" aria-label="Direct link to Bridge — Shared cluster, isolated namespaces" title="Direct link to Bridge — Shared cluster, isolated namespaces" translate="no">​</a></h3>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">Kong (shared) → Kubernetes namespace per tenant → own DB per tenant</span><br></span></code></pre></div></div>
+<ul>
+<li class=""><strong>Isolation</strong>: Namespace-level. Good separation, shared control plane.</li>
+<li class=""><strong>Cost</strong>: Medium. Share the cluster overhead, pay per DB.</li>
+<li class=""><strong>Best for</strong>: Mid-market SaaS customers. The <strong>recommended starting point</strong> for this platform.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="pool--everything-shared-row-level-isolation">Pool — Everything shared, row-level isolation<a href="#pool--everything-shared-row-level-isolation" class="hash-link" aria-label="Direct link to Pool — Everything shared, row-level isolation" title="Direct link to Pool — Everything shared, row-level isolation" translate="no">​</a></h3>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">Kong (shared) → PostgREST (shared) → PostgreSQL (shared, RLS per tenant)</span><br></span></code></pre></div></div>
+<ul>
+<li class=""><strong>Isolation</strong>: Row-Level Security only. Application-layer separation.</li>
+<li class=""><strong>Cost</strong>: Lowest. Divide all resources by number of tenants.</li>
+<li class=""><strong>Best for</strong>: High-volume, low-cost, small-customer SaaS. Maximum density, weakest isolation.</li>
+</ul>
+<p><strong>Rule of thumb</strong>: Start with Bridge for your first customers. Offer Silo as a premium tier. Use Pool only if you have a clear cost model and understand the RLS complexity.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="7-infrastructure--deployment-strategy">7. Infrastructure &amp; Deployment Strategy<a href="#7-infrastructure--deployment-strategy" class="hash-link" aria-label="Direct link to 7. Infrastructure &amp; Deployment Strategy" title="Direct link to 7. Infrastructure &amp; Deployment Strategy" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="local-development">Local Development<a href="#local-development" class="hash-link" aria-label="Direct link to Local Development" title="Direct link to Local Development" translate="no">​</a></h3>
+<p>Uses Docker Compose. Two compose files exist:</p>
+<ul>
+<li class=""><code>docker-compose.yml</code> — the full infrastructure stack (pre-built images only, for running locally without rebuilding custom services)</li>
+<li class=""><code>docker-compose.build.yml</code> — builds custom services from source and wires everything together</li>
+</ul>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token comment" style="color:rgb(98, 114, 164)"># Run the full stack locally (pre-built only)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">docker</span><span class="token plain"> compose up </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-d</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Build and run custom services from source</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">docker</span><span class="token plain"> compose </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-f</span><span class="token plain"> docker-compose.build.yml up </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-d</span><span class="token plain"> </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">--build</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="kubernetes-staging--production">Kubernetes (staging + production)<a href="#kubernetes-staging--production" class="hash-link" aria-label="Direct link to Kubernetes (staging + production)" title="Direct link to Kubernetes (staging + production)" translate="no">​</a></h3>
+<p>Managed via <strong>Kustomize overlays</strong>. Base manifests live in <code>deployments/base/</code>. Environment-specific patches live in <code>deployments/overlays/</code>.</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">deployments/</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">├── base/              ← canonical K8s definitions (env-neutral)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│   ├── kustomization.yaml</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│   ├── api-gateway/deployment.yaml</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│   ├── auth-service/deployment.yaml</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│   ├── dynamic-api/deployment.yaml</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">│   └── schema-service/deployment.yaml</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">└── overlays/</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">    ├── local/         ← namespace: default, tag: latest</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">    ├── staging/       ← namespace: mini-baas-staging, tag: staging-latest</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">    └── production/    ← namespace: mini-baas-production, tag: v1.0.0</span><br></span></code></pre></div></div>
+<p>Overlay differences are minimal: namespace, image tag, name prefix, and environment labels. This means the exact same manifest is promoted from local → staging → production by changing only the overlay.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="makefile--the-single-interface-to-everything">Makefile — The single interface to everything<a href="#makefile--the-single-interface-to-everything" class="hash-link" aria-label="Direct link to Makefile — The single interface to everything" title="Direct link to Makefile — The single interface to everything" translate="no">​</a></h3>
+<p>The Makefile is the CLI for this entire repo. It has 31+ targets covering:</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token comment" style="color:rgb(98, 114, 164)"># Docker</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> docker-build               </span><span class="token comment" style="color:rgb(98, 114, 164)"># build all images</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> docker-build-api-gateway   </span><span class="token comment" style="color:rgb(98, 114, 164)"># build one image</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> docker-push                </span><span class="token comment" style="color:rgb(98, 114, 164)"># tag + push to registry</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Kubernetes</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-deploy                 </span><span class="token comment" style="color:rgb(98, 114, 164)"># build + load + deploy (local minikube)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-status                 </span><span class="token comment" style="color:rgb(98, 114, 164)"># show pods, deployments, services</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-logs </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">SERVICE</span><span class="token operator">=</span><span class="token plain">api-gateway</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-scale </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">SERVICE</span><span class="token operator">=</span><span class="token plain">api-gateway </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">REPLICAS</span><span class="token operator">=</span><span class="token number">3</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-rollback </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">SERVICE</span><span class="token operator">=</span><span class="token plain">api-gateway</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-port-forward </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">SERVICE</span><span class="token operator">=</span><span class="token plain">api-gateway </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">PORT</span><span class="token operator">=</span><span class="token number">3000</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># CI/CD</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> build-and-push </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">REGISTRY</span><span class="token operator">=</span><span class="token plain">registry.example.com </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">IMAGE_TAG</span><span class="token operator">=</span><span class="token plain">v1.0.0</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> deploy-staging</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> deploy-production</span><br></span></code></pre></div></div>
+<p><strong>Convention</strong>: always use Make targets. Never run raw <code>kubectl</code> or <code>docker</code> commands for platform operations — keep operational knowledge in the Makefile so it is reproducible.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="environment-variables">Environment Variables<a href="#environment-variables" class="hash-link" aria-label="Direct link to Environment Variables" title="Direct link to Environment Variables" translate="no">​</a></h3>
+<p>All secrets and configuration are managed through <code>.env</code> files (see <code>.env.example</code>). <strong>Never commit <code>.env</code> to git.</strong> For production, inject via Kubernetes Secrets or a secret manager (Vault, AWS Secrets Manager, etc.).</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="8-the-70--30-rule">8. The 70 / 30 Rule<a href="#8-the-70--30-rule" class="hash-link" aria-label="Direct link to 8. The 70 / 30 Rule" title="Direct link to 8. The 70 / 30 Rule" translate="no">​</a></h2>
+<p>This repo provides <strong>70%</strong> of what you need:</p>
+<ul>
+<li class="">All infrastructure containers wired together</li>
+<li class="">Kubernetes manifests with health probes and resource limits</li>
+<li class="">Three multi-tenancy models</li>
+<li class="">Automated build + deploy pipeline</li>
+<li class="">Admin UI</li>
+<li class="">Auth, storage, real-time out of the box</li>
+</ul>
+<p><strong>You write 30%</strong> — the control plane in NestJS (or any backend framework):</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Control Plane Piece</th><th>What It Does</th></tr></thead><tbody><tr><td><strong>Provisioner</strong></td><td>Creates a new tenant: namespace, DB, credentials, Kong route</td></tr><tr><td><strong>Kong Configurator</strong></td><td>Registers routes and plugins per tenant via <code>deck</code> sync</td></tr><tr><td><strong>Schema Introspector</strong></td><td>Reads DB schema metadata to auto-generate API endpoints</td></tr><tr><td><strong>Lifecycle Manager</strong></td><td>Suspends idle tenants, enforces quotas, handles deletion</td></tr><tr><td><strong>Query Router</strong></td><td>Routes incoming requests to the right Trino catalog / DB</td></tr></tbody></table>
+<p>These pieces connect this repo to your product. Without them, mini-baas is an infrastructure toolkit. With them, it is a platform.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="9-connecting-a-frontend">9. Connecting a Frontend<a href="#9-connecting-a-frontend" class="hash-link" aria-label="Direct link to 9. Connecting a Frontend" title="Direct link to 9. Connecting a Frontend" translate="no">​</a></h2>
+<p>A frontend talks to this platform through two surfaces:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="surface-1--the-public-api-via-kong">Surface 1 — The Public API (via Kong)<a href="#surface-1--the-public-api-via-kong" class="hash-link" aria-label="Direct link to Surface 1 — The Public API (via Kong)" title="Direct link to Surface 1 — The Public API (via Kong)" translate="no">​</a></h3>
+<p>Every operation a user can do from a browser or mobile app goes through Kong on port 8000:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">POST /auth/signup      → GoTrue   (create account)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">POST /auth/signin      → GoTrue   (get JWT)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">GET  /api/items        → PostgREST (query DB, JWT verified by Kong)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">POST /storage/upload   → MinIO    (upload file)</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">WS   /realtime         → Supabase Realtime (subscribe to changes)</span><br></span></code></pre></div></div>
+<p>Your frontend needs only the Kong URL and the anonymous JWT key. Everything else is handled by the platform. This is identical to how Supabase&#x27;s client SDK works — and you can <strong>use the Supabase JS client directly</strong> pointed at your GoTrue + PostgREST endpoints.</p>
+<div class="language-typescript codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-typescript codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token comment" style="color:rgb(98, 114, 164)">// Frontend — works against this stack out of the box</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token keyword module" style="color:rgb(189, 147, 249);font-style:italic">import</span><span class="token plain"> </span><span class="token imports punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token imports"> createClient </span><span class="token imports punctuation" style="color:rgb(248, 248, 242)">}</span><span class="token plain"> </span><span class="token keyword module" style="color:rgb(189, 147, 249);font-style:italic">from</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;@supabase/supabase-js&#x27;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token keyword" style="color:rgb(189, 147, 249);font-style:italic">const</span><span class="token plain"> supabase </span><span class="token operator">=</span><span class="token plain"> </span><span class="token function" style="color:rgb(80, 250, 123)">createClient</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;http://localhost:9999&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain">  </span><span class="token comment" style="color:rgb(98, 114, 164)">// GoTrue URL (or Kong route)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">  </span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;your-anon-key&#x27;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)">// Auth</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token keyword control-flow" style="color:rgb(189, 147, 249);font-style:italic">await</span><span class="token plain"> supabase</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token property-access">auth</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">signUp</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"> email</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> password </span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token keyword control-flow" style="color:rgb(189, 147, 249);font-style:italic">await</span><span class="token plain"> supabase</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token property-access">auth</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">signInWithPassword</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"> email</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> password </span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)">// Database (via PostgREST)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token keyword" style="color:rgb(189, 147, 249);font-style:italic">const</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"> data </span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><span class="token plain"> </span><span class="token operator">=</span><span class="token plain"> </span><span class="token keyword control-flow" style="color:rgb(189, 147, 249);font-style:italic">await</span><span class="token plain"> supabase</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token keyword module" style="color:rgb(189, 147, 249);font-style:italic">from</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;items&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">select</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;*&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)">// Real-time</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">supabase</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">channel</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;items&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">on</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;postgres_changes&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(248, 248, 242)">{</span><span class="token plain"> event</span><span class="token operator">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;*&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> schema</span><span class="token operator">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;public&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> table</span><span class="token operator">:</span><span class="token plain"> </span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;items&#x27;</span><span class="token plain"> </span><span class="token punctuation" style="color:rgb(248, 248, 242)">}</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> handler</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">subscribe</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain" style="display:inline-block"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)">// Storage (via MinIO)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token keyword control-flow" style="color:rgb(189, 147, 249);font-style:italic">await</span><span class="token plain"> supabase</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token property-access">storage</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token keyword module" style="color:rgb(189, 147, 249);font-style:italic">from</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;bucket&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><span class="token punctuation" style="color:rgb(248, 248, 242)">.</span><span class="token method function property-access" style="color:rgb(80, 250, 123)">upload</span><span class="token punctuation" style="color:rgb(248, 248, 242)">(</span><span class="token string" style="color:rgb(255, 121, 198)">&#x27;file.jpg&#x27;</span><span class="token punctuation" style="color:rgb(248, 248, 242)">,</span><span class="token plain"> file</span><span class="token punctuation" style="color:rgb(248, 248, 242)">)</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="surface-2--the-admin--control-plane-api">Surface 2 — The Admin / Control Plane API<a href="#surface-2--the-admin--control-plane-api" class="hash-link" aria-label="Direct link to Surface 2 — The Admin / Control Plane API" title="Direct link to Surface 2 — The Admin / Control Plane API" translate="no">​</a></h3>
+<p>Your control plane (the 30% you build) exposes its own endpoints that your frontend uses for platform management:</p>
+<div class="language-text codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-text codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">POST /tenants           → provision new tenant</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">GET  /tenants/:id/status</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">PUT  /tenants/:id/plan  → upgrade/downgrade isolation model</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">DELETE /tenants/:id</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain">GET  /tenants/:id/usage → billing data</span><br></span></code></pre></div></div>
+<p>The admin frontend (Supabase Studio, or a custom dashboard) talks to these endpoints.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="frontend-stack-recommendations">Frontend Stack Recommendations<a href="#frontend-stack-recommendations" class="hash-link" aria-label="Direct link to Frontend Stack Recommendations" title="Direct link to Frontend Stack Recommendations" translate="no">​</a></h3>
+<p>Mini-baas is frontend-agnostic. However, the following stacks integrate with zero friction:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Stack</th><th>Why It Works Well</th></tr></thead><tbody><tr><td><strong>Next.js + Supabase JS</strong></td><td>The Supabase client works directly against GoTrue + PostgREST</td></tr><tr><td><strong>React + TanStack Query</strong></td><td>Pairs well with the REST-first API surface</td></tr><tr><td><strong>Vue / Nuxt</strong></td><td>Same — use the Supabase client or plain fetch</td></tr><tr><td><strong>React Native / Expo</strong></td><td>Mobile works the same way as web</td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="10-connecting-a-business-model">10. Connecting a Business Model<a href="#10-connecting-a-business-model" class="hash-link" aria-label="Direct link to 10. Connecting a Business Model" title="Direct link to 10. Connecting a Business Model" translate="no">​</a></h2>
+<p>Mini-baas maps naturally to several business model patterns. The infrastructure supports all of them without changes.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="pattern-a--self-serve-baas-supabase-style">Pattern A — Self-Serve BaaS (Supabase-style)<a href="#pattern-a--self-serve-baas-supabase-style" class="hash-link" aria-label="Direct link to Pattern A — Self-Serve BaaS (Supabase-style)" title="Direct link to Pattern A — Self-Serve BaaS (Supabase-style)" translate="no">​</a></h3>
+<p>You offer developers a dashboard where they sign up, create a project, and get a PostgreSQL database + REST API + auth instantly.</p>
+<p><strong>Infrastructure mapping</strong>:</p>
+<ul>
+<li class="">Each &quot;project&quot; = one Pool or Bridge tenant</li>
+<li class="">Billing is based on API requests, DB rows, or storage GB</li>
+<li class="">Supabase Studio serves as the dashboard (or you build your own)</li>
+<li class="">Free tier uses Pool model; paid tiers upgrade to Bridge or Silo</li>
+</ul>
+<p><strong>Monetization levers</strong>: storage limits, request quotas, team seats, isolation tier, SLA.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="pattern-b--embedded-baas-for-your-own-saas">Pattern B — Embedded BaaS (for your own SaaS)<a href="#pattern-b--embedded-baas-for-your-own-saas" class="hash-link" aria-label="Direct link to Pattern B — Embedded BaaS (for your own SaaS)" title="Direct link to Pattern B — Embedded BaaS (for your own SaaS)" translate="no">​</a></h3>
+<p>You are building a SaaS product (e.g. a project management tool, a CRM, an analytics platform) and you use mini-baas as the backend layer so you can focus on product instead of infrastructure.</p>
+<p><strong>Infrastructure mapping</strong>:</p>
+<ul>
+<li class="">Your SaaS users are tenants in the Pool model (shared DB with RLS)</li>
+<li class="">GoTrue handles all your user auth</li>
+<li class="">PostgREST gives you instant CRUD without writing route handlers</li>
+<li class="">Realtime gives you live updates without a WebSocket server</li>
+</ul>
+<p><strong>Benefit</strong>: You ship faster because you don&#x27;t write auth, don&#x27;t set up S3, don&#x27;t build a REST layer from scratch.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="pattern-c--white-label-platform-for-agencies-or-enterprise">Pattern C — White-Label Platform (for agencies or enterprise)<a href="#pattern-c--white-label-platform-for-agencies-or-enterprise" class="hash-link" aria-label="Direct link to Pattern C — White-Label Platform (for agencies or enterprise)" title="Direct link to Pattern C — White-Label Platform (for agencies or enterprise)" translate="no">​</a></h3>
+<p>You sell the entire platform to clients who want their own private BaaS instance.</p>
+<p><strong>Infrastructure mapping</strong>:</p>
+<ul>
+<li class="">Each client = one Silo instance (dedicated stack)</li>
+<li class="">You manage the Kubernetes cluster; they access Studio</li>
+<li class="">Billing is per instance (flat fee or resource-based)</li>
+</ul>
+<p><strong>Benefit</strong>: Clients get complete data isolation and can customize their schema freely.</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="billing-integration-points">Billing Integration Points<a href="#billing-integration-points" class="hash-link" aria-label="Direct link to Billing Integration Points" title="Direct link to Billing Integration Points" translate="no">​</a></h3>
+<p>Wherever you build billing, these are the metrics the platform can expose:</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Metric</th><th>Source</th></tr></thead><tbody><tr><td>API request count</td><td>Kong logs / Prometheus</td></tr><tr><td>Database storage size</td><td>PostgreSQL <code>pg_database_size()</code></td></tr><tr><td>Object storage used</td><td>MinIO bucket metrics</td></tr><tr><td>Active connections</td><td>Supavisor connection stats</td></tr><tr><td>Active users (MAU)</td><td>GoTrue <code>users</code> table</td></tr><tr><td>Real-time message volume</td><td>Supabase Realtime metrics</td></tr></tbody></table>
+<p>Wire these into Prometheus → Grafana for internal observability, and into your billing system (Stripe, Orb, etc.) for customer invoicing.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="11-how-to-use-this-repo-independently">11. How to Use This Repo Independently<a href="#11-how-to-use-this-repo-independently" class="hash-link" aria-label="Direct link to 11. How to Use This Repo Independently" title="Direct link to 11. How to Use This Repo Independently" translate="no">​</a></h2>
+<p>This repository is intentionally <strong>tool-agnostic and product-agnostic</strong>. It can be used in three ways:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="mode-1--full-baas-platform">Mode 1 — Full BaaS Platform<a href="#mode-1--full-baas-platform" class="hash-link" aria-label="Direct link to Mode 1 — Full BaaS Platform" title="Direct link to Mode 1 — Full BaaS Platform" translate="no">​</a></h3>
+<p>Clone the repo, configure <code>.env</code>, run <code>docker compose up -d</code>, and you have a working BaaS that a frontend can talk to immediately. Add your control plane (the 30%) to make it multi-tenant.</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token function" style="color:rgb(80, 250, 123)">git</span><span class="token plain"> clone </span><span class="token operator">&lt;</span><span class="token plain">repo</span><span class="token operator">&gt;</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">cp</span><span class="token plain"> .env.example .env</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># edit .env with real secrets</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">docker</span><span class="token plain"> compose up </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-d</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># → GoTrue at :9999, PostgREST at :3000, Studio at :3001</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="mode-2--kubernetes-infrastructure-baseline">Mode 2 — Kubernetes Infrastructure Baseline<a href="#mode-2--kubernetes-infrastructure-baseline" class="hash-link" aria-label="Direct link to Mode 2 — Kubernetes Infrastructure Baseline" title="Direct link to Mode 2 — Kubernetes Infrastructure Baseline" translate="no">​</a></h3>
+<p>Use the Kustomize manifests and Makefile as the deployment layer for any set of services. Point your own Dockerfiles at the overlay system and use the Make targets for CI/CD.</p>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token comment" style="color:rgb(98, 114, 164)"># Replace scaffold source code with your real application code</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Keep the Dockerfile patterns (multistage, non-root, health checks)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Keep the deployment.yaml patterns (probes, resource limits, labels)</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Everything else is inherited</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> docker-build</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-deploy </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">ENVIRONMENT</span><span class="token operator">=</span><span class="token plain">staging</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="mode-3--individual-component-extraction">Mode 3 — Individual Component Extraction<a href="#mode-3--individual-component-extraction" class="hash-link" aria-label="Direct link to Mode 3 — Individual Component Extraction" title="Direct link to Mode 3 — Individual Component Extraction" translate="no">​</a></h3>
+<p>Pick only what you need. Each service is self-contained. You can use:</p>
+<ul>
+<li class="">Just GoTrue for auth in an existing project</li>
+<li class="">Just PostgREST + PostgreSQL for instant REST APIs</li>
+<li class="">Just MinIO for S3-compatible storage</li>
+<li class="">Just the Kustomize overlay pattern for your own services</li>
+<li class="">Just the Makefile pattern as a CI/CD interface</li>
+</ul>
+<p>The compose files and manifests are modular — comment out anything you don&#x27;t need.</p>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="12-workflow--from-zero-to-live-product">12. Workflow — From Zero to Live Product<a href="#12-workflow--from-zero-to-live-product" class="hash-link" aria-label="Direct link to 12. Workflow — From Zero to Live Product" title="Direct link to 12. Workflow — From Zero to Live Product" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-1--local-proof-of-concept">Phase 1 — Local Proof of Concept<a href="#phase-1--local-proof-of-concept" class="hash-link" aria-label="Direct link to Phase 1 — Local Proof of Concept" title="Direct link to Phase 1 — Local Proof of Concept" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token function" style="color:rgb(80, 250, 123)">cp</span><span class="token plain"> .env.example .env          </span><span class="token comment" style="color:rgb(98, 114, 164)"># configure local secrets</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">docker</span><span class="token plain"> compose up </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-d</span><span class="token plain">          </span><span class="token comment" style="color:rgb(98, 114, 164)"># start full stack</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># → Studio at http://localhost:3001</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># → GoTrue at http://localhost:9999</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># → PostgREST at http://localhost:3000</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Connect your frontend, test auth + database</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-2--build--containerize-custom-services">Phase 2 — Build &amp; Containerize Custom Services<a href="#phase-2--build--containerize-custom-services" class="hash-link" aria-label="Direct link to Phase 2 — Build &amp; Containerize Custom Services" title="Direct link to Phase 2 — Build &amp; Containerize Custom Services" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token comment" style="color:rgb(98, 114, 164)"># Edit scaffold source code in deployments/base/*/</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># Build and validate</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> docker-build</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">docker</span><span class="token plain"> compose </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-f</span><span class="token plain"> docker-compose.build.yml up </span><span class="token parameter variable" style="color:rgb(189, 147, 249);font-style:italic">-d</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># → All custom services running alongside infrastructure</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-3--kubernetes-local-minikube">Phase 3 — Kubernetes Local (Minikube)<a href="#phase-3--kubernetes-local-minikube" class="hash-link" aria-label="Direct link to Phase 3 — Kubernetes Local (Minikube)" title="Direct link to Phase 3 — Kubernetes Local (Minikube)" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token plain">minikube start</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-deploy               </span><span class="token comment" style="color:rgb(98, 114, 164)"># build → load images → apply manifests</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-status               </span><span class="token comment" style="color:rgb(98, 114, 164)"># verify all pods Running</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">SERVICE</span><span class="token operator">=</span><span class="token plain">api-gateway </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">PORT</span><span class="token operator">=</span><span class="token number">3000</span><span class="token plain"> </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-port-forward</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-4--staging">Phase 4 — Staging<a href="#phase-4--staging" class="hash-link" aria-label="Direct link to Phase 4 — Staging" title="Direct link to Phase 4 — Staging" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">REGISTRY</span><span class="token operator">=</span><span class="token plain">registry.example.com </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">IMAGE_TAG</span><span class="token operator">=</span><span class="token plain">staging-v1.0.0 </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> build-and-push</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">ENVIRONMENT</span><span class="token operator">=</span><span class="token plain">staging </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">REGISTRY</span><span class="token operator">=</span><span class="token plain">registry.example.com </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">IMAGE_TAG</span><span class="token operator">=</span><span class="token plain">staging-v1.0.0 </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> deploy-staging</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">ENVIRONMENT</span><span class="token operator">=</span><span class="token plain">staging </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-status</span><br></span></code></pre></div></div>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="phase-5--production">Phase 5 — Production<a href="#phase-5--production" class="hash-link" aria-label="Direct link to Phase 5 — Production" title="Direct link to Phase 5 — Production" translate="no">​</a></h3>
+<div class="language-bash codeBlockContainer_Ckt0 theme-code-block" style="--prism-color:#F8F8F2;--prism-background-color:#282A36"><div class="codeBlockContent_QJqH"><pre tabindex="0" class="prism-code language-bash codeBlock_bY9V thin-scrollbar" style="color:#F8F8F2;background-color:#282A36"><code class="codeBlockLines_e6Vv"><span class="token-line" style="color:#F8F8F2"><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">REGISTRY</span><span class="token operator">=</span><span class="token plain">registry.example.com </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">IMAGE_TAG</span><span class="token operator">=</span><span class="token plain">v1.0.0 </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> build-and-push</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">ENVIRONMENT</span><span class="token operator">=</span><span class="token plain">production </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">REGISTRY</span><span class="token operator">=</span><span class="token plain">registry.example.com </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">IMAGE_TAG</span><span class="token operator">=</span><span class="token plain">v1.0.0 </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> deploy-production</span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token comment" style="color:rgb(98, 114, 164)"># If something goes wrong:</span><span class="token plain"></span><br></span><span class="token-line" style="color:#F8F8F2"><span class="token plain"></span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">ENVIRONMENT</span><span class="token operator">=</span><span class="token plain">production </span><span class="token assign-left variable" style="color:rgb(189, 147, 249);font-style:italic">SERVICE</span><span class="token operator">=</span><span class="token plain">api-gateway </span><span class="token function" style="color:rgb(80, 250, 123)">make</span><span class="token plain"> k8s-rollback</span><br></span></code></pre></div></div>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="13-development-conventions">13. Development Conventions<a href="#13-development-conventions" class="hash-link" aria-label="Direct link to 13. Development Conventions" title="Direct link to 13. Development Conventions" translate="no">​</a></h2>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="docker">Docker<a href="#docker" class="hash-link" aria-label="Direct link to Docker" title="Direct link to Docker" translate="no">​</a></h3>
+<ul>
+<li class="">All Dockerfiles use <strong>multistage builds</strong>. Builder stage installs dev tools and compiles. Runtime stage copies only the compiled output.</li>
+<li class="">All runtime images use <strong>Alpine Linux</strong> or distroless. Never use <code>debian</code> or <code>ubuntu</code> as a runtime base.</li>
+<li class="">All containers run as <strong>non-root users</strong>.</li>
+<li class="">All services expose a <code>/health</code> endpoint. All Kubernetes manifests include <code>livenessProbe</code> and <code>readinessProbe</code> pointing at it.</li>
+<li class="">Every service directory has a <code>.dockerignore</code> that excludes git history, docs, tests, dev dependencies, and environment files.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="kubernetes">Kubernetes<a href="#kubernetes" class="hash-link" aria-label="Direct link to Kubernetes" title="Direct link to Kubernetes" translate="no">​</a></h3>
+<ul>
+<li class="">Resource <code>requests</code> and <code>limits</code> are always set. Never deploy without them.</li>
+<li class="">Use Kustomize overlays for environment differences. Never fork a manifest per environment.</li>
+<li class="">Labels follow the pattern <code>app.mini-baas/managed-by: kustomize</code> and <code>app.mini-baas/version: vX</code>.</li>
+<li class="">Namespaces: <code>default</code> (local), <code>mini-baas-staging</code>, <code>mini-baas-production</code>.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="secrets">Secrets<a href="#secrets" class="hash-link" aria-label="Direct link to Secrets" title="Direct link to Secrets" translate="no">​</a></h3>
+<ul>
+<li class="">Never commit <code>.env</code> files. Use <code>.env.example</code> as the contract.</li>
+<li class="">In Kubernetes, mount secrets via <code>Secret</code> objects — never as environment variables hardcoded in manifests.</li>
+<li class="">Rotate <code>JWT_SECRET</code>, <code>SECRET_KEY_BASE</code>, and <code>VAULT_ENC_KEY</code> before going to production.</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="cicd">CI/CD<a href="#cicd" class="hash-link" aria-label="Direct link to CI/CD" title="Direct link to CI/CD" translate="no">​</a></h3>
+<ul>
+<li class="">All CI/CD actions should use Makefile targets. This means a CI pipeline is just a series of <code>make</code> calls.</li>
+<li class="">Image tags should be the Git commit SHA for staging and a semver tag for production.</li>
+<li class="">Rollback is <code>make k8s-rollback SERVICE=&lt;name&gt;</code> — no manual kubectl commands.</li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="14-decision-log">14. Decision Log<a href="#14-decision-log" class="hash-link" aria-label="Direct link to 14. Decision Log" title="Direct link to 14. Decision Log" translate="no">​</a></h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Decision</th><th>Rationale</th></tr></thead><tbody><tr><td>Trino as SQL federation layer</td><td>Eliminates per-database translator code. One SQL interface to all DB engines.</td></tr><tr><td>Kustomize over Helm</td><td>Kustomize patches are simpler for overlay-only differences. Helm is available as an opt-in in <code>tooling/helm/</code>.</td></tr><tr><td>GoTrue over custom auth</td><td>Battle-tested, supports OAuth + MFA + RBAC. No auth code to maintain.</td></tr><tr><td>Alpine Linux base images</td><td>70-90% smaller than standard images. Reduced attack surface.</td></tr><tr><td>Multistage builds for all services</td><td>Build tools never end up in production images.</td></tr><tr><td>Makefile as the single interface</td><td>Prevents institutional knowledge from living in individuals&#x27; heads. All operations are reproducible.</td></tr><tr><td>Bridge model as default starting point</td><td>Balances isolation and cost. Can upgrade to Silo or downgrade to Pool per customer.</td></tr><tr><td>PostgREST as default REST translator</td><td>Zero boilerplate. Full REST + OpenAPI from schema alone.</td></tr><tr><td>Supabase-compatible surface</td><td>Allows use of the Supabase JS client directly. Proven frontend DX.</td></tr></tbody></table>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="15-what-you-still-have-to-build">15. What You Still Have to Build<a href="#15-what-you-still-have-to-build" class="hash-link" aria-label="Direct link to 15. What You Still Have to Build" title="Direct link to 15. What You Still Have to Build" translate="no">​</a></h2>
+<p>The following are explicitly <strong>not in this repo</strong> and are the product-specific 30%:</p>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="required-for-a-functioning-multi-tenant-platform">Required for a Functioning Multi-Tenant Platform<a href="#required-for-a-functioning-multi-tenant-platform" class="hash-link" aria-label="Direct link to Required for a Functioning Multi-Tenant Platform" title="Direct link to Required for a Functioning Multi-Tenant Platform" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Tenant Provisioner</strong> — creates new tenants, provisions namespace / DB / credentials</li>
+<li class=""><strong>Kong Route Registrar</strong> — adds per-tenant routes and plugin configs via <code>deck</code></li>
+<li class=""><strong>Schema Introspector</strong> — reads DB metadata to derive API surface dynamically</li>
+<li class=""><strong>Lifecycle Manager</strong> — suspends idle tenants, enforces quotas, handles deletion</li>
+<li class=""><strong>Control Plane API</strong> — the REST API your dashboard or CLI calls to manage tenants</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="required-for-a-business">Required for a Business<a href="#required-for-a-business" class="hash-link" aria-label="Direct link to Required for a Business" title="Direct link to Required for a Business" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Billing integration</strong> — Stripe / Orb connected to Prometheus metrics</li>
+<li class=""><strong>Usage metering</strong> — per-tenant request counts, storage, MAU</li>
+<li class=""><strong>Customer dashboard</strong> — frontend for tenants to manage their own projects</li>
+<li class=""><strong>Onboarding flow</strong> — signup → provision → give credentials → first request</li>
+</ul>
+<h3 class="anchor anchorTargetStickyNavbar_Vzrq" id="recommended-for-production-readiness">Recommended for Production Readiness<a href="#recommended-for-production-readiness" class="hash-link" aria-label="Direct link to Recommended for Production Readiness" title="Direct link to Recommended for Production Readiness" translate="no">​</a></h3>
+<ul>
+<li class=""><strong>Observability stack</strong> — Prometheus + Grafana + Logflare + Vector for logs and metrics</li>
+<li class=""><strong>Alerting</strong> — PagerDuty or Slack alerts for error rate, latency, pod restarts</li>
+<li class=""><strong>Backup strategy</strong> — PostgreSQL WAL archiving or pg_dump CronJob</li>
+<li class=""><strong>Network policies</strong> — restrict inter-pod traffic to declared paths only</li>
+<li class=""><strong>HPA (Horizontal Pod Autoscaler)</strong> — auto-scale api-gateway and dynamic-api on CPU/RPS</li>
+</ul>
+<hr>
+<h2 class="anchor anchorTargetStickyNavbar_Vzrq" id="16-next-steps">16. Next Steps<a href="#16-next-steps" class="hash-link" aria-label="Direct link to 16. Next Steps" title="Direct link to 16. Next Steps" translate="no">​</a></h2>
+<p>In priority order:</p>
+<ol>
+<li class=""><strong>Set real secrets</strong> in <code>.env</code> — replace every <code>replace-with-*</code> value before anything touches the internet</li>
+<li class=""><strong>Start the stack locally</strong> — <code>docker compose up -d</code>, open Studio, create a table, confirm PostgREST returns data</li>
+<li class=""><strong>Connect a frontend</strong> — use the Supabase JS client pointed at localhost, test auth + query + real-time</li>
+<li class=""><strong>Choose your isolation model</strong> — Bridge is recommended; document the decision</li>
+<li class=""><strong>Build the Provisioner</strong> — the single most important control plane piece</li>
+<li class=""><strong>Wire Kubernetes locally</strong> — <code>make k8s-deploy</code>, confirm pods are Running, port-forward and test</li>
+<li class=""><strong>Set up a registry</strong> — push images to a real registry (GHCR, ECR, Docker Hub)</li>
+<li class=""><strong>Deploy to staging</strong> — <code>make deploy-staging</code>, run smoke tests</li>
+<li class=""><strong>Add observability</strong> — Prometheus + Grafana at minimum before production</li>
+<li class=""><strong>Deploy to production</strong> — <code>make deploy-production</code> with a real image tag and rollback plan</li>
+</ol>
+<hr>
+<p><em>This document should be updated every time a significant architectural decision is made or reversed. It is the source of truth for why things are the way they are.</em></p></div><footer class="theme-doc-footer docusaurus-mt-lg"><div class="row margin-top--sm theme-doc-footer-edit-meta-row"><div class="col noPrint_WFHX"><a href="https://github.com/Univers42/ft_transcendence/tree/develop/static_docs/docusaurus/docs/strategy/infrastructure.md" target="_blank" rel="noopener noreferrer" class="theme-edit-this-page"><svg fill="currentColor" height="20" width="20" viewBox="0 0 40 40" class="iconEdit_Z9Sw" aria-hidden="true"><g><path d="m34.5 11.7l-3 3.1-6.3-6.3 3.1-3q0.5-0.5 1.2-0.5t1.1 0.5l3.9 3.9q0.5 0.4 0.5 1.1t-0.5 1.2z m-29.5 17.1l18.4-18.5 6.3 6.3-18.4 18.4h-6.3v-6.2z"></path></g></svg>Edit this page</a></div><div class="col lastUpdated_JAkA"></div></div></footer></article><nav class="docusaurus-mt-lg pagination-nav" aria-label="Docs pages"><a class="pagination-nav__link pagination-nav__link--prev" href="/transcendance/docs/strategy/mini-baas"><div class="pagination-nav__sublabel">Previous</div><div class="pagination-nav__label">Mini-BaaS Strategy</div></a><a class="pagination-nav__link pagination-nav__link--next" href="/transcendance/docs/strategy/refactoring-plan"><div class="pagination-nav__sublabel">Next</div><div class="pagination-nav__label">Refactoring Plan</div></a></nav></div></div><div class="col col--3"><div class="tableOfContents_bqdL thin-scrollbar theme-doc-toc-desktop"><ul class="table-of-contents table-of-contents__left-border"><li><a href="#table-of-contents" class="table-of-contents__link toc-highlight">Table of Contents</a></li><li><a href="#1-what-is-mini-baas" class="table-of-contents__link toc-highlight">1. What Is Mini-BaaS</a></li><li><a href="#2-the-core-bet" class="table-of-contents__link toc-highlight">2. The Core Bet</a></li><li><a href="#3-architecture-in-plain-language" class="table-of-contents__link toc-highlight">3. Architecture in Plain Language</a></li><li><a href="#4-the-two-layer-entry-system" class="table-of-contents__link toc-highlight">4. The Two-Layer Entry System</a><ul><li><a href="#layer-1--kong-http" class="table-of-contents__link toc-highlight">Layer 1 — Kong (HTTP)</a></li><li><a href="#layer-2--trino-sql-federation" class="table-of-contents__link toc-highlight">Layer 2 — Trino (SQL Federation)</a></li></ul></li><li><a href="#5-service-catalog" class="table-of-contents__link toc-highlight">5. Service Catalog</a><ul><li><a href="#infrastructure-services-pre-built-images-no-custom-code" class="table-of-contents__link toc-highlight">Infrastructure Services (pre-built images, no custom code)</a></li><li><a href="#custom-services-this-repo-owns-these" class="table-of-contents__link toc-highlight">Custom Services (this repo owns these)</a></li></ul></li><li><a href="#6-multi-tenancy-models" class="table-of-contents__link toc-highlight">6. Multi-Tenancy Models</a><ul><li><a href="#silo--one-stack-per-tenant" class="table-of-contents__link toc-highlight">Silo — One stack per tenant</a></li><li><a href="#bridge--shared-cluster-isolated-namespaces" class="table-of-contents__link toc-highlight">Bridge — Shared cluster, isolated namespaces</a></li><li><a href="#pool--everything-shared-row-level-isolation" class="table-of-contents__link toc-highlight">Pool — Everything shared, row-level isolation</a></li></ul></li><li><a href="#7-infrastructure--deployment-strategy" class="table-of-contents__link toc-highlight">7. Infrastructure &amp; Deployment Strategy</a><ul><li><a href="#local-development" class="table-of-contents__link toc-highlight">Local Development</a></li><li><a href="#kubernetes-staging--production" class="table-of-contents__link toc-highlight">Kubernetes (staging + production)</a></li><li><a href="#makefile--the-single-interface-to-everything" class="table-of-contents__link toc-highlight">Makefile — The single interface to everything</a></li><li><a href="#environment-variables" class="table-of-contents__link toc-highlight">Environment Variables</a></li></ul></li><li><a href="#8-the-70--30-rule" class="table-of-contents__link toc-highlight">8. The 70 / 30 Rule</a></li><li><a href="#9-connecting-a-frontend" class="table-of-contents__link toc-highlight">9. Connecting a Frontend</a><ul><li><a href="#surface-1--the-public-api-via-kong" class="table-of-contents__link toc-highlight">Surface 1 — The Public API (via Kong)</a></li><li><a href="#surface-2--the-admin--control-plane-api" class="table-of-contents__link toc-highlight">Surface 2 — The Admin / Control Plane API</a></li><li><a href="#frontend-stack-recommendations" class="table-of-contents__link toc-highlight">Frontend Stack Recommendations</a></li></ul></li><li><a href="#10-connecting-a-business-model" class="table-of-contents__link toc-highlight">10. Connecting a Business Model</a><ul><li><a href="#pattern-a--self-serve-baas-supabase-style" class="table-of-contents__link toc-highlight">Pattern A — Self-Serve BaaS (Supabase-style)</a></li><li><a href="#pattern-b--embedded-baas-for-your-own-saas" class="table-of-contents__link toc-highlight">Pattern B — Embedded BaaS (for your own SaaS)</a></li><li><a href="#pattern-c--white-label-platform-for-agencies-or-enterprise" class="table-of-contents__link toc-highlight">Pattern C — White-Label Platform (for agencies or enterprise)</a></li><li><a href="#billing-integration-points" class="table-of-contents__link toc-highlight">Billing Integration Points</a></li></ul></li><li><a href="#11-how-to-use-this-repo-independently" class="table-of-contents__link toc-highlight">11. How to Use This Repo Independently</a><ul><li><a href="#mode-1--full-baas-platform" class="table-of-contents__link toc-highlight">Mode 1 — Full BaaS Platform</a></li><li><a href="#mode-2--kubernetes-infrastructure-baseline" class="table-of-contents__link toc-highlight">Mode 2 — Kubernetes Infrastructure Baseline</a></li><li><a href="#mode-3--individual-component-extraction" class="table-of-contents__link toc-highlight">Mode 3 — Individual Component Extraction</a></li></ul></li><li><a href="#12-workflow--from-zero-to-live-product" class="table-of-contents__link toc-highlight">12. Workflow — From Zero to Live Product</a><ul><li><a href="#phase-1--local-proof-of-concept" class="table-of-contents__link toc-highlight">Phase 1 — Local Proof of Concept</a></li><li><a href="#phase-2--build--containerize-custom-services" class="table-of-contents__link toc-highlight">Phase 2 — Build &amp; Containerize Custom Services</a></li><li><a href="#phase-3--kubernetes-local-minikube" class="table-of-contents__link toc-highlight">Phase 3 — Kubernetes Local (Minikube)</a></li><li><a href="#phase-4--staging" class="table-of-contents__link toc-highlight">Phase 4 — Staging</a></li><li><a href="#phase-5--production" class="table-of-contents__link toc-highlight">Phase 5 — Production</a></li></ul></li><li><a href="#13-development-conventions" class="table-of-contents__link toc-highlight">13. Development Conventions</a><ul><li><a href="#docker" class="table-of-contents__link toc-highlight">Docker</a></li><li><a href="#kubernetes" class="table-of-contents__link toc-highlight">Kubernetes</a></li><li><a href="#secrets" class="table-of-contents__link toc-highlight">Secrets</a></li><li><a href="#cicd" class="table-of-contents__link toc-highlight">CI/CD</a></li></ul></li><li><a href="#14-decision-log" class="table-of-contents__link toc-highlight">14. Decision Log</a></li><li><a href="#15-what-you-still-have-to-build" class="table-of-contents__link toc-highlight">15. What You Still Have to Build</a><ul><li><a href="#required-for-a-functioning-multi-tenant-platform" class="table-of-contents__link toc-highlight">Required for a Functioning Multi-Tenant Platform</a></li><li><a href="#required-for-a-business" class="table-of-contents__link toc-highlight">Required for a Business</a></li><li><a href="#recommended-for-production-readiness" class="table-of-contents__link toc-highlight">Recommended for Production Readiness</a></li></ul></li><li><a href="#16-next-steps" class="table-of-contents__link toc-highlight">16. Next Steps</a></li></ul></div></div></div></div></main></div></div></div><footer class="theme-layout-footer footer footer--dark"><div class="container container-fluid"><div class="row footer__links"><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Documentation</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/intro">Getting Started</a></li><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/architecture">Architecture</a></li><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/api">API Reference</a></li><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/setup">Setup Guide</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Project</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/contributing">Contributing</a></li><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/changelog">Changelog</a></li><li class="footer__item"><a class="footer__link-item" href="/transcendance/docs/faq">FAQ</a></li></ul></div><div class="theme-layout-footer-column col footer__col"><div class="footer__title">Links</div><ul class="footer__items clean-list"><li class="footer__item"><a class="footer__link-item" href="/transcendance/blog">Blog</a></li><li class="footer__item"><a href="https://github.com/Univers42/ft_transcendence" target="_blank" rel="noopener noreferrer" class="footer__link-item">GitHub<svg width="13.5" height="13.5" aria-label="(opens in new tab)" class="iconExternalLink_nPIU"><use href="#theme-svg-external-link"></use></svg></a></li></ul></div></div><div class="footer__bottom text--center"><div class="footer__copyright">Copyright © 2026 Univers42 — Prismatica. Built with Docusaurus.</div></div></div></footer></div>
+</body>
+</html>

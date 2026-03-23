@@ -1,0 +1,1 @@
+"use strict";(globalThis.webpackChunkprismatica_docs=globalThis.webpackChunkprismatica_docs||[]).push([[1903],{1912(a){a.exports=JSON.parse('{"blogBasePath":"/transcendance/blog","blogTitle":"Blog","authorsListPath":"/transcendance/blog/authors"}')}}]);
