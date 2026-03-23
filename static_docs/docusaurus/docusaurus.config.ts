@@ -19,6 +19,18 @@ const config: Config = {
     format: 'md',
   },
 
+  plugins: [
+    function enableHMR() {
+      return {
+        name: 'enable-hmr',
+        configureWebpack(_config, isServer) {
+          if (isServer) return {};
+          return { devServer: { hot: true } };
+        },
+      };
+    },
+  ],
+
   i18n: {
     defaultLocale: 'en',
     locales: ['en'],

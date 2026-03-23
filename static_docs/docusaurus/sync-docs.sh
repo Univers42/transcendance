@@ -71,4 +71,32 @@ copy_doc "$REPO_ROOT/static_docs/norm/SQL_NORM.md"   "$DOCS_DIR/database/sql-nor
 copy_doc "$REPO_ROOT/static_docs/fixes/prisma_datasource_issue.md" "$DOCS_DIR/fixes/prisma-datasource.md" "Prisma Datasource Fix"  1
 copy_doc "$REPO_ROOT/static_docs/fixes/fixing_broken_submole.md"   "$DOCS_DIR/fixes/broken-submodule.md"  "Broken Submodule Fix"   2
 
+# ── Fix cross-doc links for Docusaurus routing ────────────
+# Original files use raw .md references (for GitHub); Docusaurus needs doc paths.
+fix_links() {
+  local file="$1"
+  local depth="${2:-0}"  # 0 = root docs/, 1 = one level deep (design/, etc.)
+  [ -f "$file" ] || return
+
+  local prefix=""
+  if [ "$depth" -eq 1 ]; then
+    prefix="../"
+  fi
+
+  sed -i \
+    -e "s|\](../CONTRIBUTING\.md)|](${prefix}contributing)|g" \
+    -e "s|\](CONTRIBUTING\.md)|](${prefix}contributing)|g" \
+    -e "s|\](SECURITY\.md)|](${prefix}security)|g" \
+    -e "s|\](TEAM\.md)|](${prefix}contributors)|g" \
+    -e "s|\](README\.md)|](${prefix}intro)|g" \
+    -e "s|\](../README\.md)|](${prefix}intro)|g" \
+    "$file"
+}
+
+# Apply to files that have cross-references (depth: 0=root, 1=subfolder)
+fix_links "$DOCS_DIR/intro.md" 0
+fix_links "$DOCS_DIR/architecture.md" 0
+fix_links "$DOCS_DIR/contributors.md" 0
+fix_links "$DOCS_DIR/design/frontend-design.md" 1
+
 echo "✅ Synced $(find "$DOCS_DIR" -name '*.md' | wc -l) docs"
