@@ -1,23 +1,387 @@
-/**
- * CSS files with the .module.css suffix will be treated as CSS modules
- * and scoped locally.
- */
+/* ═══════════════════════════════════════════════════════════
+   Prismatica Landing Page — index.module.css
+   ═══════════════════════════════════════════════════════════ */
 
-.heroBanner {
-  padding: 4rem 0;
-  text-align: center;
+/* ── Hero ────────────────────────────────────────────────── */
+.hero {
   position: relative;
   overflow: hidden;
+  padding: 6rem 2rem 5rem;
+  text-align: center;
+  background: linear-gradient(170deg, #0d0d1a 0%, #1a1035 40%, #0f1729 100%);
 }
 
-@media screen and (max-width: 996px) {
-  .heroBanner {
-    padding: 2rem;
+.heroInner {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.heroGlow {
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.heroTitle {
+  font-size: 4.5rem;
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.heroTitleGradient {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 30%, #06b6d4 70%, #22d3ee 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.heroSubtitle {
+  font-size: 1.35rem;
+  color: #94a3b8;
+  margin-bottom: 1rem;
+  font-weight: 400;
+}
+
+.heroDescription {
+  font-size: 1.05rem;
+  color: #64748b;
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  line-height: 1.7;
+}
+
+.heroButtons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.heroBtnPrimary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #fff !important;
+  background: linear-gradient(135deg, #7c3aed, #6d28d9);
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
+}
+
+.heroBtnPrimary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.5);
+}
+
+.heroBtnSecondary {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  color: #a78bfa !important;
+  background: rgba(124, 58, 237, 0.1);
+  border: 1px solid rgba(124, 58, 237, 0.3);
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+}
+
+.heroBtnSecondary:hover {
+  background: rgba(124, 58, 237, 0.2);
+  border-color: rgba(124, 58, 237, 0.5);
+  transform: translateY(-2px);
+}
+
+@media screen and (max-width: 640px) {
+  .hero {
+    padding: 4rem 1.5rem 3rem;
+  }
+  .heroTitle {
+    font-size: 2.8rem;
+  }
+  .heroSubtitle {
+    font-size: 1.1rem;
   }
 }
 
-.buttons {
+/* ── Features Grid ───────────────────────────────────────── */
+.features {
+  padding: 5rem 0;
+  background: #0f0f1a;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.sectionTitle {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.sectionSubtitle {
+  font-size: 1.1rem;
+  color: #64748b;
+}
+
+.featureGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media screen and (max-width: 996px) {
+  .featureGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .featureGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.featureCard {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: all 0.25s ease;
+}
+
+.featureCard:hover {
+  background: rgba(124, 58, 237, 0.06);
+  border-color: rgba(124, 58, 237, 0.2);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.featureIcon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+}
+
+.featureTitle {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #e2e8f0;
+  margin-bottom: 0.5rem;
+}
+
+.featureDesc {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.6;
+  margin: 0;
+}
+
+/* ── Quick Navigation ────────────────────────────────────── */
+.quickLinks {
+  padding: 5rem 0;
+  background: linear-gradient(180deg, #0f0f1a 0%, #131325 100%);
+}
+
+.linkGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+@media screen and (max-width: 996px) {
+  .linkGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media screen and (max-width: 640px) {
+  .linkGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.linkCard {
   display: flex;
   align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  text-decoration: none !important;
+  color: inherit !important;
+  transition: all 0.2s ease;
+}
+
+.linkCard:hover {
+  background: rgba(124, 58, 237, 0.08);
+  border-color: rgba(124, 58, 237, 0.2);
+  transform: translateX(4px);
+}
+
+.linkCard strong {
+  display: block;
+  color: #e2e8f0;
+  font-size: 0.95rem;
+  margin-bottom: 2px;
+}
+
+.linkCard span {
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.linkIcon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+/* ── Tech Stack ──────────────────────────────────────────── */
+.techStack {
+  padding: 4rem 0 5rem;
+  background: #131325;
+}
+
+.techGrid {
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
+  gap: 0.75rem;
+}
+
+.techBadge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  min-width: 120px;
+  transition: all 0.2s ease;
+}
+
+.techBadge:hover {
+  border-color: rgba(124, 58, 237, 0.3);
+  background: rgba(124, 58, 237, 0.05);
+}
+
+.techName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #e2e8f0;
+}
+
+.techCat {
+  font-size: 0.75rem;
+  color: #7c3aed;
+  margin-top: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 500;
+}
+
+/* ── Light theme overrides ───────────────────────────────── */
+[data-theme='light'] .hero {
+  background: linear-gradient(170deg, #f8fafc 0%, #eef2ff 40%, #f1f5f9 100%);
+}
+
+[data-theme='light'] .heroGlow {
+  background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+}
+
+[data-theme='light'] .heroSubtitle {
+  color: #475569;
+}
+
+[data-theme='light'] .heroDescription {
+  color: #64748b;
+}
+
+[data-theme='light'] .features {
+  background: #fff;
+}
+
+[data-theme='light'] .sectionTitle {
+  color: #1e293b;
+}
+
+[data-theme='light'] .featureCard {
+  background: #fff;
+  border-color: #e2e8f0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+[data-theme='light'] .featureCard:hover {
+  background: #faf5ff;
+  border-color: #c4b5fd;
+  box-shadow: 0 8px 25px rgba(124, 58, 237, 0.08);
+}
+
+[data-theme='light'] .featureTitle {
+  color: #1e293b;
+}
+
+[data-theme='light'] .featureDesc {
+  color: #64748b;
+}
+
+[data-theme='light'] .quickLinks {
+  background: linear-gradient(180deg, #fff 0%, #f8fafc 100%);
+}
+
+[data-theme='light'] .linkCard {
+  background: #fff;
+  border-color: #e2e8f0;
+}
+
+[data-theme='light'] .linkCard:hover {
+  background: #faf5ff;
+  border-color: #c4b5fd;
+}
+
+[data-theme='light'] .linkCard strong {
+  color: #1e293b;
+}
+
+[data-theme='light'] .linkCard span {
+  color: #64748b;
+}
+
+[data-theme='light'] .techStack {
+  background: #f8fafc;
+}
+
+[data-theme='light'] .techBadge {
+  background: #fff;
+  border-color: #e2e8f0;
+}
+
+[data-theme='light'] .techBadge:hover {
+  border-color: #c4b5fd;
+  background: #faf5ff;
+}
+
+[data-theme='light'] .techName {
+  color: #1e293b;
 }
