@@ -4,7 +4,7 @@
 # Multi-stage build: install deps, compile TS, run slim.
 
 # ── Stage 1: Install + Build ────────────────
-FROM node:22-alpine AS builder
+FROM node:25-alpine AS builder
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
@@ -19,7 +19,7 @@ COPY src/ ./src/
 RUN pnpm run build
 
 # ── Stage 2: Production ─────────────────────
-FROM node:22-alpine AS production
+FROM node:25-alpine AS production
 
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
