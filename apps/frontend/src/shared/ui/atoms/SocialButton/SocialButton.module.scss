@@ -1,0 +1,48 @@
+@use '@/styles/abstracts' as *;
+
+.social-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-3;
+  width: 100%;
+  padding: $spacing-3 $spacing-4;
+  border-radius: $radius-md;
+  border: 1px solid var(--prisma-border-strong);
+  background: var(--prisma-bg-secondary);
+  color: var(--prisma-text-primary);
+  font-family: $font-family-sans;
+  font-size: $font-size-base;
+  font-weight: $weight-medium;
+  cursor: pointer;
+  transition: all $duration-fast $ease-default;
+
+  &:hover:not(:disabled) {
+    background: var(--prisma-bg-hover);
+    border-color: var(--prisma-accent);
+    transform: translateY(-1px);
+    box-shadow: var(--prisma-shadow-sm);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &__icon {
+    @include flex-center;
+    flex-shrink: 0;
+
+    svg {
+      display: block;
+    }
+  }
+
+  &__label {
+    white-space: nowrap;
+  }
+}

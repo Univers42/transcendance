@@ -1,0 +1,40 @@
+@use '@/styles/abstracts' as *;
+
+.strength-bar {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+  width: 100%;
+  margin-top: $spacing-1;
+
+  &__indicators {
+    display: flex;
+    gap: $spacing-1;
+    width: 100%;
+  }
+
+  &__item {
+    height: 0.25rem;
+    flex: 1;
+    border-radius: $radius-full;
+    background: var(--prisma-border-strong);
+    transition: background-color $duration-normal $ease-default;
+
+    &--active {
+      &-1 { background: var(--prisma-data-error); }
+      &-2 { background: var(--prisma-data-warning); }
+      &-3 { background: var(--prisma-data-success); }
+    }
+  }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $weight-semibold;
+    text-align: right;
+    transition: color $duration-normal $ease-default;
+
+    &--1 { color: var(--prisma-data-error); }
+    &--2 { color: var(--prisma-data-warning); }
+    &--3 { color: var(--prisma-data-success); }
+  }
+}

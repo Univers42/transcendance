@@ -1,0 +1,104 @@
+@use '@/styles/abstracts' as *;
+
+.info-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: $spacing-12;
+  background: var(--prisma-bg-secondary);
+  color: var(--prisma-text-primary);
+  border-radius: $radius-2xl;
+  overflow: hidden;
+  position: relative;
+
+  &__header {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-6;
+    z-index: 1;
+  }
+
+  &__title {
+    font-family: $font-family-sans;
+    font-size: $font-size-4xl;
+    font-weight: $weight-bold;
+    line-height: $leading-tight;
+    letter-spacing: $tracking-tight;
+
+    &-accent {
+      color: var(--prisma-accent);
+    }
+  }
+
+  &__subtitle {
+    font-size: $font-size-lg;
+    color: var(--prisma-text-secondary);
+    max-width: 32rem;
+    line-height: $leading-relaxed;
+  }
+
+  &__features {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-4;
+    margin-top: $spacing-4;
+  }
+
+  &__feature {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+
+    &-icon {
+      @include flex-center;
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: $radius-full;
+      background: rgba($accent, 0.1);
+      color: var(--prisma-accent);
+      flex-shrink: 0;
+    }
+
+    &-text {
+      font-size: $font-size-base;
+      font-weight: $weight-medium;
+    }
+  }
+
+  &__footer {
+    z-index: 1;
+  }
+
+  &__divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--prisma-border-strong), transparent);
+    margin-bottom: $spacing-8;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: $spacing-8;
+  }
+
+  &__stat {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-1;
+
+    &-value {
+      font-size: $font-size-2xl;
+      font-weight: $weight-bold;
+      color: var(--prisma-text-primary);
+    }
+
+    &-label {
+      font-size: $font-size-sm;
+      color: var(--prisma-text-secondary);
+      text-transform: lowercase;
+    }
+  }
+}
+
+// Background decorative elements can be added here if needed

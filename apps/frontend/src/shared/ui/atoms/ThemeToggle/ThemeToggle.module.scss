@@ -1,0 +1,39 @@
+@use '@/styles/abstracts' as *;
+
+.theme-toggle {
+  @include flex-center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: $radius-md;
+  border: 1px solid var(--prisma-border);
+  background: var(--prisma-bg-elevated);
+  color: var(--prisma-text-secondary);
+  cursor: pointer;
+  transition: all $duration-fast $ease-default;
+
+  &:hover {
+    background: var(--prisma-bg-hover);
+    color: var(--prisma-accent);
+    border-color: var(--prisma-accent);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  &:focus-visible {
+    @include focus-ring;
+  }
+
+  &--dark {
+    color: var(--prisma-accent);
+    background: var(--prisma-bg-hover);
+  }
+
+  &__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    stroke-width: 2px;
+  }
+}

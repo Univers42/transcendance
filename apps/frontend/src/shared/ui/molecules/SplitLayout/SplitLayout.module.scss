@@ -1,0 +1,52 @@
+@use '@/styles/abstracts' as *;
+
+.split-layout {
+  display: grid;
+  width: 100%;
+  margin: 0 auto;
+  min-height: 100vh;
+
+  &--split {
+    grid-template-columns: 1fr;
+
+    @include md {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    @include lg {
+      grid-template-columns: 45% 55%;
+    }
+  }
+
+  &--centered {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $spacing-6;
+  }
+
+  &--minimal {
+    grid-template-columns: 1fr;
+    max-width: 40rem;
+    margin: 0 auto;
+  }
+
+  &__left {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    background: var(--prisma-bg-primary);
+  }
+
+  &__right {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background: var(--prisma-bg-secondary);
+    border-left: 1px solid var(--prisma-border);
+
+    @include md {
+      display: flex;
+    }
+  }
+}

@@ -1,0 +1,108 @@
+@use '@/styles/abstracts' as *;
+
+.language-selector {
+  position: relative;
+  display: inline-block;
+
+  &__trigger {
+    display: flex;
+    align-items: center;
+    gap: $spacing-2;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $radius-md;
+    border: 1px solid var(--prisma-border);
+    background: var(--prisma-bg-elevated);
+    color: var(--prisma-text-primary);
+    font-family: $font-family-sans;
+    font-size: $font-size-sm;
+    font-weight: $weight-medium;
+    cursor: pointer;
+    transition: all $duration-fast $ease-default;
+
+    &:hover {
+      background: var(--prisma-bg-hover);
+      border-color: var(--prisma-accent);
+    }
+
+    &:focus-visible {
+      @include focus-ring;
+    }
+  }
+
+  &__flag {
+    font-size: 1.125rem;
+    line-height: 1;
+  }
+
+  &__code {
+    text-transform: uppercase;
+    letter-spacing: $tracking-wider;
+  }
+
+  &__dropdown {
+    position: absolute;
+    top: calc(100% + $spacing-2);
+    right: 0;
+    min-width: 10rem;
+    background: var(--prisma-bg-elevated);
+    border: 1px solid var(--prisma-border-strong);
+    border-radius: $radius-lg;
+    padding: $spacing-1;
+    box-shadow: var(--prisma-shadow-lg);
+    z-index: $z-dropdown;
+    animation: fade-in-scale $duration-fast $ease-out;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: $spacing-3;
+    width: 100%;
+    padding: $spacing-2 $spacing-3;
+    border-radius: $radius-md;
+    border: none;
+    background: transparent;
+    color: var(--prisma-text-secondary);
+    font-family: $font-family-sans;
+    font-size: $font-size-sm;
+    text-align: left;
+    cursor: pointer;
+    transition: all $duration-fast $ease-default;
+
+    &:hover {
+      background: var(--prisma-bg-hover);
+      color: var(--prisma-text-primary);
+    }
+
+    &--active {
+      background: rgba($accent, 0.08);
+      color: var(--prisma-accent);
+      font-weight: $weight-semibold;
+    }
+
+    &-flag {
+      font-size: 1rem;
+    }
+
+    &-label {
+      flex: 1;
+    }
+
+    &-code {
+      font-size: $font-size-xs;
+      opacity: 0.6;
+      text-transform: uppercase;
+    }
+  }
+}
+
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
