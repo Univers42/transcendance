@@ -1,19 +1,24 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+prismatica:
+  label: Prismatica
+  permalink: /prismatica
+  description: Prismatica platform updates
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+release:
+  label: Release
+  permalink: /release
+  description: Release announcements
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
+architecture:
+  label: Architecture
+  permalink: /architecture
+  description: Architecture and design decisions
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+backend:
+  label: Backend
+  permalink: /backend
+  description: Backend development updates
+
+frontend:
+  label: Frontend
+  permalink: /frontend
+  description: Frontend development updates

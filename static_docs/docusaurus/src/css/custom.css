@@ -1,30 +1,210 @@
-/**
- * Any CSS included here will be global. The classic template
- * bundles Infima by default. Infima is a CSS framework designed to
- * work well for content-centric websites.
- */
+/* ═══════════════════════════════════════════════════════════
+   Prismatica Global Theme — custom.css
+   Purple-cyan prismatic palette on dark base
+   ═══════════════════════════════════════════════════════════ */
 
-/* You can override the default Infima variables here. */
 :root {
-  --ifm-color-primary: #2e8555;
-  --ifm-color-primary-dark: #29784c;
-  --ifm-color-primary-darker: #277148;
-  --ifm-color-primary-darkest: #205d3b;
-  --ifm-color-primary-light: #33925d;
-  --ifm-color-primary-lighter: #359962;
-  --ifm-color-primary-lightest: #3cad6e;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
+  /* Primary: violet */
+  --ifm-color-primary: #7c3aed;
+  --ifm-color-primary-dark: #6d28d9;
+  --ifm-color-primary-darker: #5b21b6;
+  --ifm-color-primary-darkest: #4c1d95;
+  --ifm-color-primary-light: #8b5cf6;
+  --ifm-color-primary-lighter: #a78bfa;
+  --ifm-color-primary-lightest: #c4b5fd;
+
+  --ifm-code-font-size: 92%;
+  --ifm-font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --ifm-heading-font-weight: 700;
+  --ifm-font-weight-semibold: 600;
+
+  --docusaurus-highlighted-code-line-bg: rgba(124, 58, 237, 0.1);
 }
 
-/* For readability concerns, you should choose a lighter palette in dark mode. */
 [data-theme='dark'] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
+  --ifm-color-primary: #a78bfa;
+  --ifm-color-primary-dark: #8b5cf6;
+  --ifm-color-primary-darker: #7c3aed;
+  --ifm-color-primary-darkest: #6d28d9;
+  --ifm-color-primary-light: #c4b5fd;
+  --ifm-color-primary-lighter: #ddd6fe;
+  --ifm-color-primary-lightest: #ede9fe;
+
+  --ifm-background-color: #0f0f1a;
+  --ifm-background-surface-color: #161625;
+  --ifm-navbar-background-color: rgba(15, 15, 26, 0.85);
+  --ifm-footer-background-color: #0a0a14;
+  --ifm-toc-border-color: rgba(255, 255, 255, 0.06);
+  --ifm-color-emphasis-300: #334155;
+  --ifm-hr-border-color: rgba(255, 255, 255, 0.06);
+
+  --docusaurus-highlighted-code-line-bg: rgba(124, 58, 237, 0.15);
+}
+
+/* ── Navbar ──────────────────────────────────────────────── */
+[data-theme='dark'] .navbar {
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.navbar__title {
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.navbar__link:hover,
+.navbar__link--active {
+  color: var(--ifm-color-primary-light);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────── */
+[data-theme='dark'] .menu {
+  background: transparent;
+}
+
+[data-theme='dark'] .menu__link {
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+[data-theme='dark'] .menu__link:hover {
+  background: rgba(124, 58, 237, 0.08);
+  color: var(--ifm-color-primary-light);
+}
+
+[data-theme='dark'] .menu__link--active {
+  background: rgba(124, 58, 237, 0.12);
+  color: var(--ifm-color-primary-light);
+  font-weight: 600;
+}
+
+[data-theme='dark'] .menu__list-item-collapsible:hover {
+  background: rgba(124, 58, 237, 0.05);
+}
+
+/* ── Doc page ────────────────────────────────────────────── */
+[data-theme='dark'] .theme-doc-markdown h1,
+[data-theme='dark'] .theme-doc-markdown h2,
+[data-theme='dark'] .theme-doc-markdown h3 {
+  color: #e2e8f0;
+}
+
+[data-theme='dark'] .theme-doc-markdown h2 {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 0.5rem;
+}
+
+[data-theme='dark'] .theme-doc-breadcrumbs__item--active .breadcrumbs__link {
+  background: rgba(124, 58, 237, 0.1);
+  color: var(--ifm-color-primary-light);
+}
+
+/* ── Code blocks ─────────────────────────────────────────── */
+[data-theme='dark'] .prism-code {
+  background: #1a1a2e !important;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+code {
+  border-radius: 4px;
+  padding: 2px 6px;
+}
+
+[data-theme='dark'] code {
+  background: rgba(124, 58, 237, 0.1);
+  color: #c4b5fd;
+  border: 1px solid rgba(124, 58, 237, 0.15);
+}
+
+/* ── TOC ─────────────────────────────────────────────────── */
+[data-theme='dark'] .table-of-contents__link:hover,
+[data-theme='dark'] .table-of-contents__link--active {
+  color: var(--ifm-color-primary-light);
+}
+
+/* ── Footer ──────────────────────────────────────────────── */
+[data-theme='dark'] .footer {
+  background: #0a0a14;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.footer__title {
+  color: #e2e8f0 !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+
+.footer__link-item {
+  font-size: 0.9rem;
+}
+
+[data-theme='dark'] .footer__link-item:hover {
+  color: var(--ifm-color-primary-light);
+}
+
+.footer__copyright {
+  opacity: 0.5;
+  font-size: 0.85rem;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────── */
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(124, 58, 237, 0.2);
+  border-radius: 4px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 58, 237, 0.35);
+}
+
+/* ── Pagination ──────────────────────────────────────────── */
+[data-theme='dark'] .pagination-nav__link {
+  border-color: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+[data-theme='dark'] .pagination-nav__link:hover {
+  border-color: rgba(124, 58, 237, 0.3);
+  background: rgba(124, 58, 237, 0.04);
+}
+
+/* ── Admonitions ─────────────────────────────────────────── */
+[data-theme='dark'] .alert {
+  border-radius: 8px;
+}
+
+/* ── Tables ──────────────────────────────────────────────── */
+[data-theme='dark'] table {
+  border-collapse: collapse;
+}
+
+[data-theme='dark'] table th {
+  background: rgba(124, 58, 237, 0.08);
+}
+
+[data-theme='dark'] table td,
+[data-theme='dark'] table th {
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme='dark'] table tr:nth-child(2n) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* ── Selection ───────────────────────────────────────────── */
+::selection {
+  background: rgba(124, 58, 237, 0.3);
+  color: #fff;
 }
