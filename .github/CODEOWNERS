@@ -1,8 +1,11 @@
 # ================================================================
-# CODEOWNERS — Prismatica
+# CODEOWNERS — Transcendence (Orchestration)
 # ================================================================
 # Defines who is automatically requested for review when a PR
 # changes files in specific paths.
+#
+# Note: prismatica/ is a separate repo with its own CODEOWNERS.
+#       Only orchestration, CI, and docs files live here.
 #
 # Rules are evaluated top-to-bottom. The last matching rule wins.
 # Owners are @github-username.
@@ -11,19 +14,7 @@
 # Default — every file requires review from the Tech Lead
 *                               @LESdylan @serjimen
 
-# Data API — Express + pg + mongodb
-apps/data-api/                  @LESdylan @danielfdez17 @serjimen
-
-# Frontend — React 19, Vite 6
-apps/frontend/                  @vjan-nie @LESdylan
-
-# Database schemas — SQL + NoSQL models (high-risk)
-Model/                          @esettes @serjimen @LESdylan
-Model/sql/                      @esettes @serjimen @LESdylan
-Model/nosql/                    @esettes @serjimen @LESdylan
-
-# Infrastructure — Docker, Compose, Makefile
-apps/data-api/Dockerfile*       @esettes @serjimen
+# Infrastructure — Docker Compose, Makefile, orchestration
 docker-compose*.yml             @esettes @serjimen
 Makefile                        @esettes @serjimen
 

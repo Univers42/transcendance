@@ -31,9 +31,8 @@ build/
 *.cert
 *.p12
 
-# ── Prisma (generated client) ───────────────────────
-apps/backend/generated/
-**/node_modules/.prisma/
+# ── Prismatica (separate repo — has its own .git) ───
+prismatica/
 
 # ── IDE & Editor ─────────────────────────────────────
 .vscode/*
@@ -93,5 +92,5 @@ static_docs/docusaurus/node_modules/
 static_docs/docusaurus/.docusaurus/
 static_docs/docusaurus/.cache-loader/
 
-# ── Gitflow --------------------------────────────────
-gitflow/prismatica/
+# ── Gitflow ──────────────────────────────────────────
+gitflow/
