@@ -69,20 +69,22 @@ db-init:  ## 🗄️ Apply schemas + seeds (PG + Mongo)
 	@echo -e "  $(C)ℹ$(N)  Initializing databases..."
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/apply_schema.sh" 2>/dev/null || true
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/apply_seeds.sh" 2>/dev/null || true
-	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_setup.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
-	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_seed.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
+	@docker exec $(API_CTR) tar -cf - -C /app Model 2>/dev/null | docker exec -i $(MONGO_CTR) tar -xf - -C /tmp/ 2>/dev/null || true
+	@docker exec $(MONGO_CTR) bash -c "cd /tmp/Model/sql && bash manager/mongo_setup.sh mongodb://localhost:27017 transcendence" 2>/dev/null || true
+	@docker exec $(MONGO_CTR) bash -c "cd /tmp/Model/sql && bash manager/mongo_seed.sh mongodb://localhost:27017 transcendence" 2>/dev/null || true
 	@echo -e "  $(G)✓$(N)  Databases initialized"
 
 db-seed:  ## 🗄️ Re-seed databases
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/apply_seeds.sh" 2>/dev/null || true
-	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_seed.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
+	@docker exec $(API_CTR) tar -cf - -C /app Model 2>/dev/null | docker exec -i $(MONGO_CTR) tar -xf - -C /tmp/ 2>/dev/null || true
+	@docker exec $(MONGO_CTR) bash -c "cd /tmp/Model/sql && bash manager/mongo_seed.sh mongodb://localhost:27017 transcendence" 2>/dev/null || true
 	@echo -e "  $(G)✓$(N)  Databases seeded"
 
 db-reset:  ## 🗄️ Reset databases (drop + reinit)
 	@echo -e "$(R)⚠  This will DROP all data$(N)"
 	@read -p "Are you sure? [y/N] " c && [ "$$c" = "y" ] || exit 1
 	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/reset.sh" 2>/dev/null || true
-	@docker exec $(API_CTR) sh -c "cd /app/Model/sql && bash manager/mongo_reset.sh mongodb://mongo:27017 transcendence" 2>/dev/null || true
+	@docker exec $(MONGO_CTR) mongosh --quiet --eval 'db.dropDatabase()' mongodb://localhost:27017/transcendence 2>/dev/null || true
 	@$(MAKE) db-init
 
 db-status:  ## 🗄️ Show database status
