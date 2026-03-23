@@ -17,7 +17,6 @@ on:
       - "static_docs/**"
       - "docs/**"
       - "*.md"
-      - "Model/**/*.md"
       - "CONTRIBUTING.md"
       - "SECURITY.md"
       - "CODE_OF_CONDUCT.md"

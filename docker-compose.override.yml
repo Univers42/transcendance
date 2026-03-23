@@ -1,0 +1,29 @@
+# ============================================
+# docker-compose.override.yml — Local dev override
+# ============================================
+# Use when developing Prismatica locally instead of
+# pulling published images.
+#
+# Usage:
+#   docker compose -f docker-compose.dev.yml -f docker-compose.override.yml up -d
+#
+# This builds images from prismatica/ source instead of pulling ghcr.io.
+# ============================================
+
+services:
+  data-api:
+    build:
+      context: ./prismatica
+      dockerfile: apps/data-api/Dockerfile
+    image: prismatica-api:local
+    volumes:
+      - ./prismatica/apps/data-api/src:/app/src:ro
+      - ./prismatica/Model:/app/Model:ro
+    environment:
+      NODE_ENV: development
+
+  frontend:
+    build:
+      context: ./prismatica/apps/frontend
+      dockerfile: Dockerfile
+    image: prismatica-frontend:local

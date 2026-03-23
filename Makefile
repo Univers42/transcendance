@@ -58,9 +58,10 @@ COMPOSE_PROD := $(COMPOSE_CMD) -f docker-compose.yml
 API_CTR      := transcendence-api
 DB_CTR       := transcendence-db
 MONGO_CTR    := transcendence-mongo
-FRONTEND     := apps/frontend
-DATA_API     := apps/data-api
-SHARED       := packages/shared
+# Prismatica lives in its own repo (nested or submodule)
+PRISMATICA   := prismatica
+FRONTEND     := $(PRISMATICA)/apps/frontend
+DATA_API     := $(PRISMATICA)/apps/data-api
 
 # Colors
 BLUE    := \033[0;34m
@@ -218,17 +219,16 @@ preflight: check-docker check-compose check-env check-ports
 
 .PHONY: configure-hooks
 
-HOOKS_DIR ?= $(shell if [ -d vendor/scripts/hooks ]; then echo vendor/scripts/hooks; else echo qa/implementation/hooks; fi)
+HOOKS_DIR ?= vendor/scripts/hooks
 
-configure-hooks:  ## 🪝 Activate git hooks (auto-runs on make / make dev)
+configure-hooks:  ## 🪝 Activate git hooks
 	@if [ ! -d .git ]; then \
 		echo -e "  $(YELLOW)⚠$(NC)  Not a git repo — skipping hook setup"; \
-	else \
-		bash qa/implementation/scripts/activate-hooks.sh >/dev/null; \
+	elif [ -d $(HOOKS_DIR) ]; then \
+		git config core.hooksPath $(HOOKS_DIR) 2>/dev/null || true; \
 		echo -e "  $(GREEN)✓$(NC)  Git hooks active (core.hooksPath → $(HOOKS_DIR))"; \
-		for old in commit-msg pre-commit pre-push post-checkout pre-merge-commit log_hook log_hook.sh; do \
-			if [ -L ".git/hooks/$$old" ]; then rm -f ".git/hooks/$$old"; fi; \
-		done; \
+	else \
+		echo -e "  $(YELLOW)⚠$(NC)  Hook directory $(HOOKS_DIR) not found — skipping"; \
 	fi
 
 # ============================================
@@ -246,13 +246,13 @@ update:
 banner:
 	$(BANNER)
 
-bootstrap: docker-up install db-init  ## Full bootstrap sequence
+bootstrap: docker-up db-init  ## Full bootstrap sequence
 	@echo ""
 	@echo -e "$(GREEN)╔══════════════════════════════════════════════════════════╗$(NC)"
 	@echo -e "$(GREEN)║$(NC)  ✅  $(BOLD)Setup complete!$(NC)                                       $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)╠══════════════════════════════════════════════════════════╣$(NC)"
 	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
-	@echo -e "$(GREEN)║$(NC)  Frontend  →  http://localhost:$${FRONTEND_PORT:-5173}                      $(GREEN)║$(NC)"
+	@echo -e "$(GREEN)║$(NC)  Frontend  →  http://localhost:$${FRONTEND_PORT:-8080}                      $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)║$(NC)  data-api  →  http://localhost:$${DATA_API_PORT:-3001}                      $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)║$(NC)  Mailpit   →  http://localhost:$${MAILPIT_UI_PORT:-8025}                      $(GREEN)║$(NC)"
 	@echo -e "$(GREEN)║$(NC)                                                          $(GREEN)║$(NC)"
@@ -324,20 +324,20 @@ docker-clean: check-docker check-compose  ## 🐳 Remove containers + volumes (f
 #  📦 DEPENDENCIES
 # ============================================
 
-.PHONY: install install-frontend install-shared
+.PHONY: install install-frontend
 
-install: install-shared install-frontend  ## 📦 Install all dependencies
+install: install-frontend  ## 📦 Install local dependencies (requires prismatica/)
 	$(call step,$(GREEN)✓,All dependencies installed)
 
 install-frontend:
-	$(call step,$(BLUE)ℹ,Installing frontend dependencies...)
-	@cd $(FRONTEND) && pnpm install 2>&1 || { \
-		echo -e "$(RED)│  ✗  FAILED: pnpm install (frontend)$(NC)"; exit 1; \
-	}
-
-install-shared:
-	$(call step,$(BLUE)ℹ,Installing shared package dependencies...)
-	@cd $(SHARED) && pnpm install 2>/dev/null || true
+	@if [ ! -d $(FRONTEND) ]; then \
+		echo -e "  $(YELLOW)⚠$(NC)  $(FRONTEND) not found — skip (clone prismatica/ first)"; \
+	else \
+		$(call step,$(BLUE)ℹ,Installing frontend dependencies...); \
+		cd $(FRONTEND) && pnpm install 2>&1 || { \
+			echo -e "$(RED)│  ✗  FAILED: pnpm install (frontend)$(NC)"; exit 1; \
+		}; \
+	fi
 
 # ============================================
 #  🎨 CSS / SASS
@@ -383,15 +383,15 @@ build-frontend:  ## 🏗️ Build frontend
 
 .PHONY: dev dev-frontend shell
 
-dev: configure-hooks docker-up  ## 🚀 Start all dev servers (hot reload)
-	$(call step,$(BLUE)ℹ,Starting Vite dev server...)
-	@cd $(FRONTEND) && pnpm run dev &
-	@sleep 2
-	$(call step,$(GREEN)✓,Dev servers started)
-	@echo -e "  Frontend  → http://localhost:$${FRONTEND_PORT:-5173}"
+dev: configure-hooks docker-up  ## 🚀 Start dev stack (Docker)
+	$(call step,$(GREEN)✓,Dev stack running)
+	@echo -e "  Frontend  → http://localhost:$${FRONTEND_PORT:-8080}"
 	@echo -e "  data-api  → http://localhost:$${DATA_API_PORT:-3001}"
 
-dev-frontend:  ## 🚀 Start frontend only (local Vite)
+dev-frontend:  ## 🚀 Start frontend locally (Vite HMR — requires prismatica/)
+	@if [ ! -d $(FRONTEND) ]; then \
+		echo -e "  $(RED)✗$(NC)  $(FRONTEND) not found — clone prismatica/ first"; exit 1; \
+	fi
 	@cd $(FRONTEND) && pnpm run dev
 
 shell:  ## 🐚 Interactive shell in data-api container
@@ -403,16 +403,13 @@ shell:  ## 🐚 Interactive shell in data-api container
 
 .PHONY: turn-on turn-off
 
-turn-on: docker-up  ## ⚡ Start dev servers + open browser
-	$(call step,$(BLUE)ℹ,Starting Vite dev server...)
-	@cd $(FRONTEND) && pnpm run dev &
-	@sleep 2
-	$(call step,$(GREEN)✓,Dev servers started)
+turn-on: docker-up  ## ⚡ Start dev stack + open browser
+	$(call step,$(GREEN)✓,Dev stack running)
 	@echo ""
-	@echo -e "  Frontend  → http://localhost:$${FRONTEND_PORT:-5173}"
+	@echo -e "  Frontend  → http://localhost:$${FRONTEND_PORT:-8080}"
 	@echo -e "  data-api  → http://localhost:$${DATA_API_PORT:-3001}"
 	@echo ""
-	@URL="http://localhost:$${FRONTEND_PORT:-5173}"; \
+	@URL="http://localhost:$${FRONTEND_PORT:-8080}"; \
 	if command -v xdg-open >/dev/null 2>&1; then \
 		xdg-open "$$URL" 2>/dev/null & disown; \
 	elif command -v open >/dev/null 2>&1; then \
@@ -421,9 +418,8 @@ turn-on: docker-up  ## ⚡ Start dev servers + open browser
 		echo -e "  $(DIM)→ Open $$URL in your browser$(NC)"; \
 	fi
 
-turn-off:  ## 🔌 Stop everything (servers + containers + ports)
+turn-off:  ## 🔌 Stop everything (containers + ports)
 	$(call step,$(YELLOW)⚠,Shutting everything down...)
-	@pkill -f 'node.*vite' 2>/dev/null || true
 	@$(COMPOSE_DEV) down 2>/dev/null || { \
 		docker rm -f $$(docker ps -aq --filter "name=transcendence") 2>/dev/null || true; \
 	}
@@ -519,7 +515,7 @@ prettier:  ## ✅ Prettier — check / fix code formatting
 #   make audit PATH=apps/frontend       → audit a specific workspace
 #   make audit VERBOSE=1                → show full verbose output
 #   make audit PATH=apps/frontend VERBOSE=1
-AUDIT_PATH ?= apps/frontend
+AUDIT_PATH ?= prismatica/apps/frontend
 audit:  ## ✅ Security & lint audit (strict mode)
 	@_PATH="$${PATH:-$(AUDIT_PATH)}"; \
 	_VERBOSE="$${VERBOSE:-0}"; \
@@ -594,7 +590,7 @@ http-surface:  ## 🧪 Check HTTP headers/cookies (URL=http://... or URLS="...")
 
 clean:  ## 🧹 Remove build artifacts
 	$(call step,$(YELLOW)⚠,Cleaning build artifacts...)
-	@rm -rf $(FRONTEND)/dist $(DATA_API)/dist 2>/dev/null || true
+	@rm -rf $(FRONTEND)/dist $(FRONTEND)/node_modules/.vite 2>/dev/null || true
 	$(call step,$(GREEN)✓,Clean)
 
 fclean: clean  ## 🧹 Full clean (artifacts + modules + volumes)
@@ -631,17 +627,22 @@ prod-logs:  ## 🏭 Tail production logs
 
 .PHONY: local local-install local-dev
 
-local: local-install  ## 💻 Setup using host Node.js (no Docker)
+local: local-install  ## 💻 Setup using host Node.js (no Docker) — requires prismatica/
 	$(call step,$(GREEN)✓,Local setup complete. Run: make local-dev)
 
 local-install:
+	@if [ ! -d $(PRISMATICA) ]; then \
+		echo -e "  $(RED)✗$(NC)  prismatica/ not found — clone it first"; exit 1; \
+	fi
 	$(call step,$(BLUE)ℹ,Installing dependencies locally...)
 	@cd $(FRONTEND) && pnpm install
 	@cd $(DATA_API) && pnpm install
-	@cd $(SHARED) && pnpm install 2>/dev/null || true
 	$(call step,$(GREEN)✓,Dependencies installed)
 
-local-dev:  ## 💻 Start dev servers locally (requires Node.js + DBs)
+local-dev:  ## 💻 Start dev servers locally (requires prismatica/ + host DBs)
+	@if [ ! -d $(PRISMATICA) ]; then \
+		echo -e "  $(RED)✗$(NC)  prismatica/ not found — clone it first"; exit 1; \
+	fi
 	$(call step,$(BLUE)ℹ,Starting local dev servers...)
 	@cd $(DATA_API) && pnpm run dev &
 	@cd $(FRONTEND) && pnpm run dev &

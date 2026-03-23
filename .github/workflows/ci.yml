@@ -1,14 +1,13 @@
 # ============================================
-# Prismatica — CI Pipeline
+# Transcendence — CI Pipeline
 # ============================================
 # Runs on every push to develop/main and on every PR.
-# Steps: lint → typecheck → docker build validation → docs build
+# Steps: compose validation → docs build
 #
-# Architecture:
-#   apps/data-api   — Express + pg + mongodb (pnpm)
-#   apps/frontend   — React 19 + Vite 6 (pnpm)
-#   static_docs/    — Docusaurus 3.9 (npm)
-#   Model/          — SQL schemas + NoSQL definitions
+# Architecture (post-extraction):
+#   prismatica/     — separate repo with its own CI (ghcr.io images)
+#   static_docs/    — Docusaurus 3.9 documentation (npm)
+#   docker-compose  — orchestration pulling ghcr.io/univers42/* images
 # ============================================
 
 name: CI
@@ -25,86 +24,21 @@ concurrency:
 
 env:
   NODE_VERSION: "22"
-  PNPM_VERSION: "10"
 
 jobs:
-  # ── Lint ─────────────────────────────────────────────
-  lint:
-    name: 🔍 Lint
+  # ── Compose Config Validation ───────────────────────
+  compose:
+    name: 🐳 Compose Validation
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-          cache-dependency-path: |
-            apps/frontend/pnpm-lock.yaml
-            apps/data-api/pnpm-lock.yaml
-
-      - name: Install frontend dependencies
-        run: cd apps/frontend && pnpm install --frozen-lockfile
-
-      - name: Lint frontend
-        run: cd apps/frontend && pnpm exec eslint .
-
-  # ── Type Check ──────────────────────────────────────
-  typecheck:
-    name: 🏗️ Type Check
-    runs-on: ubuntu-latest
-    needs: lint
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: ${{ env.PNPM_VERSION }}
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "pnpm"
-          cache-dependency-path: |
-            apps/frontend/pnpm-lock.yaml
-            apps/data-api/pnpm-lock.yaml
-
-      - name: Install frontend dependencies
-        run: cd apps/frontend && pnpm install --frozen-lockfile
-
-      - name: Install data-api dependencies
-        run: cd apps/data-api && pnpm install --frozen-lockfile
-
-      - name: Typecheck frontend
-        run: cd apps/frontend && pnpm exec tsc --noEmit
-
-      - name: Typecheck data-api
-        run: cd apps/data-api && pnpm run typecheck
-
-  # ── Docker Build Validation ─────────────────────────
-  docker:
-    name: 🐳 Docker Build
-    runs-on: ubuntu-latest
-    needs: typecheck
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Validate compose config
+      - name: Validate dev compose config
         run: docker compose -f docker-compose.dev.yml config --quiet
 
-      - name: Build data-api image
-        run: docker build -f apps/data-api/Dockerfile apps/data-api --tag prismatica-api:ci
+      - name: Validate prod compose config
+        run: docker compose -f docker-compose.yml config --quiet
 
   # ── Docs Build ──────────────────────────────────────
   docs:

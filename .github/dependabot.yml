@@ -15,38 +15,6 @@ updates:
       prefix: "chore(deps)"
     open-pull-requests-limit: 5
 
-  # Frontend — React 19 + Vite 6
-  - package-ecosystem: "npm"
-    directory: "/apps/frontend"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "05:15"
-      timezone: "Europe/Madrid"
-    labels:
-      - "dependencies"
-      - "frontend"
-      - "security"
-    commit-message:
-      prefix: "chore(frontend-deps)"
-    open-pull-requests-limit: 5
-
-  # Data API — Express + pg + mongodb
-  - package-ecosystem: "npm"
-    directory: "/apps/data-api"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "05:30"
-      timezone: "Europe/Madrid"
-    labels:
-      - "dependencies"
-      - "data-api"
-      - "security"
-    commit-message:
-      prefix: "chore(data-api-deps)"
-    open-pull-requests-limit: 5
-
   # Docusaurus documentation site
   - package-ecosystem: "npm"
     directory: "/static_docs/docusaurus"
@@ -60,22 +28,6 @@ updates:
       - "docs"
     commit-message:
       prefix: "chore(docs-deps)"
-    open-pull-requests-limit: 3
-
-  # Docker — data-api Dockerfiles
-  - package-ecosystem: "docker"
-    directory: "/apps/data-api"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "06:00"
-      timezone: "Europe/Madrid"
-    labels:
-      - "dependencies"
-      - "docker"
-      - "security"
-    commit-message:
-      prefix: "chore(docker-deps)"
     open-pull-requests-limit: 3
 
   # GitHub Actions
