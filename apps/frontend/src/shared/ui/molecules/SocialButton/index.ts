@@ -1,2 +1,2 @@
-export { SocialButton } from './ui/SocialButton.tsx';
-export type { SocialButtonProps } from './ui/SocialButton.tsxes';
+export { SocialButton } from './ui/SocialButton';
+export type { SocialButtonProps } from './model/SocialButton.types';

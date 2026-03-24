@@ -12,13 +12,13 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './app/App';
-import './app/styles/main.scss'; // Importación única de estilos globales
+import './app/styles/main.scss';
 
 const rootElement = document.getElementById('root');
 
 if (!rootElement) {
   throw new Error(
-    "[main.tsx] No se encontró el elemento 'root'. Verifica tu index.html."
+    "[main.tsx] element 'root' not found. Verify your index.html."
   );
 }
 
