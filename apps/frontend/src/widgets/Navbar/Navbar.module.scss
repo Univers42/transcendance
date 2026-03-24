@@ -1,0 +1,120 @@
+/**
+ * @file Navbar.module.scss
+ * @description Encapsulated styles for the Navbar widget using CSS Modules.
+ * @author serjimen
+ * @date 2026-03-05
+ */
+
+@use '@/styles/abstracts' as *;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: $z-sticky;
+  width: 100%;
+  background: rgba($bg-primary, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom: 1px solid $border-default;
+  transition: $transition-all;
+
+  @include theme('dark') {
+    background: rgba($dark-bg-primary, 0.85);
+    border-color: $dark-border-default;
+  }
+
+  &__bar {
+    height: 4rem;
+    display: flex;
+    align-items: center;
+  }
+
+  &__container {
+    @include container;
+    @include flex-between;
+    height: 100%;
+  }
+
+  &__nav {
+    display: none;
+
+    @include lg-up {
+      display: flex;
+      align-items: center;
+      gap: $space-1;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+  }
+
+  &__cta {
+    display: none;
+    @include lg-up { display: inline-flex; }
+  }
+
+  &__hamburger {
+    @include lg-up { display: none; }
+  }
+
+  // Mobile Menu Logic
+  &__mobile-menu {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition: max-height 300ms ease-in-out, opacity 200ms ease-in-out;
+    background: rgba($bg-primary, 0.95);
+    backdrop-filter: blur(14px);
+
+    @include theme('dark') {
+      background: rgba($dark-bg-primary, 0.95);
+    }
+
+    &[data-open='true'] {
+      max-height: 480px;
+      opacity: 1;
+      border-bottom: 1px solid $border-default;
+    }
+  }
+
+  &__mobile-container {
+    @include container;
+    padding: $space-4 0;
+    display: flex;
+    flex-direction: column;
+    gap: $space-2;
+  }
+
+  &__mobile-divider {
+    border: none;
+    border-top: 1px solid $border-default;
+    margin: $space-2 0;
+  }
+}
+
+// Nav Link Styles (Scoped to Navbar)
+.nav-link {
+  padding: $space-2 $space-3;
+  font-size: $text-sm;
+  font-weight: $weight-medium;
+  color: $text-secondary;
+  text-decoration: none;
+  border-radius: $radius-md;
+  transition: $transition-colors;
+
+  &:hover {
+    color: $text-primary;
+    background: $bg-hover;
+  }
+
+  &--mobile {
+    display: flex;
+    width: 100%;
+    padding: $space-3 $space-4;
+  }
+}

@@ -9,7 +9,7 @@
 import type { JSX } from 'react';
 import type { BrandLogoProps } from '../model/BrandLogo.types';
 import { DefaultLogoIcon } from './BrandLogo.icons';
-import { DEFAULT_HREF, DEFAULT_TITLE } from '../model/BrandLogo.constant';
+import { DEFAULT_HREF, DEFAULT_TITLE } from '../model/BrandLogo.constants';
 import styles from './BrandLogo.module.scss';
 
 export function BrandLogo({

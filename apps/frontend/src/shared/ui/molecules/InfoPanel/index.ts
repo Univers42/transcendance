@@ -1,2 +1,2 @@
-export { InfoPanel } from './InfoPanel';
-export type { InfoPanelProps, InfoFeature, InfoStat } from './InfoPanel.types';
+export { InfoPanel } from './ui/InfoPanel';
+export type { InfoPanelProps, InfoFeature, InfoStat } from './model/InfoPanel.types';

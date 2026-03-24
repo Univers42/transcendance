@@ -1,0 +1,38 @@
+/**
+ * @file main.scss
+ * @description Global entry point for styles. 
+ * Only contains base rules, typography, and theme orchestration.
+ * @author serjimen
+ * @date 2026-03-24
+ */
+
+@use '@/styles/abstracts' as *;
+
+// 1. BASE (Reglas universales)
+@use '@/styles/base/reset';
+@use '@/styles/base/typography';
+
+// 2. UTILITIES (Animaciones globales)
+@use '@/styles/utilities/animations';
+
+// 3. THEME APPLICATION (La única lógica global permitida)
+// Esto asegura que las variables CSS (--prisma-...) cambien en toda la app
+:root {
+  @include theme-variables('light');
+}
+
+[data-theme='dark'] {
+  @include theme-variables('dark');
+}
+
+// Soporte para usuarios que no han elegido tema aún
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    @include theme-variables('dark');
+  }
+}
+
+// 4. LEGACY BRIDGE (Provisional)
+// Mientras terminamos de mover todo a src/, podemos dejar aquí 
+// lo que todavía NO hemos refactorizado.
+// @use '../../styles/components/hero-slider'; // Ejemplo de lo que falta

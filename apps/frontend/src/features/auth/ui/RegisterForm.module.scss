@@ -1,0 +1,152 @@
+@use '@/styles/abstracts' as *;
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-5;
+  width: 100%;
+}
+
+.socials {
+  display: flex;
+  gap: $spacing-3;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: $spacing-3;
+  margin: $spacing-2 0;
+
+  &__line {
+    flex: 1;
+    height: 1px;
+    background-color: var(--prisma-border);
+  }
+
+  &__text {
+    font-size: $font-size-xs;
+    color: var(--prisma-text-tertiary);
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: $tracking-wider;
+  }
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.input {
+  width: 100%;
+  height: $spacing-11; // 44px
+  padding: 0 $spacing-4;
+  padding-right: $spacing-4;
+  border-radius: $radius-lg;
+  border: $border-width-thin solid var(--prisma-border);
+  background-color: var(--prisma-bg-secondary);
+  color: var(--prisma-text-primary);
+  font-size: $font-size-sm;
+  transition: all $duration-fast $ease-default;
+
+  &:focus {
+    border-color: var(--prisma-accent);
+    background-color: var(--prisma-bg-primary);
+    @include focus-ring;
+  }
+
+  &--error {
+    border-color: var(--prisma-data-error);
+    
+    &:focus {
+      border-color: var(--prisma-data-error);
+      @include focus-ring(var(--prisma-data-error));
+    }
+  }
+
+  &--withAction {
+    padding-right: $spacing-11;
+  }
+}
+
+.inputAction {
+  position: absolute;
+  right: $spacing-2;
+  top: 50%;
+  transform: translateY(-50%);
+  width: $spacing-8;
+  height: $spacing-8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--prisma-text-tertiary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: $radius-md;
+  transition: all $duration-fast $ease-default;
+
+  &:hover {
+    color: var(--prisma-text-secondary);
+    background-color: var(--prisma-bg-hover);
+  }
+}
+
+.terms {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-2;
+
+  &__label {
+    display: flex;
+    align-items: flex-start;
+    gap: $spacing-2;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    color: var(--prisma-text-secondary);
+
+    input {
+      margin-top: $spacing-1;
+    }
+
+    a {
+      color: var(--prisma-accent);
+      text-decoration: none;
+      font-weight: $weight-medium;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  &__error {
+    display: flex;
+    align-items: center;
+    gap: $spacing-1;
+    font-size: $font-size-xs;
+    color: var(--prisma-data-error);
+    margin-left: $spacing-6;
+  }
+}
+
+.switch {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: var(--prisma-text-secondary);
+  margin-top: $spacing-2;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--prisma-accent);
+    font-weight: $weight-semibold;
+    cursor: pointer;
+    margin-left: $spacing-1;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
