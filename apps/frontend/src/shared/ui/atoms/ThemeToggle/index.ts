@@ -1,2 +1,2 @@
-export { ThemeToggle } from './ThemeToggle';
-export type { ThemeToggleProps } from './ThemeToggle.types';
+export { ThemeToggle } from './ui/ThemeToggle';
+export type { ThemeToggleProps } from './model/ThemeToggle.types';
